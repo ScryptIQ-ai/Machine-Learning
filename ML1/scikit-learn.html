@@ -151,15 +151,7 @@ from numpy.random import uniform, seed
 
 from matplotlib.pyplot import subplots, scatter, xlabel, ylabel, xticks, show</code></pre>
             </div>
-            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
-ModuleNotFoundError                       Traceback (most recent call last)
-Cell In[1], line 3
-      1 # FIXED WITH OUTPUT
-----&gt; 3 from pandas import read_csv
-      5 from numpy import arange, asarray, linspace, c_, meshgrid, zeros, ones
-      7 from numpy.random import uniform, seed
-
-ModuleNotFoundError: No module named &#x27;pandas&#x27;</pre></div>
+            
         </div>
         
                     </div>
@@ -185,7 +177,7 @@ df[&#x27;Weight&#x27;] = 0.454*df[&#x27;Weight&#x27;]
 df.head(10)</code></pre>
             </div>
             <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
-NameError                                 Traceback (most recent call last)
+FileNotFoundError                         Traceback (most recent call last)
 Cell In[2], line 4
       1 # FIXED WITH OUTPUT
       2 
@@ -194,7 +186,61 @@ Cell In[2], line 4
       6 print(df.shape)
       8 # Convert inches to cm and pounds to kg:
 
-NameError: name &#x27;read_csv&#x27; is not defined</pre></div>
+File ~/work/ML1_L2D_Lesson_Resources/ML1_L2D_Lesson_Resources/self-repo/.venv/lib/python3.12/site-packages/pandas/io/parsers/readers.py:873, in read_csv(filepath_or_buffer, sep, delimiter, header, names, index_col, usecols, dtype, engine, converters, true_values, false_values, skipinitialspace, skiprows, skipfooter, nrows, na_values, keep_default_na, na_filter, skip_blank_lines, parse_dates, date_format, dayfirst, cache_dates, iterator, chunksize, compression, thousands, decimal, lineterminator, quotechar, quoting, doublequote, escapechar, comment, encoding, encoding_errors, dialect, on_bad_lines, low_memory, memory_map, float_precision, storage_options, dtype_backend)
+    861 kwds_defaults = _refine_defaults_read(
+    862     dialect,
+    863     delimiter,
+   (...)    869     dtype_backend=dtype_backend,
+    870 )
+    871 kwds.update(kwds_defaults)
+--&gt; 873 return _read(filepath_or_buffer, kwds)
+
+File ~/work/ML1_L2D_Lesson_Resources/ML1_L2D_Lesson_Resources/self-repo/.venv/lib/python3.12/site-packages/pandas/io/parsers/readers.py:300, in _read(filepath_or_buffer, kwds)
+    297 _validate_names(kwds.get(&quot;names&quot;, None))
+    299 # Create the parser.
+--&gt; 300 parser = TextFileReader(filepath_or_buffer, **kwds)
+    302 if chunksize or iterator:
+    303     return parser
+
+File ~/work/ML1_L2D_Lesson_Resources/ML1_L2D_Lesson_Resources/self-repo/.venv/lib/python3.12/site-packages/pandas/io/parsers/readers.py:1645, in TextFileReader.__init__(self, f, engine, **kwds)
+   1642     self.options[&quot;has_index_names&quot;] = kwds[&quot;has_index_names&quot;]
+   1644 self.handles: IOHandles | None = None
+-&gt; 1645 self._engine = self._make_engine(f, self.engine)
+
+File ~/work/ML1_L2D_Lesson_Resources/ML1_L2D_Lesson_Resources/self-repo/.venv/lib/python3.12/site-packages/pandas/io/parsers/readers.py:1904, in TextFileReader._make_engine(self, f, engine)
+   1902     if &quot;b&quot; not in mode:
+   1903         mode += &quot;b&quot;
+-&gt; 1904 self.handles = get_handle(
+   1905     f,
+   1906     mode,
+   1907     encoding=self.options.get(&quot;encoding&quot;, None),
+   1908     compression=self.options.get(&quot;compression&quot;, None),
+   1909     memory_map=self.options.get(&quot;memory_map&quot;, False),
+   1910     is_text=is_text,
+   1911     errors=self.options.get(&quot;encoding_errors&quot;, &quot;strict&quot;),
+   1912     storage_options=self.options.get(&quot;storage_options&quot;, None),
+   1913 )
+   1914 assert self.handles is not None
+   1915 f = self.handles.handle
+
+File ~/work/ML1_L2D_Lesson_Resources/ML1_L2D_Lesson_Resources/self-repo/.venv/lib/python3.12/site-packages/pandas/io/common.py:926, in get_handle(path_or_buf, mode, encoding, compression, memory_map, is_text, errors, storage_options)
+    921 elif isinstance(handle, str):
+    922     # Check whether the filename is to be opened in binary mode.
+    923     # Binary mode does not support &#x27;encoding&#x27; and &#x27;newline&#x27;.
+    924     if ioargs.encoding and &quot;b&quot; not in ioargs.mode:
+    925         # Encoding
+--&gt; 926         handle = open(
+    927             handle,
+    928             ioargs.mode,
+    929             encoding=ioargs.encoding,
+    930             errors=errors,
+    931             newline=&quot;&quot;,
+    932         )
+    933     else:
+    934         # Binary mode
+    935         handle = open(handle, ioargs.mode)
+
+FileNotFoundError: [Errno 2] No such file or directory: &#x27;data/patients_data.csv&#x27;</pre></div>
         </div>
         <p><br>Note that data in the first five columns are either integers (age) or real numbers (floating point). The classes (categorical data) in the last two columns come as binary (0/1) for &#x27;smokers/non-smokers&#x27; and as strings for &#x27;male/female&#x27;. Both can be used for classification.<br><br></p>
         <div class="info-box note-box">
@@ -228,13 +274,14 @@ show()
             </div>
             <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
 NameError                                 Traceback (most recent call last)
-Cell In[3], line 3
+Cell In[3], line 5
       1 # FIXED WITH OUTPUT
-----&gt; 3 fig, ax = subplots(figsize=(12,6),ncols=2,nrows=1)
-      5 gender_boolean = df[&#x27;Gender&#x27;] == &#x27;Female&#x27;
+      3 fig, ax = subplots(figsize=(12,6),ncols=2,nrows=1)
+----&gt; 5 gender_boolean = df[&#x27;Gender&#x27;] == &#x27;Female&#x27;
       7 ax[0].scatter(df[&#x27;Height&#x27;], df[&#x27;Weight&#x27;], c=gender_boolean, cmap=&#x27;bwr&#x27;)
+      8 ax[0].set_xlabel(&#x27;Height&#x27;, fontsize=14)
 
-NameError: name &#x27;subplots&#x27; is not defined</pre></div>
+NameError: name &#x27;df&#x27; is not defined</pre><img src="data:image/png;base64,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AAcAAIAEAhwAAAASCHAAAABIIMABAAAggQAHAACABAIcAAAAEghwAAAASCDAAQAAIIEABwAAgAQCHAAAABIIcAAAAEggwAEAACCBAAcAAIAEAhwAAAASCHAAAABIIMABAAAggQAHAACABAIcAAAAEghwAAAASCDAAQAAIIEABwAAgAQCHAAAABIIcAAAAEggwAEAACCBAAcAAIAEAhwAAAASCHAAAABIIMABAAAggQAHAACABAIcAAAAEghwAAAASCDAAQAAIIEABwAAgAQCHAAAABIIcAAAAEggwAEAACCBAAcAAIAEAhwAAAASCHAAAABIIMABAAAggQAHAACABAIcAAAAEghwAAAASCDAAQAAIIEABwAAgAQCHAAAABIIcAAAAEggwAEAACCBAAcAAIAEAhwAAAASCHAAAABIIMABAAAggQAHAACABAIcAAAAEghwAAAASCDAAQAAIIEABwAAgAQCHAAAABIIcAAAAEggwAEAACCBAAcAAIAEAhwAAAASCHAAAABIIMABAAAgwbACfO3atTF9+vSoqamJxsbG2LZt20ldt2HDhhgzZkzMnz9/OHcLACQx6wGg/EoO8I0bN0ZLS0u0trbGjh07YsaMGTF37tx444033vW6119/Pf7xH/8xrrrqqmEvFgCoPLMeACqj5AB/8MEH46abboolS5bERz/60Vi3bl2cddZZ8dhjj53wmv7+/vjsZz8b99xzT5x//vnvacEAQGWZ9QBQGSUFeF9fX2zfvj2am5t//wXGjo3m5ubo6Og44XVf+cpXYtKkSXHjjTee1P309vZGT0/PkBsAUHlmPQBUTkkBfvDgwejv74/6+vohx+vr66Ozs/O41zz//PPx6KOPxvr160/6ftra2qKurm7w1tDQUMoyAYBhMusBoHIq+i7ohw8fjoULF8b69etj4sSJJ33dihUroru7e/C2f//+Cq4SABgusx4ATt74Uk6eOHFijBs3Lrq6uoYc7+rqismTJx9z/s9//vN4/fXXY968eYPHBgYG3r7j8ePj5ZdfjgsuuOCY66qrq6O6urqUpQEAZWDWA0DllPQMeFVVVcyaNSva29sHjw0MDER7e3s0NTUdc/5FF10UL774YuzatWvw9ulPfzquueaa2LVrl5ebAcAoY9YDQOWU9Ax4RERLS0ssXrw4Zs+eHXPmzIk1a9bEkSNHYsmSJRERsWjRopg2bVq0tbVFTU1NXHzxxUOuP+eccyIijjkOAIwOZj0AVEbJAb5gwYI4cOBArFy5Mjo7O2PmzJmxZcuWwTdr2bdvX4wdW9FfLQcAKsisB4DKGFMURTHSi/hjenp6oq6uLrq7u6O2tnaklwPA+5y5VH72FIDRphKzyY+vAQAAIIEABwAAgAQCHAAAABIIcAAAAEggwAEAACCBAAcAAIAEAhwAAAASCHAAAABIIMABAAAggQAHAACABAIcAAAAEghwAAAASCDAAQAAIIEABwAAgAQCHAAAABIIcAAAAEggwAEAACCBAAcAAIAEAhwAAAASCHAAAABIIMABAAAggQAHAACABAIcAAAAEghwAAAASCDAAQAAIIEABwAAgAQCHAAAABIIcAAAAEggwAEAACCBAAcAAIAEAhwAAAASCHAAAABIIMABAAAggQAHAACABAIcAAAAEghwAAAASCDAAQAAIIEABwAAgAQCHAAAABIIcAAAAEggwAEAACCBAAcAAIAEAhwAAAASCHAAAABIIMABAAAggQAHAACABAIcAAAAEghwAAAASCDAAQAAIIEABwAAgAQCHAAAABIIcAAAAEggwAEAACCBAAcAAIAEAhwAAAASCHAAAABIIMABAAAggQAHAACABAIcAAAAEghwAAAASCDAAQAAIIEABwAAgAQCHAAAABIIcAAAAEggwAEAACCBAAcAAIAEAhwAAAASCHAAAABIIMABAAAggQAHAACABAIcAAAAEghwAAAASCDAAQAAIIEABwAAgAQCHAAAABIIcAAAAEggwAEAACCBAAcAAIAEAhwAAAASCHAAAABIIMABAAAggQAHAACABMMK8LVr18b06dOjpqYmGhsbY9u2bSc8d/369XHVVVfFhAkTYsKECdHc3Pyu5wMAI8+sB4DyKznAN27cGC0tLdHa2ho7duyIGTNmxNy5c+ONN9447vlbt26N66+/Pn70ox9FR0dHNDQ0xKc+9an45S9/+Z4XDwCUn1kPAJUxpiiKopQLGhsb4/LLL4+HHnooIiIGBgaioaEhbr311li+fPkfvb6/vz8mTJgQDz30UCxatOik7rOnpyfq6uqiu7s7amtrS1kuAJTd6T6XzHoAqMxsKukZ8L6+vti+fXs0Nzf//guMHRvNzc3R0dFxUl/jzTffjLfeeivOPffcE57T29sbPT09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3Lt3b/zHf/xHfPazn43NmzfHq6++Gl/4whfirbfeitbW1oxlj2rD2dMbbrghDh48GJ/85CejKIo4evRo3HLLLXHHHXdkLPm0c6K51NPTE7/97W/jzDPPHKGVjQ5mfXmZ9eVn1pefeV9eZv3IK9esH/FnwBldVq9eHRs2bIinn346ampqRno5p6TDhw/HwoULY/369TFx4sSRXs5pYWBgICZNmhSPPPJIzJo1KxYsWBB33nlnrFu3bqSXdsraunVrrFq1Kh5++OHYsWNHPPXUU7Fp06a49957R3ppQIWZ9e+dWV8Z5n15mfWj04g/Az5x4sQYN25cdHV1DTne1dUVkydPPu41kydPLun895Ph7Oc77r///li9enX88Ic/jEsvvbSSyzyllLqnP//5z+P111+PefPmDR4bGBiIiIjx48fHyy+/HBdccEFlFz2KDed7dMqUKXHGGWfEuHHjBo995CMfic7Ozujr64uqqqqKrnm0G86e3n333bFw4cL43Oc+FxERl1xySRw5ciRuvvnmuPPOO2PsWD+fLcWJ5lJtbe37/tnvCLO+3Mz68jPry8+8Ly+zfuSVa9aP+K5XVVXFrFmzor29ffDYwMBAtLe3R1NT03GvaWpqGnJ+RMRzzz13wvPfT4aznxER9913X9x7772xZcuWmD17dsZSTxml7ulFF10UL774YuzatWvw9ulPfzquueaa2LVrVzQ0NGQuf9QZzvfolVdeGa+++urgP24iIl555ZWYMmXK+3oYv2M4e/rmm28eM3jf+QfP2+9FQinMpXdn1peXWV9+Zn35mfflZdaPvLLNpZLesq1CNmzYUFRXVxePP/548dJLLxU333xzcc455xSdnZ1FURTFwoULi+XLlw+e/5Of/KQYP358cf/99xe7d+8uWltbfTTJ/1Hqfq5evbqoqqoqnnzyyeJXv/rV4O3w4cMj9RBGnVL39A95Z9ShSt3Pffv2FWeffXbxD//wD8XLL79c/OAHPygmTZpUfPWrXx2phzDqlLqnra2txdlnn13867/+a7F3797i3//934sLLrig+MxnPjNSD2FUOXz4cLFz585i586dRUQUDz74YLFz587iF7/4RVEURbF8+fJi4cKFg+e/89Ek//RP/1Ts3r27WLt2rY8h+wNmfXmZ9eVn1pefeV9eZn15jdSsHxUBXhRF8Y1vfKM477zziqqqqmLOnDnFf/7nfw7+t6uvvrpYvHjxkPO/+93vFhdeeGFRVVVVfOxjHys2bdqUvOLRrZT9/OAHP1hExDG31tbW/IWPYqV+j/5fhvKxSt3PF154oWhsbCyqq6uL888/v/ja175WHD16NHnVo1spe/rWW28VX/7yl4sLLrigqKmpKRoaGoovfOELxf/+7//mL3wU+tGPfnTc/y++s4eLFy8urr766mOumTlzZlFVVVWcf/75xT//8z+nr3u0M+vLy6wvP7O+/Mz78jLry2ekZv2YovD6AwAAAKi0Ef8dcAAAAHg/EOAAAACQQIADAABAAgEOAAAACQQ4AAAAJBDgAAAAkECAAwAAQAIBDgAAAAkEOAAAACQQ4AAAAJBAgAMAAEACAQ4AAAAJ/j8CdozLp0fHxAAAAABJRU5ErkJggg==" class="output-image" width="992" height="511" /></div>
         </div>
         <p><br>It appears from these graphs that based on height and weight data it is possible to distinguish male and female. Based on visual inspection one could conclude that everybody with a weight lower than 70kg is female and everybody with a weight above 70kg is male. That would be a classification based on the weight alone. It also appears that the data points classified as &#x27;male&#x27; are taller on average, so it might be helpful to have the height recorded as well. E.g it could improve the prediction of gender for new subjects with a weight around 70 kg. But it would not be the best choice if only a single quantity was used. Thus, a second conclusion is that based on these data the weight is more important for the classification than the height.<br><br>On the other hand, based on the smoker / non-smoker data it will not be possible to distinguish smokers from non-smokers. Red dots and blue dots are scattered throughout the graph. The conclusion is that height and weight cannot be used to predict whether a subject is a smoker.<br><br></p>
                     </div>
