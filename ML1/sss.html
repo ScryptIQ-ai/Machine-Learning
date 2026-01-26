@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- MathJax for mathematical notation -->
+    <script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$']],
+            displayMath: [['$$', '$$']],
+            processEscapes: true
+        },
+        svg: {
+            fontCache: 'global'
+        }
+    };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    
+    <!-- Syntax Highlighting with highlight.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="../assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../assets/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="../assets/android-chrome-512x512.png">
+    
+    <!-- Core Stylesheets -->
+    <link rel="stylesheet" href=../assets/colours.css>
+    <link rel="stylesheet" href="../assets/shared-styles.css">
+    <link rel="stylesheet" href="../assets/nav-bar.css">
+    <link rel="stylesheet" href="../assets/module_card.css">
+    <link rel="stylesheet" href="../assets/learning_outcomes.css">
+    <link rel="stylesheet" href="../assets/learning_lists.css">
+    <link rel="stylesheet" href="../assets/box_styles.css">
+    <link rel="stylesheet" href="../assets/code_styles.css">
+    <link rel="stylesheet" href="../assets/static_output.css">
+
+    <!-- Meta Tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L2D - ML1 - Untitled</title>
+        
+</head>
+<body>
+    
+    <!-- Sidebar Navigation -->
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <a href="../homepage.html" style="text-decoration: none; display: inline-block;">
+                <img src="../assets/l2d-brain-logo.png" alt="scryptIQ Logo" class="sidebar-logo">
+            </a>
+        </div>
+
+        <h3>Content</h3>
+        <ul>
+            <li><a href="./introduction.html" class="">Introduction</a></li><li><a href="./scikit-learn.html">scikit-learn</a></li><li><a href="./classification.html">Untitled</a></li><li><a href="./application.html">Untitled</a></li><li><a href="./improvement.html">Improvement</a></li><li><a href="./models.html">Untitled</a></li>
+            <li>
+                <div class="nav-toggle active" data-target="expandable-section-6">
+                    Untitled
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <ul class="nested-nav expanded" id="expandable-section-6"><li><a href="#stratified-shuffle-split">Stratified shuffle split</a></li>
+                </ul>
+            </li><li><a href="./evaluation.html">Untitled</a></li><li><a href="./assignment.html">Assignment</a></li><li><a href="./feedback.html">Feedback</a></li>
+        </ul>
+
+        <h3 class="collapsible-header collapsed">
+            Resources
+            <span class="collapse-icon">►</span>
+        </h3>
+        <div class="collapsible-content collapsed">
+            <ul>
+                <li><a href="./glossary.html">Glossary</a></li><li><a href="./downloads.html">Downloads</a></li><li><a href="../HB/introduction.html">Handbook</a></li>
+            </ul>
+        </div>
+
+        <h3>
+            <li><a href="./report-issue.html">Report an Issue</a></li>
+        </h3>
+    </div>
+    
+    <!-- Sidebar Toggle Button -->
+    <button id="sidebar-toggle" class="sidebar-toggle">❮</button>
+    
+    <!-- Main Content Area -->
+    <div id="main-content" class="main-content">
+        <!-- Top Navigation Bar -->
+        <div class="top-navbar">
+            <h1 class="page-title">Machine Learning 1</h1>
+            <div class="nav-actions">
+                <a href="../homepage.html" class="text-button" title="Materials homepage">
+                    Homepage
+                </a>
+                <a href="https://learntodiscover.ai/my-cohorts/" class="text-button" title="Find out more about us">
+                    Learn to Discover
+                </a>
+            </div>
+        </div>
+
+        
+            <div class="module-card" id="stratified-shuffle-split">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Stratified shuffle split</h3>
+                        <p><br><br>When training a model, a common source of bias is the choice of which data points are used to train the classifier, and which are used for testing. Each train-test group within your data will have its own statistical skew, which can can sometimes lead to overly optimistic performance estimates, that do not necessarily generalise well to unseen data. The <code>stratified_shuffle_split</code> function within scikit-learn seeks to overcome this problem by iteratively creating different train-test splits of your data. It then proceeds to train your model on these different splits, averaging the results in an attempt to overcome this bias. Additionally, the proportion of labels for each class within the dataset as a whole, is maintained within each split.<br><br>We first need to import and instantiate the splitter. We set key word argument <code>n_splits</code> to determine the number of different splits. <code>test_size</code> lets us determine what fraction of samples is used for the testing data.<br><br></p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-45">from sklearn.model_selection import StratifiedShuffleSplit
+
+sss = StratifiedShuffleSplit(random_state=RANDOM_STATE, n_splits=10, test_size=0.3)
+
+</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[1], line 5
+      1 # FIXED WITH OUTPUT
+      3 from sklearn.model_selection import StratifiedShuffleSplit
+----&gt; 5 sss = StratifiedShuffleSplit(random_state=RANDOM_STATE, n_splits=10, test_size=0.3)
+
+NameError: name &#x27;RANDOM_STATE&#x27; is not defined</pre></div>
+        </div>
+        <p><br>Let us look at the different splits obtained:<br><br></p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-46">fig, ax = subplots(figsize=[10, 5])
+
+n_splits = sss.n_splits
+split_data_indices = sss.split(X=X, y=y)
+
+for index, (tr, tt) in enumerate(split_data_indices):
+    indices = X[:, feature_1].copy()
+    indices[tt] = 1
+    indices[tr] = 0
+
+    # Visualize the results
+    x_axis = arange(indices.size)
+    y_axis = [index + .5] * indices.size
+    ax.scatter(x_axis, y_axis, c=indices, marker=&#x27;_&#x27;, lw=10, cmap=&#x27;coolwarm&#x27;, vmin=-.2, vmax=1.2)
+
+# Plot the data classes and groups at the end
+class_y = [index + 1.5] * indices.size
+ax.scatter(x_axis, class_y, c=y, marker=&#x27;_&#x27;, lw=10, cmap=&#x27;coolwarm&#x27;)
+
+# Formatting
+ylabels = list(range(n_splits))
+ylabels.extend([&#x27;Data&#x27;])
+
+ax.set_yticks(arange(n_splits + 1) + .5)
+ax.set_yticklabels(ylabels)
+ax.set_xlabel(&#x27;Sample index&#x27;)
+ax.set_ylabel(&#x27;SSS iteration&#x27;);
+
+show()
+
+</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[2], line 3
+      1 # FIXED WITH OUTPUT
+----&gt; 3 fig, ax = subplots(figsize=[10, 5])
+      5 n_splits = sss.n_splits
+      6 split_data_indices = sss.split(X=X, y=y)
+
+NameError: name &#x27;subplots&#x27; is not defined</pre></div>
+        </div>
+        <p>By choosing <code>n_splits=10</code>, we obtained ten different splits that have similarly distributed train and test data subsets from the original data. The fraction of the data set aside for testing is 30 %. The different splits cover the whole data set evenly. As such, using them for training and testing will lead to a fairly unbiased average performance.<br><br>Let us look at the data in state space to check that the classification task is now a real challenge.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-47">fig, ax = subplots(figsize=(8, 8))
+
+for train_index, test_index in sss.split(X, y):
+    ax.scatter(X[train_index, 0], X[train_index, 1], c=y[train_index], cmap=&#x27;Set1&#x27;, s=30, marker=&#x27;^&#x27;, alpha=.5)
+    ax.scatter(X[test_index, 0], X[test_index, 1], c=y[test_index], cmap=&#x27;cool&#x27;, s=30, alpha=.5, marker=&#x27;*&#x27;, label=&#x27;Test&#x27;);
+
+show()</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[3], line 3
+      1 # FIXED WITH OUTPUT
+----&gt; 3 fig, ax = subplots(figsize=(8, 8))
+      5 for train_index, test_index in sss.split(X, y):
+      6     ax.scatter(X[train_index, 0], X[train_index, 1], c=y[train_index], cmap=&#x27;Set1&#x27;, s=30, marker=&#x27;^&#x27;, alpha=.5)
+
+NameError: name &#x27;subplots&#x27; is not defined</pre></div>
+        </div>
+        <p><br>These are the scatter plots of the training (magenta) and testing (blue) data. Here are their distributions:<br><br></p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-48">fig, ax = subplots(figsize=(8, 8))
+
+for train_index, test_index in sss.split(X, y):
+    ax.hist(X[train_index], color=[&#x27;magenta&#x27;, &#x27;red&#x27;], alpha=.5, histtype=&#x27;step&#x27;)
+    ax.hist(X[test_index], color=[&#x27;cyan&#x27;, &#x27;blue&#x27;], alpha=.4, histtype=&#x27;step&#x27;);
+
+show()</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[4], line 3
+      1 # FIXED WITH OUTPUT
+----&gt; 3 fig, ax = subplots(figsize=(8, 8))
+      5 for train_index, test_index in sss.split(X, y):
+      6     ax.hist(X[train_index], color=[&#x27;magenta&#x27;, &#x27;red&#x27;], alpha=.5, histtype=&#x27;step&#x27;)
+
+NameError: name &#x27;subplots&#x27; is not defined</pre></div>
+        </div>
+        <p><br><br>The distributions differ in height because less data are in the testing test. Otherwise they are similarly centred and spread. Using a number of realisations (instead of just one) we expect to obtain a more accurate and robust result of the training.<br><br>We now train our classifiers on these different splits and obtain the respective scores. They will give a robust measure of the classifier&#x27;s performance given the data and avoid potential bias due to the selection of specific test data.<br><br></p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-49">X, y = make_circles(n_samples=1000, factor=.3, noise=.4, random_state=RANDOM_STATE)
+
+score = list()
+
+for train_index, test_index in sss.split(X, y):
+    X_s, y_s = X[train_index, :], y[train_index]
+    new_obs_s, y_test_s = X[test_index, :], y[test_index]
+
+    score_clf = list()
+
+    for name, clf in classifiers.items():
+
+        clf.fit(X_s, y_s)
+        y_pred = clf.predict(new_obs_s)
+        score_clf.append(clf.score(new_obs_s, y_test_s))
+
+    score.append(score_clf)
+
+score_mean = mean(score, axis=0)
+
+bins = arange(len(score_mean))
+
+fig, ax = subplots()
+
+ax.bar(bins, score_mean);
+ax.set_xticks(arange(0,8)+0.4)
+ax.set_xticklabels(classifiers.keys(), rotation=-70);
+
+show()
+
+print(classifiers.keys())
+print(&#x27;Average scores: &#x27;)
+print([&quot;{0:0.2f}&quot;.format(ind) for ind in score_mean])
+</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[5], line 3
+      1 # FIXED WITH OUTPUT
+----&gt; 3 X, y = make_circles(n_samples=1000, factor=.3, noise=.4, random_state=RANDOM_STATE)
+      5 score = list()
+      7 for train_index, test_index in sss.split(X, y):
+
+NameError: name &#x27;make_circles&#x27; is not defined</pre></div>
+        </div>
+        <p><br>The result is the average score for the ten splits performed. All results for the noise-contaminated data are now in the seventies.<br><br>This is still good given the quality of the data. It appears that the <em>SVC (linear)</em> classifier gives the lowest result for this kind of problem, <em>SVC (RBF)</em> scores highest. This is to be expected as the values in our dataset are non-linearly separated. We have to keep in mind, however, that we are using the classifiers with their default settings. We will later experiment with manipulating the hyperparameters in an attempt to further improve the classification score.<br><br>Here we have used a <code>for</code> loop to train and test on each of the different splits of the data. scikit-learn also contains functions that take the stratified shuffle split as an argument, e.g. <code>permutation_test_score</code> (which we will explore in the next Machine Learning lesson, on refinement). In that case, the splits do not need to be done separately.<br><br>We have now reached a point where we can trust to have a robust and unbiased outcome of the training. Let us now look at more refined ways to quantify the result.<br><br></p>
+                    </div>
+                </div>
+            </div>
+            
+        
+        <div class="page-navigation">
+            <a href="./models.html" class="nav-button prev">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                </svg>
+                Previous
+            </a>
+            <a href="./evaluation.html" class="nav-button next">
+                Next
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                </svg>
+            </a></div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <div>© All materials are copyright scryptIQ 2025</div>
+            <div>Static Notebook - Pre-executed Content</div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="../assets/main.js"></script>
+    
+    <!-- Initialize syntax highlighting -->
+    <script>
+        // Set page ready flag immediately for PDF generation
+        window.pageReady = true;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
+        });
+    </script>
+</body>
+</html>
+    

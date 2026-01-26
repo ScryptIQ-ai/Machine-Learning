@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- MathJax for mathematical notation -->
+    <script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$']],
+            displayMath: [['$$', '$$']],
+            processEscapes: true
+        },
+        svg: {
+            fontCache: 'global'
+        }
+    };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    
+    <!-- Syntax Highlighting with highlight.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="../assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../assets/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="../assets/android-chrome-512x512.png">
+    
+    <!-- Core Stylesheets -->
+    <link rel="stylesheet" href=../assets/colours.css>
+    <link rel="stylesheet" href="../assets/shared-styles.css">
+    <link rel="stylesheet" href="../assets/nav-bar.css">
+    <link rel="stylesheet" href="../assets/module_card.css">
+    <link rel="stylesheet" href="../assets/learning_outcomes.css">
+    <link rel="stylesheet" href="../assets/learning_lists.css">
+    <link rel="stylesheet" href="../assets/box_styles.css">
+    <link rel="stylesheet" href="../assets/code_styles.css">
+    <link rel="stylesheet" href="../assets/static_output.css">
+
+    <!-- Meta Tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L2D - ML1 - Untitled</title>
+        
+</head>
+<body>
+    
+    <!-- Sidebar Navigation -->
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <a href="../homepage.html" style="text-decoration: none; display: inline-block;">
+                <img src="../assets/l2d-brain-logo.png" alt="scryptIQ Logo" class="sidebar-logo">
+            </a>
+        </div>
+
+        <h3>Content</h3>
+        <ul>
+            <li><a href="./introduction.html" class="">Introduction</a></li><li><a href="./scikit-learn.html">scikit-learn</a></li>
+            <li>
+                <div class="nav-toggle active" data-target="expandable-section-2">
+                    Untitled
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <ul class="nested-nav expanded" id="expandable-section-2"><li><a href="#classification">Classification</a></li><li><a href="#the-random-forest-classifier">The Random Forest Classifier</a></li><li><a href="#train-a-model">Train a model</a></li>
+                </ul>
+            </li><li><a href="./application.html">Untitled</a></li><li><a href="./improvement.html">Improvement</a></li><li><a href="./models.html">Untitled</a></li><li><a href="./sss.html">Untitled</a></li><li><a href="./evaluation.html">Untitled</a></li><li><a href="./assignment.html">Assignment</a></li><li><a href="./feedback.html">Feedback</a></li>
+        </ul>
+
+        <h3 class="collapsible-header collapsed">
+            Resources
+            <span class="collapse-icon">►</span>
+        </h3>
+        <div class="collapsible-content collapsed">
+            <ul>
+                <li><a href="./glossary.html">Glossary</a></li><li><a href="./downloads.html">Downloads</a></li><li><a href="../HB/introduction.html">Handbook</a></li>
+            </ul>
+        </div>
+
+        <h3>
+            <li><a href="./report-issue.html">Report an Issue</a></li>
+        </h3>
+    </div>
+    
+    <!-- Sidebar Toggle Button -->
+    <button id="sidebar-toggle" class="sidebar-toggle">❮</button>
+    
+    <!-- Main Content Area -->
+    <div id="main-content" class="main-content">
+        <!-- Top Navigation Bar -->
+        <div class="top-navbar">
+            <h1 class="page-title">Machine Learning 1</h1>
+            <div class="nav-actions">
+                <a href="../homepage.html" class="text-button" title="Materials homepage">
+                    Homepage
+                </a>
+                <a href="https://learntodiscover.ai/my-cohorts/" class="text-button" title="Find out more about us">
+                    Learn to Discover
+                </a>
+            </div>
+        </div>
+
+        
+            <div class="module-card" id="classification">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Classification</h3>
+                        <h4>Prepare data with labels</h4><p>The terminology that is widely used in Machine Learning (including Scikit Learn) refers to data points as __samples__, and the different types of recordings(columns in our case) are referred to as __features__. In <code>Numpy</code> notation, samples are organised in rows, features in columns.<br><br>We can use the function <code>uniform</code> from numpy.random to generate uniformly distributed random data. Here we create 100 samples of two features (as in the visualisation above). We decide to have values distributed between 0 and 100.<br><br>The convention in machine learning is to call the training data &#x27;X&#x27;. This array must be __two dimensional__, where rows are the samples and columns are the features.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-4">low  = 0
+high = 100
+
+n_samples, m_features = 100, 2
+
+RANDOM_SEED  = 1234
+
+seed(RANDOM_SEED)
+
+random_numbers = uniform(low=low, high=high, size=(n_samples, m_features))
+
+X = random_numbers.round(3)
+
+print(&#x27;Dimensions of training data&#x27;)
+print(&#x27;&#x27;)
+print(&#x27;Number of samples:  &#x27;, X.shape[0])
+print(&#x27;Number of features: &#x27;, X.shape[1])
+print(&#x27;&#x27;)
+
+</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[1], line 10
+      6 n_samples, m_features = 100, 2
+      8 RANDOM_SEED  = 1234
+---&gt; 10 seed(RANDOM_SEED)
+     12 random_numbers = uniform(low=low, high=high, size=(n_samples, m_features))
+     14 X = random_numbers.round(3)
+
+NameError: name &#x27;seed&#x27; is not defined</pre></div>
+        </div>
+        
+        <div class="info-box note-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                NOTE
+            </div>
+            <div class="box-content">
+                <p>This code uses a __random number generator__. The output of a random number generator is different each time it is run. On the one hand, this is good because it allows us to create many realisations of samples drawn from a fixed distribution. On the other hand, when testing and sharing code this prevents exact reproduction of results. We therefore use the <code>seed</code> function to reset the generator such that with a given number for the seed (the parameter called <code>RANDOM_SEED</code>) the same numbers are produced.</p>
+            </div>
+        </div>
+        <p><br>Let us check the histograms of both features:<br><br></p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-5">fig, ax = subplots()
+
+ax.hist(X, bins=10);
+
+show()</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[2], line 3
+      1 # FIXED WITH OUTPUT
+----&gt; 3 fig, ax = subplots()
+      5 ax.hist(X, bins=10);
+      7 show()
+
+NameError: name &#x27;subplots&#x27; is not defined</pre></div>
+        </div>
+        <p><br>We find that both features are distributed over the selected range of values. Due to the small number of samples, the distribution is not very even.<br>The categorical data used to distinguish between different classes are called __labels__. Let us create an artificial set of labels for our first classification task.<br>We pick an arbitrary threshold and call all values <code>True</code> if the values in both the first and the second feature are above the threshold. The resulting labels <code>True</code> and <code>False</code> can be viewed as 0/1 using the method <code>astype</code> with argument <code>int</code>.<br><br></p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-6">threshold = 50
+
+y = (X[:,0] &gt; threshold) &amp; (X[:,1] &gt; threshold)
+
+y.astype(int)</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[3], line 5
+      1 # FIXED WITH OUTPUT
+      3 threshold = 50
+----&gt; 5 y = (X[:,0] &gt; threshold) &amp; (X[:,1] &gt; threshold)
+      7 y.astype(int)
+
+NameError: name &#x27;X&#x27; is not defined</pre></div>
+        </div>
+        <p>If both features (columns) were risk factors, this might be interpreted as: only if both risk factors are above the threshold, a subject is classified as &#x27;at risk&#x27;, meaning it gets label &#x27;True&#x27; or &#x27;1&#x27;.<br><br>Labels must be __one-dimensional__. You can check this by printing the <code>shape</code>.<br>The output should be a single number:</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-7">print(&#x27;Number of labels:&#x27;, y.shape)
+
+</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[4], line 3
+      1 # FIXED WITH OUTPUT
+----&gt; 3 print(&#x27;Number of labels:&#x27;, y.shape)
+
+NameError: name &#x27;y&#x27; is not defined</pre></div>
+        </div>
+        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="the-random-forest-classifier">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>The Random Forest Classifier</h3>
+                        <p>To start with our learning algorithm, we import one of the many classifiers from Scikit Learn: it is called Random Forest.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-8">from sklearn.ensemble import RandomForestClassifier</code></pre>
+            </div>
+            
+        </div>
+        <p>The <strong>Random Forest</strong> is a member of the ensemble learning family, whose objective is to combine the predictions of several optimisations to improve their performance, generalisability, and robustness.<br><br>Ensemble methods are often divided into two different categories:<br><ol class="nested-list"><li>Averaging methods: Build several estimators independently, and average their predictions. In general, the combined estimator tends to perform better than any single estimator due to the reduction in variance. Examples: Random Forest and Decision Tree.</li><br><li>Boosting methods: Build the estimators sequentially, and attempt to reduce the bias of the combined estimator. Although the performance of individual estimators may be weak, upon combination, they amount to a powerful ensemble. Examples: Gradient Boosting and AdaBoost.</li></ol>We now train a model using the Python class for the Random Forest classifier. Unlike a function (which we can use out of the box) a class needs to be _instantiated_ before it can be used. In Python, we instantiate a class as follows:</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-9">clf = RandomForestClassifier(random_state=RANDOM_SEED)</code></pre>
+            </div>
+            
+        </div>
+        <p>where <code>clf</code> now represents an _instance_ of class <code>RandomForestClassifier</code>. Note that we have set the keyword argument <code>random_state</code> to a number. This is to assure reproducibility of the results. (It does not have to be the same as above, pick any integer).<br><br>The instance of a class is typically referred to as an object, whose type is the class that it represents:</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-10">print(&#x27;Type of clf:&#x27;, type(clf))
+print(&#x27;&#x27;)</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-stream">Type of clf: &lt;class &#x27;sklearn.ensemble._forest.RandomForestClassifier&#x27;&gt;
+
+</pre></div>
+        </div>
+        <p>Once instantiated, we can use this object, <code>clf</code>, to access the methods that are associated with that class. Methods are essentially functions that are encapsulated inside a class.<br>In SciKit Learn all classes have a <code>.fit()</code>  method. Its function is to receive the training data and perform the training of the model.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="train-a-model">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Train a model</h3>
+                        <p>To train a model, we apply the fit method to the training data, labelled &#x27;X&#x27;, given the corresponding labels &#x27;y&#x27;:</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-11">clf.fit(X, y)
+
+</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[8], line 3
+      1 # FIXED WITH OUTPUT
+----&gt; 3 clf.fit(X, y)
+
+NameError: name &#x27;X&#x27; is not defined</pre></div>
+        </div>
+        <p><br>And that&#x27;s it. All the machine learning magic done. <code>clf</code> is now a trained model with optimised parameters which we can use to predict new data.<br><br>### <strong>Predict Test Data</strong><br><br>### Categorical Prediction<br>We start by creating a number of test data in the same way as we created the training data. Note that the number of test samples is arbitrary. You can create any number of samples. However, you must provide the same number of features (columns) used in the training of the classifier. In our case that is 2.<br><br></p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-12">RANDOM_SEED_2 = 123
+
+seed(RANDOM_SEED_2)
+
+new_samples = 10
+
+features = X.shape[1]
+
+new_data = uniform(low=low, high=high, size=(10, 2))
+
+print(&#x27;Shape of new data&#x27;, new_data.shape)
+print(&#x27;&#x27;)
+print(new_data)
+
+</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[9], line 5
+      1 # FIXED WITH OUTPUT
+      3 RANDOM_SEED_2 = 123
+----&gt; 5 seed(RANDOM_SEED_2)
+      7 new_samples = 10
+      9 features = X.shape[1]
+
+NameError: name &#x27;seed&#x27; is not defined</pre></div>
+        </div>
+        <p><br>There are 10 randomly created pairs of numbers in the same range as the training data. They represent &#x27;unlabelled&#x27; incoming data which we offer to the trained model.<br><br>The method <code>.predict()</code> helps us to find out what the model claims these data to be:<br><br></p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-13">predictions = clf.predict(new_data)
+
+print(&#x27;Predictions: &#x27;, predictions)
+
+</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[10], line 3
+      1 # FIXED WITH OUTPUT
+----&gt; 3 predictions = clf.predict(new_data)
+      5 print(&#x27;Predictions: &#x27;, predictions)
+
+NameError: name &#x27;new_data&#x27; is not defined</pre></div>
+        </div>
+        <p><br>They can also be viewed as zeros and ones:<br><br></p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-14">predictions.astype(int)
+
+</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[11], line 3
+      1 # FIXED WITH OUTPUT
+----&gt; 3 predictions.astype(int)
+
+NameError: name &#x27;predictions&#x27; is not defined</pre></div>
+        </div>
+        <p><br>According to the model, data points with indices 3, and 9 are in class <code>True</code> (or <code>1</code>).<br><br>Predicting individual samples is fine, but does not tell us whether the classifier was able to create a good model of the class distinction. To check the training result systematically, we create a state space grid over the state space. This is the same as creating a coordinate system of data points (as in a scatter plot), in our case with values from 0 to 100 in each feature.<br><br>Here we use a resolution of 100, ie. we create a 100 by 100 grid:<br><br></p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-15">resolution = 100
+
+vec_a = linspace(low, high, resolution)
+vec_b = vec_a
+
+grid_a, grid_b = meshgrid(vec_a, vec_b)
+
+grid_a_flat = grid_a.ravel()
+grid_b_flat = grid_b.ravel()
+
+XY_statespace = c_[grid_a_flat, grid_b_flat]
+
+print(XY_statespace.shape)
+
+</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[12], line 5
+      1 # FIXED WITH OUTPUT
+      3 resolution = 100
+----&gt; 5 vec_a = linspace(low, high, resolution)
+      6 vec_b = vec_a
+      8 grid_a, grid_b = meshgrid(vec_a, vec_b)
+
+NameError: name &#x27;linspace&#x27; is not defined</pre></div>
+        </div>
+        <p><br>Now we can offer the grid of the X-Y state space as &#x27;new data&#x27; to the classifier and obtain the predictions. We can then plot the grid points and colour them according to the labels assigned by the trained model.<br><br></p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-16">predictions = clf.predict(XY_statespace)
+
+predictions.shape
+</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[13], line 3
+      1 # FIXED WITH OUTPUT
+----&gt; 3 predictions = clf.predict(XY_statespace)
+      5 predictions.shape
+
+NameError: name &#x27;XY_statespace&#x27; is not defined</pre></div>
+        </div>
+        <p><br>We obtain 10,000 predictions, one for each point on the grid.<br><br>To compare the data with the original thresholds and the model predictions we can use plots of the state space:<br><br></p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-17">feature_1, feature_2 = 0, 1
+
+fig, ax = subplots(ncols=2, nrows=1, figsize=(10, 5))
+
+ax[0].scatter(X[:, feature_1], X[:, feature_2], c=y, s=4, cmap=&#x27;bwr&#x27;);
+ax[1].scatter(XY_statespace[:, feature_1], XY_statespace[:, feature_2], c=predictions, s=1, cmap=&#x27;bwr&#x27;);
+
+p1, p2 = [threshold, threshold], [100, threshold]
+p3, p4 = [threshold, 100], [threshold, threshold]
+
+ax[0].plot(p1, p2, c=&#x27;k&#x27;)
+ax[0].plot(p3, p4, c=&#x27;k&#x27;)
+
+ax[0].set_xlabel(&#x27;Feature 1&#x27;, fontsize=16)
+ax[0].set_ylabel(&#x27;Feature 2&#x27;, fontsize=16);
+ax[1].set_xlabel(&#x27;Feature 1&#x27;, fontsize=16);
+
+show()
+
+</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[14], line 5
+      1 # FIXED WITH OUTPUT
+      3 feature_1, feature_2 = 0, 1
+----&gt; 5 fig, ax = subplots(ncols=2, nrows=1, figsize=(10, 5))
+      7 ax[0].scatter(X[:, feature_1], X[:, feature_2], c=y, s=4, cmap=&#x27;bwr&#x27;);
+      8 ax[1].scatter(XY_statespace[:, feature_1], XY_statespace[:, feature_2], c=predictions, s=1, cmap=&#x27;bwr&#x27;);
+
+NameError: name &#x27;subplots&#x27; is not defined</pre></div>
+        </div>
+        <p>Left is a scatter plot of the data points used for training. They are coloured according to their labels. The black lines indicate the threshold boundaries that we introduced to distinguish the two classes. On the right hand side are the predictions for the coordinate grid. Label 0 is blue, label 1 is red.<br>Based on the training samples (left), a good classification can be achieved with the model (right). But some problems persist. In particular, the boundaries are not sharp.</p><h4>Probability Prediction</h4><p>Let us pick a sample near the boundary. We can get its predicted label. In addition, using <code>.predict_proba()</code> we can get the probability of this prediction. This reflects the confidence in the prediction. 50% probability means, the prediction is at chance level, i.e. equivalent to a coin toss.<br></p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-18">pos = 55
+
+test_sample = [[pos, pos]]
+
+test_sample_label = clf.predict(test_sample)
+
+test_sample_proba = clf.predict_proba(test_sample)
+
+print(&#x27;Prediction:&#x27;, test_sample_label)
+print(clf.classes_, test_sample_proba)
+
+</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NotFittedError                            Traceback (most recent call last)
+Cell In[15], line 7
+      3 pos = 55
+      5 test_sample = [[pos, pos]]
+----&gt; 7 test_sample_label = clf.predict(test_sample)
+      9 test_sample_proba = clf.predict_proba(test_sample)
+     11 print(&#x27;Prediction:&#x27;, test_sample_label)
+
+File ~/work/ML1_L2D_Lesson_Resources/ML1_L2D_Lesson_Resources/self-repo/.venv/lib/python3.12/site-packages/sklearn/ensemble/_forest.py:903, in ForestClassifier.predict(self, X)
+    882 def predict(self, X):
+    883     &quot;&quot;&quot;
+    884     Predict class for X.
+    885 
+   (...)    901         The predicted classes.
+    902     &quot;&quot;&quot;
+--&gt; 903     proba = self.predict_proba(X)
+    905     if self.n_outputs_ == 1:
+    906         return self.classes_.take(np.argmax(proba, axis=1), axis=0)
+
+File ~/work/ML1_L2D_Lesson_Resources/ML1_L2D_Lesson_Resources/self-repo/.venv/lib/python3.12/site-packages/sklearn/ensemble/_forest.py:943, in ForestClassifier.predict_proba(self, X)
+    921 def predict_proba(self, X):
+    922     &quot;&quot;&quot;
+    923     Predict class probabilities for X.
+    924 
+   (...)    941         classes corresponds to that in the attribute :term:`classes_`.
+    942     &quot;&quot;&quot;
+--&gt; 943     check_is_fitted(self)
+    944     # Check data
+    945     X = self._validate_X_predict(X)
+
+File ~/work/ML1_L2D_Lesson_Resources/ML1_L2D_Lesson_Resources/self-repo/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py:1705, in check_is_fitted(estimator, attributes, msg, all_or_any)
+   1702     return
+   1704 if not _is_fitted(estimator, attributes, all_or_any):
+-&gt; 1705     raise NotFittedError(msg % {&quot;name&quot;: type(estimator).__name__})
+
+NotFittedError: This RandomForestClassifier instance is not fitted yet. Call &#x27;fit&#x27; with appropriate arguments before using this estimator.</pre></div>
+        </div>
+        
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-19">bins = arange(test_sample_proba.shape[1])
+
+fig, ax = subplots()
+
+ax.bar(bins, test_sample_proba[0,:], color=(&#x27;b&#x27;, &#x27;r&#x27;))
+ax.set_ylabel(&#x27;Probability&#x27;, fontsize=16)
+xticks(bins, (&#x27;Label 0&#x27;, &#x27;Label 1&#x27;), fontsize=16);
+
+show()
+</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[16], line 3
+      1 # FIXED WITH OUTPUT
+----&gt; 3 bins = arange(test_sample_proba.shape[1])
+      5 fig, ax = subplots()
+      7 ax.bar(bins, test_sample_proba[0,:], color=(&#x27;b&#x27;, &#x27;r&#x27;))
+
+NameError: name &#x27;arange&#x27; is not defined</pre></div>
+        </div>
+        <p><br>Even though the sample is from the region that (according to the creation of the data) is in the &#x27;True&#x27; region, it is labelled as false. The reason is that there were few or no training data points in that specific region.<br>Here is a plot of the probability for the state space. White represents False and Black represents True, the values in between are gray coded. Note that the probability values are complementary. We only need the probabilities for one of our classes.<br><br></p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-20">state_space_proba = clf.predict_proba(XY_statespace)
+
+grid_shape = grid_a.shape
+
+proba_grid = state_space_proba[:, 1].reshape(grid_shape)
+
+contour_levels = linspace(0, 1, 6)
+
+
+fig, ax = subplots(figsize=(6, 5))
+
+cax = ax.contourf(grid_a, grid_b, proba_grid, cmap=&#x27;Greys&#x27;, levels=contour_levels)
+fig.colorbar(cax)
+
+ax.scatter(test_sample[0][0], test_sample[0][1], c=&#x27;r&#x27;, marker=&#x27;o&#x27;, s=100)
+
+ax.plot(p1, p2, p3, p4, c=&#x27;r&#x27;)
+
+ax.set_xlabel(&#x27;Feature 1&#x27;, fontsize=16)
+ax.set_ylabel(&#x27;Feature 2&#x27;, fontsize=16);
+
+show()
+</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[17], line 3
+      1 # FIXED WITH OUTPUT
+----&gt; 3 state_space_proba = clf.predict_proba(XY_statespace)
+      5 grid_shape = grid_a.shape
+      7 proba_grid = state_space_proba[:, 1].reshape(grid_shape)
+
+NameError: name &#x27;XY_statespace&#x27; is not defined</pre></div>
+        </div>
+        <p>The single red dot marks the individual data point we used to illustrate the prediction probability above.</p><h4>Feature Importances</h4><p>We can check the contribution of each feature for the success of the classification. The feature importance is given as the fraction contribution of each feature to the prediction.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-21">importances = clf.feature_importances_
+
+print(&#x27;Relative importance:&#x27;)
+
+template = &#x27;Feature 1: {:.1f}%; Feature 2: {:.1f}%&#x27;
+
+print(template.format(importances[0]*100, importances[1]*100))
+
+bins = arange(importances.shape[0])
+
+fig, ax = subplots()
+
+ax.bar(bins, importances, color=(&#x27;g&#x27;, &#x27;m&#x27;));
+ax.set_ylabel(&#x27;Feature Importance&#x27;, fontsize=16)
+
+xticks(bins, (&#x27;Feature 1&#x27;, &#x27;Feature 2&#x27;), fontsize=16);
+
+show()
+</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NotFittedError                            Traceback (most recent call last)
+Cell In[18], line 3
+      1 # FIXED WITH OUTPUT
+----&gt; 3 importances = clf.feature_importances_
+      5 print(&#x27;Relative importance:&#x27;)
+      7 template = &#x27;Feature 1: {:.1f}%; Feature 2: {:.1f}%&#x27;
+
+File ~/work/ML1_L2D_Lesson_Resources/ML1_L2D_Lesson_Resources/self-repo/.venv/lib/python3.12/site-packages/sklearn/ensemble/_forest.py:670, in BaseForest.feature_importances_(self)
+    649 @property
+    650 def feature_importances_(self):
+    651     &quot;&quot;&quot;
+    652     The impurity-based feature importances.
+    653 
+   (...)    668         array of zeros.
+    669     &quot;&quot;&quot;
+--&gt; 670     check_is_fitted(self)
+    672     all_importances = Parallel(n_jobs=self.n_jobs, prefer=&quot;threads&quot;)(
+    673         delayed(getattr)(tree, &quot;feature_importances_&quot;)
+    674         for tree in self.estimators_
+    675         if tree.tree_.node_count &gt; 1
+    676     )
+    678     if not all_importances:
+
+File ~/work/ML1_L2D_Lesson_Resources/ML1_L2D_Lesson_Resources/self-repo/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py:1705, in check_is_fitted(estimator, attributes, msg, all_or_any)
+   1702     return
+   1704 if not _is_fitted(estimator, attributes, all_or_any):
+-&gt; 1705     raise NotFittedError(msg % {&quot;name&quot;: type(estimator).__name__})
+
+NotFittedError: This RandomForestClassifier instance is not fitted yet. Call &#x27;fit&#x27; with appropriate arguments before using this estimator.</pre></div>
+        </div>
+        <p><br><br>In this case, the predictions are based on a 61% contribution from feature 1 and a 38% contribution from feature 2.<br><br></p><p>It should be noted that the attribute <code>.feature_importances_</code> will not work if applied to a Multi-Layer Pereceptron (MLP) Classifier. This attribute actually only works with specific models such as random forest or decision trees.<br><br>We can, however, make use of a permutation-based feature importance measure for the MLP classifier, instead. This can be accessed using the function <code>.permutation_importance</code>, which measures the decrease in the model&#x27;s performance, each time a specific feature is shuffled; effectively measuring its importance to the resulting prediction.<br><br>This attribute is available within scikit-learn&#x27;s inspection sub-library, and assuming you have a trained classifier stored in a variable, you could use it, as follows:</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-22">from sklearn.neural_network import MLPClassifier
+from sklearn.inspection import permutation_importance
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+
+# Load a simple dataset
+X, y = load_iris(return_X_y=True)
+
+# Split into train and test sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42)
+
+# Train a multi-layer perceptron classifier
+clf = MLPClassifier(max_iter=1000, random_state=42)
+clf.fit(X_train, y_train)
+
+# Compute permutation importance on the test set
+result = permutation_importance(clf, X_test, y_test, n_repeats=10, random_state=123)
+
+# Display the mean importance for each feature
+print(result.importances_mean)</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-stream">[0.07368421 0.02105263 0.62368421 0.21578947]
+</pre></div>
+        </div>
+        <p><br></p>
+                    </div>
+                </div>
+            </div>
+            
+        
+        <div class="page-navigation">
+            <a href="./scikit-learn.html" class="nav-button prev">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                </svg>
+                Previous
+            </a>
+            <a href="./application.html" class="nav-button next">
+                Next
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                </svg>
+            </a></div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <div>© All materials are copyright scryptIQ 2025</div>
+            <div>Static Notebook - Pre-executed Content</div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="../assets/main.js"></script>
+    
+    <!-- Initialize syntax highlighting -->
+    <script>
+        // Set page ready flag immediately for PDF generation
+        window.pageReady = true;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
+        });
+    </script>
+</body>
+</html>
+    

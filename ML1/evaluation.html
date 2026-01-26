@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- MathJax for mathematical notation -->
+    <script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$']],
+            displayMath: [['$$', '$$']],
+            processEscapes: true
+        },
+        svg: {
+            fontCache: 'global'
+        }
+    };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    
+    <!-- Syntax Highlighting with highlight.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="../assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../assets/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="../assets/android-chrome-512x512.png">
+    
+    <!-- Core Stylesheets -->
+    <link rel="stylesheet" href=../assets/colours.css>
+    <link rel="stylesheet" href="../assets/shared-styles.css">
+    <link rel="stylesheet" href="../assets/nav-bar.css">
+    <link rel="stylesheet" href="../assets/module_card.css">
+    <link rel="stylesheet" href="../assets/learning_outcomes.css">
+    <link rel="stylesheet" href="../assets/learning_lists.css">
+    <link rel="stylesheet" href="../assets/box_styles.css">
+    <link rel="stylesheet" href="../assets/code_styles.css">
+    <link rel="stylesheet" href="../assets/static_output.css">
+
+    <!-- Meta Tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L2D - ML1 - Untitled</title>
+        
+</head>
+<body>
+    
+    <!-- Sidebar Navigation -->
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <a href="../homepage.html" style="text-decoration: none; display: inline-block;">
+                <img src="../assets/l2d-brain-logo.png" alt="scryptIQ Logo" class="sidebar-logo">
+            </a>
+        </div>
+
+        <h3>Content</h3>
+        <ul>
+            <li><a href="./introduction.html" class="">Introduction</a></li><li><a href="./scikit-learn.html">scikit-learn</a></li><li><a href="./classification.html">Untitled</a></li><li><a href="./application.html">Untitled</a></li><li><a href="./improvement.html">Improvement</a></li><li><a href="./models.html">Untitled</a></li><li><a href="./sss.html">Untitled</a></li>
+            <li>
+                <div class="nav-toggle active" data-target="expandable-section-7">
+                    Untitled
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <ul class="nested-nav expanded" id="expandable-section-7"><li><a href="#evaluation--roc---auc">Evaluation: ROC & AUC</a></li>
+                </ul>
+            </li><li><a href="./assignment.html">Assignment</a></li><li><a href="./feedback.html">Feedback</a></li>
+        </ul>
+
+        <h3 class="collapsible-header collapsed">
+            Resources
+            <span class="collapse-icon">►</span>
+        </h3>
+        <div class="collapsible-content collapsed">
+            <ul>
+                <li><a href="./glossary.html">Glossary</a></li><li><a href="./downloads.html">Downloads</a></li><li><a href="../HB/introduction.html">Handbook</a></li>
+            </ul>
+        </div>
+
+        <h3>
+            <li><a href="./report-issue.html">Report an Issue</a></li>
+        </h3>
+    </div>
+    
+    <!-- Sidebar Toggle Button -->
+    <button id="sidebar-toggle" class="sidebar-toggle">❮</button>
+    
+    <!-- Main Content Area -->
+    <div id="main-content" class="main-content">
+        <!-- Top Navigation Bar -->
+        <div class="top-navbar">
+            <h1 class="page-title">Machine Learning 1</h1>
+            <div class="nav-actions">
+                <a href="../homepage.html" class="text-button" title="Materials homepage">
+                    Homepage
+                </a>
+                <a href="https://learntodiscover.ai/my-cohorts/" class="text-button" title="Find out more about us">
+                    Learn to Discover
+                </a>
+            </div>
+        </div>
+
+        
+            <div class="module-card" id="evaluation--roc---auc">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Evaluation: ROC & AUC</h3>
+                        <p>There are various measures that may be used to evaluate the performance of a machine learning model. Such measures look at different characteristics, including the goodness of fit and generalisability of a model. Evaluation measures used with regards to classification models include, but are not limited to:<br><ul class="nested-list"><li>Receiver Operation Characteristic (ROC) and Area Under the Curve (AUC) - for binary classifiers.</li><br><li>Accuracy</li><br><li>Precision</li><br><li>Recall</li></ul>There are many other metrics that, depending on the problem, we may use to evaluate a machine learning model. Please see <a href="https://scikit-learn.org/stable/modules/model_evaluation.html">the official documentation</a> for additional information on these measures and their implementation in scikit-learn.<br><br>The quantities we are going to look at are the <strong>Receiver Operation Characteristic (ROC)</strong> and the <strong>Area Under the Curve (AUC)</strong>.<br><br>A receiver operation characteristic, often referred to as the <strong>ROC curve</strong>, is a visualisation of the discrimination threshold in a binary classification model. It illustrates the rate of true positives (TPR) against the rate of false positives (FPR) at different thresholds. The aforementioned rates are essentially defined as:<br><ul class="nested-list"><li>True Positive Rate (TPR): the sensitivity of the model</li><br><li>False Positive Rate (FPR): one minus the specificity of the model</li></ul>This makes ROC a measure of sensitivity versus specificity.<br><br>We can see that our classifiers now reach different degrees of prediction. The degree can be quantified by the <strong>Area Under the Curve (AUC)</strong>. It refers to the area between the blue ROC curve and the orange diagonal. The area under the ROC curve, often referred to as AUC, reduces the information contained within a ROC curve down to a value between and 0 and 1, with 1 being a perfect fit. An AUC value of 0.5 represents a random guess, and values below the diagonal demonstrate a performance that’s even worse than a guess!</p>
+        <div class="info-box note-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                NOTE
+            </div>
+            <div class="box-content">
+                <p><code>scikit-learn</code> includes specialist functions called <code>roc_curve</code> and <code>roc_auc_score</code> to obtain ROC (FPR and TPR values for visualisation) and AUC respectively. Both functions receive as input arguments the test labels (i.e. <code>y_test</code>) and the score (probability) associated with each prediction. We obtain the latter measure using one of the following two techniques:<br><ul class="nested-list"><li><strong>Decision function</strong>: where classification models have a <code>.decision_function</code> method that provides us with score associated with each label.</li><br><li><strong>Probability</strong>: where classification models have a <code>.predict_proba</code> method that provides us with the probability associated with each prediction (we used it in the Classification Introduction lesson). In this case, however, the results are provided in the form of a two-dimensional array where columns represent different labels (as defined in property). Given that we will plot ROC curves for binary problems (two labels), we only pick one of these columns. Usually, the second column (the feature representing <code>True</code> or <strong>1</strong>) is the one to choose. However, if you notice that the results are unexpectedly bad, you may try the other column just be sure.</li></ul></p>
+            </div>
+        </div>
+        
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-50">from sklearn.metrics import roc_curve, roc_auc_score
+
+fig, all_axes = subplots(figsize=[15, 10], ncols=4, nrows=2, sharey=True, sharex=True)
+
+for ax, (name, clf) in zip(all_axes.ravel(), classifiers.items()):
+    clf.fit(X_train, y_train)
+
+    # Checking whether or not the object has `decision_function`:
+    if hasattr(clf, &#x27;decision_function&#x27;):
+        # If it does:
+        y_score = clf.decision_function(X_test)
+    else:
+        # Otherwise:
+        y_score = clf.predict_proba(X_test)[:, feature_2]  # We only need one column.
+
+    # Obtaining the x- and y-axis values for the ROC curve:
+    fpr, tpr, thresh = roc_curve(y_test, y_score)
+
+    # Obtaining the AUC value:
+    roc_auc = roc_auc_score(y_test, y_score)
+
+    ax.plot(fpr, tpr, lw=2)
+    ax.plot([0, 1], [0, 1], lw=1, linestyle=&#x27;--&#x27;)
+
+    ax.set_xlabel(&#x27;False Positive Rate&#x27;)
+    ax.set_ylabel(&#x27;True Positive Rate&#x27;)
+
+    label = &#x27;{} - AUC: {:.2f}&#x27;.format(name, roc_auc)
+    ax.set_title(label, fontsize=10)
+
+show()
+</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[1], line 5
+      1 # FIXED WITH OUTPUT
+      3 from sklearn.metrics import roc_curve, roc_auc_score
+----&gt; 5 fig, all_axes = subplots(figsize=[15, 10], ncols=4, nrows=2, sharey=True, sharex=True)
+      7 for ax, (name, clf) in zip(all_axes.ravel(), classifiers.items()):
+      8     clf.fit(X_train, y_train)
+
+NameError: name &#x27;subplots&#x27; is not defined</pre></div>
+        </div>
+        <p><br>The (orange) diagonal represents predictions of the two labels by a coin toss. To be of value the classifier must reach a ROC curve above the diagonal.<br><br>This concludes our first steps into classification with scikit-learn. There are many more aspects of classification. From a practical point of view, <a href="https://scikit-learn.org/stable/modules/preprocessing.html">data normalisation</a> and <a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.permutation_test_score.html">permutation test score</a> as well as the workflow report are important. These will be the topics of our next lesson.<br><br></p>
+                    </div>
+                </div>
+            </div>
+            
+        
+        <div class="page-navigation">
+            <a href="./sss.html" class="nav-button prev">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                </svg>
+                Previous
+            </a>
+            <a href="./assignment.html" class="nav-button next">
+                Next
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                </svg>
+            </a></div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <div>© All materials are copyright scryptIQ 2025</div>
+            <div>Static Notebook - Pre-executed Content</div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="../assets/main.js"></script>
+    
+    <!-- Initialize syntax highlighting -->
+    <script>
+        // Set page ready flag immediately for PDF generation
+        window.pageReady = true;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
+        });
+    </script>
+</body>
+</html>
+    

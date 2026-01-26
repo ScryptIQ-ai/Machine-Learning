@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- MathJax for mathematical notation -->
+    <script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$']],
+            displayMath: [['$$', '$$']],
+            processEscapes: true
+        },
+        svg: {
+            fontCache: 'global'
+        }
+    };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    
+    <!-- Syntax Highlighting with highlight.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="../assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../assets/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="../assets/android-chrome-512x512.png">
+    
+    <!-- Core Stylesheets -->
+    <link rel="stylesheet" href=../assets/colours.css>
+    <link rel="stylesheet" href="../assets/shared-styles.css">
+    <link rel="stylesheet" href="../assets/nav-bar.css">
+    <link rel="stylesheet" href="../assets/module_card.css">
+    <link rel="stylesheet" href="../assets/learning_outcomes.css">
+    <link rel="stylesheet" href="../assets/learning_lists.css">
+    <link rel="stylesheet" href="../assets/box_styles.css">
+    <link rel="stylesheet" href="../assets/code_styles.css">
+    <link rel="stylesheet" href="../assets/static_output.css">
+
+    <!-- Meta Tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L2D - ML1 - Untitled</title>
+        
+</head>
+<body>
+    
+    <!-- Sidebar Navigation -->
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <a href="../homepage.html" style="text-decoration: none; display: inline-block;">
+                <img src="../assets/l2d-brain-logo.png" alt="scryptIQ Logo" class="sidebar-logo">
+            </a>
+        </div>
+
+        <h3>Content</h3>
+        <ul>
+            <li><a href="./introduction.html" class="">Introduction</a></li><li><a href="./scikit-learn.html">scikit-learn</a></li><li><a href="./classification.html">Untitled</a></li>
+            <li>
+                <div class="nav-toggle active" data-target="expandable-section-3">
+                    Untitled
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <ul class="nested-nav expanded" id="expandable-section-3"><li><a href="#application">Application</a></li>
+                </ul>
+            </li><li><a href="./improvement.html">Improvement</a></li><li><a href="./models.html">Untitled</a></li><li><a href="./sss.html">Untitled</a></li><li><a href="./evaluation.html">Untitled</a></li><li><a href="./assignment.html">Assignment</a></li><li><a href="./feedback.html">Feedback</a></li>
+        </ul>
+
+        <h3 class="collapsible-header collapsed">
+            Resources
+            <span class="collapse-icon">►</span>
+        </h3>
+        <div class="collapsible-content collapsed">
+            <ul>
+                <li><a href="./glossary.html">Glossary</a></li><li><a href="./downloads.html">Downloads</a></li><li><a href="../HB/introduction.html">Handbook</a></li>
+            </ul>
+        </div>
+
+        <h3>
+            <li><a href="./report-issue.html">Report an Issue</a></li>
+        </h3>
+    </div>
+    
+    <!-- Sidebar Toggle Button -->
+    <button id="sidebar-toggle" class="sidebar-toggle">❮</button>
+    
+    <!-- Main Content Area -->
+    <div id="main-content" class="main-content">
+        <!-- Top Navigation Bar -->
+        <div class="top-navbar">
+            <h1 class="page-title">Machine Learning 1</h1>
+            <div class="nav-actions">
+                <a href="../homepage.html" class="text-button" title="Materials homepage">
+                    Homepage
+                </a>
+                <a href="https://learntodiscover.ai/my-cohorts/" class="text-button" title="Find out more about us">
+                    Learn to Discover
+                </a>
+            </div>
+        </div>
+
+        
+            <div class="module-card" id="application">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Application</h3>
+                        <p><br>Now we pick the &#x27;Height&#x27; and &#x27;Weight&#x27; columns from the patients data to predict the gender labels. We use a split of 4/5 of the data for training and 1/5 for testing.<br><br></p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-23">df = read_csv(&#x27;data/patients_data.csv&#x27;)
+
+print(df.shape)
+
+# Convert pounds to kg and inches to cm:
+df[&#x27;Weight&#x27;] = 0.454*df[&#x27;Weight&#x27;]
+df[&#x27;Height&#x27;] = 2.540*df[&#x27;Height&#x27;]
+
+df.head(10)</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[1], line 3
+      1 # FIXED WITH OUTPUT
+----&gt; 3 df = read_csv(&#x27;data/patients_data.csv&#x27;)
+      5 print(df.shape)
+      7 # Convert pounds to kg and inches to cm:
+
+NameError: name &#x27;read_csv&#x27; is not defined</pre></div>
+        </div>
+        <h4>Prepare training data and labels</h4>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-24"># Extract data as numpy array
+df_np = df.to_numpy()
+
+# Pick a fraction of height and weight data as training data
+samples = 80
+
+X = df_np[:samples, [1, 2]]
+
+print(X.shape)</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[2], line 4
+      1 # FIXED WITH OUTPUT
+      2 
+      3 # Extract data as numpy array
+----&gt; 4 df_np = df.to_numpy()
+      6 # Pick a fraction of height and weight data as training data
+      7 samples = 80
+
+NameError: name &#x27;df&#x27; is not defined</pre></div>
+        </div>
+        <p><br>For the labels of the training data we convert the &#x27;Male&#x27; and &#x27;Female&#x27; strings to categorical values.<br><br></p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-25">gender_boolean = df[&#x27;Gender&#x27;] == &#x27;Female&#x27;
+
+y = gender_boolean[:80]
+
+# printed as 0 and 1:
+
+y.astype(&#x27;int&#x27;)
+
+</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[3], line 3
+      1 # FIXED WITH OUTPUT
+----&gt; 3 gender_boolean = df[&#x27;Gender&#x27;] == &#x27;Female&#x27;
+      5 y = gender_boolean[:80]
+      7 # printed as 0 and 1:
+
+NameError: name &#x27;df&#x27; is not defined</pre></div>
+        </div>
+        <h4>Train classifier and predict</h4>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-26">from sklearn.ensemble import RandomForestClassifier
+
+seed(RANDOM_SEED)
+
+clf = RandomForestClassifier(random_state=RANDOM_SEED)
+
+clf.fit(X, y)</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[4], line 5
+      1 # FIXED WITH OUTPUT
+      3 from sklearn.ensemble import RandomForestClassifier
+----&gt; 5 seed(RANDOM_SEED)
+      7 clf = RandomForestClassifier(random_state=RANDOM_SEED)
+      9 clf.fit(X, y)
+
+NameError: name &#x27;seed&#x27; is not defined</pre></div>
+        </div>
+        <p><br>We now take the remaining fifth of the data to predict.<br><br></p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-27">X_test = df.loc[80:, [&#x27;Height&#x27;, &#x27;Weight&#x27;]]
+
+X_test = X_test.values
+
+predict_test = clf.predict(X_test)
+
+probab_test = clf.predict_proba(X_test)
+
+print(&#x27;Predictions: &#x27;, predict_test, &#x27;\n&#x27;, &#x27;Probabilities: &#x27;, &#x27;\n&#x27;,  probab_test)
+
+</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[5], line 3
+      1 # FIXED WITH OUTPUT
+----&gt; 3 X_test = df.loc[80:, [&#x27;Height&#x27;, &#x27;Weight&#x27;]]
+      5 X_test = X_test.values
+      7 predict_test = clf.predict(X_test)
+
+NameError: name &#x27;df&#x27; is not defined</pre></div>
+        </div>
+        <p><br>As in the example above, we create a state space grid to visualise the outcome for the two features.<br><br></p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-28">X1_min, X1_max = min(X[:, 0]), max(X[:, 0])
+X2_min, X2_max = min(X[:, 1]), max(X[:, 1])
+
+resolution = 100
+
+vec_a = linspace(X1_min, X1_max, resolution)
+vec_b = linspace(X2_min, X2_max, resolution)
+
+grid_a, grid_b = meshgrid(vec_a, vec_b)
+
+
+grid_a_flat = grid_a.ravel()
+grid_b_flat = grid_b.ravel()
+
+X_statespace = c_[grid_a_flat, grid_b_flat]</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[6], line 3
+      1 # FIXED WITH OUTPUT
+----&gt; 3 X1_min, X1_max = min(X[:, 0]), max(X[:, 0])
+      4 X2_min, X2_max = min(X[:, 1]), max(X[:, 1])
+      6 resolution = 100
+
+NameError: name &#x27;X&#x27; is not defined</pre></div>
+        </div>
+        <p><br>We can now obtain the categorical and probability predictions from the trained classifier for all points of the grid.<br><br></p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-29">predict = clf.predict(X_statespace)
+probabs = clf.predict_proba(X_statespace)</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[7], line 3
+      1 # FIXED WITH OUTPUT
+----&gt; 3 predict = clf.predict(X_statespace)
+      4 probabs = clf.predict_proba(X_statespace)
+
+NameError: name &#x27;clf&#x27; is not defined</pre></div>
+        </div>
+        <p><br>Here is the plot of the state space and the predicted probabilities:<br><br></p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-30">feature_1, feature_2 = 0, 1
+
+fig, ax = subplots(ncols=3, nrows=1, figsize=(15, 5))
+
+ax[0].scatter(X[:, feature_1], X[:, feature_2], c=y, s=40, cmap=&#x27;bwr&#x27;);
+ax[0].set_xlim(X1_min, X1_max);
+ax[0].set_ylim(X2_min, X2_max);
+ax[0].set_xlabel(&#x27;Feature 1&#x27;, fontsize=16);
+ax[0].set_ylabel(&#x27;Feature 2&#x27;, fontsize=16);
+
+cax1 = ax[1].scatter(X_statespace[:, feature_1], X_statespace[:, feature_2], c=predict, s=1, cmap=&#x27;bwr&#x27;);
+ax[1].scatter(X_test[:, feature_1], X_test[:, feature_2], c=predict_test, s=40, cmap=&#x27;Greys&#x27;);
+ax[1].set_xlabel(&#x27;Feature 1&#x27;, fontsize=16);
+ax[1].set_xlim(X1_min, X1_max);
+ax[1].set_ylim(X2_min, X2_max);
+fig.colorbar(cax1, ax=ax[1]);
+
+grid_shape = grid_a.shape
+
+probab_grid = probabs[:, 1].reshape(grid_shape)
+
+# Subject with 170cm and 70 kg
+pos1, pos2 = 170, 70
+
+test_sample = [pos1, pos2]
+
+contour_levels = linspace(0, 1, 10)
+
+cax2 = ax[2].contourf(grid_a, grid_b, probab_grid, cmap=&#x27;Greys&#x27;, levels=contour_levels);
+fig.colorbar(cax2, ax=ax[2]);
+
+ax[2].scatter(test_sample[0], test_sample[1], c=&#x27;r&#x27;, marker=&#x27;o&#x27;, s=100);
+ax[2].set_xlabel(&#x27;Feature 1&#x27;, fontsize=16);
+ax[2].set_xlim(X1_min, X1_max);
+ax[2].set_ylim(X2_min, X2_max);
+
+show()
+
+</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[8], line 5
+      1 # FIXED WITH OUTPUT
+      3 feature_1, feature_2 = 0, 1
+----&gt; 5 fig, ax = subplots(ncols=3, nrows=1, figsize=(15, 5))
+      7 ax[0].scatter(X[:, feature_1], X[:, feature_2], c=y, s=40, cmap=&#x27;bwr&#x27;);
+      8 ax[0].set_xlim(X1_min, X1_max);
+
+NameError: name &#x27;subplots&#x27; is not defined</pre></div>
+        </div>
+        <p>The left panel shows the original data with labels as colours, i.e. the training data. Central panel shows the classified state space with the test samples as black dots in predicted category &#x27;Female&#x27; and white dots in predicted category &#x27;Male&#x27;. Right panel shows the state space with prediction probabilities with black for &#x27;Female&#x27; and white for &#x27;Male&#x27;. The red dot represents the simulated subject with 170cm and 70 kg (see below).</p><h4>Probability of a single observation</h4><p>Let us pick that subject and obtain its predicted label and probability. Note the use of double brackets to create a sample that is a two-dimensional array.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-31">test_sample = [[pos1, pos2]]
+
+test_predict = clf.predict(test_sample)
+test_proba   = clf.predict_proba(test_sample)
+
+print(&#x27;Predicted class:&#x27;, test_predict, &#x27;Female&#x27;)
+print(&#x27;Probability:&#x27;, test_proba[0, 0])
+print(&#x27;&#x27;)
+
+bins = arange(test_proba.shape[1])
+
+fig, ax = subplots()
+
+ax.bar(bins, test_proba[0,:], color=(&#x27;r&#x27;, &#x27;b&#x27;));
+xticks(bins, (&#x27;Female&#x27;, &#x27;Male&#x27;), fontsize=16);
+ax.set_ylabel(&#x27;Probability&#x27;, fontsize=16);
+
+show()
+</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[9], line 3
+      1 # FIXED WITH OUTPUT
+----&gt; 3 test_sample = [[pos1, pos2]]
+      5 test_predict = clf.predict(test_sample)
+      6 test_proba   = clf.predict_proba(test_sample)
+
+NameError: name &#x27;pos1&#x27; is not defined</pre></div>
+        </div>
+        <p>This shows that the predicted label is female but the probability is less than 70 % and, e.g. if a clinical decision was to be taken based on the outcome of the classification, it might suggest looking for additional evidence before the decision is made.</p><h4>**Feature Importances**</h4>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-32">importances = clf.feature_importances_
+
+print(&#x27;Features importances:&#x27;)
+template = &#x27;Feature 1: {:.1f}%; Feature 2: {:.1f}%&#x27;
+print(template.format(importances[0]*100, importances[1]*100))
+print(&#x27;&#x27;)
+
+bins = arange(importances.shape[0])
+
+fig, ax = subplots()
+
+ax.bar(bins, importances, color=(&#x27;m&#x27;, &#x27;g&#x27;));
+xticks(bins, (&#x27;Feature 1&#x27;, &#x27;Feature 2&#x27;), fontsize=16);
+ax.set_ylabel(&#x27;Feature Importance&#x27;, fontsize=16);
+
+show()
+</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[10], line 3
+      1 # FIXED WITH OUTPUT
+----&gt; 3 importances = clf.feature_importances_
+      5 print(&#x27;Features importances:&#x27;)
+      6 template = &#x27;Feature 1: {:.1f}%; Feature 2: {:.1f}%&#x27;
+
+NameError: name &#x27;clf&#x27; is not defined</pre></div>
+        </div>
+        <p>Feature Height contributes about one third and feature Weight about two thirds to the decisions.<br><br>Feature importances can be used in data sets with many features, e.g. to reduce the number of features used for classification. Some features might not contribute to the classification and could therefore be left out of the process.<br><br>In the next section, we are going to test multiple classifiers and quantify their performance to improve the outcome of the classification.</p>
+                    </div>
+                </div>
+            </div>
+            
+        
+        <div class="page-navigation">
+            <a href="./classification.html" class="nav-button prev">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                </svg>
+                Previous
+            </a>
+            <a href="./improvement.html" class="nav-button next">
+                Next
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                </svg>
+            </a></div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <div>© All materials are copyright scryptIQ 2025</div>
+            <div>Static Notebook - Pre-executed Content</div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="../assets/main.js"></script>
+    
+    <!-- Initialize syntax highlighting -->
+    <script>
+        // Set page ready flag immediately for PDF generation
+        window.pageReady = true;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
+        });
+    </script>
+</body>
+</html>
+    

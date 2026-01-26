@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- MathJax for mathematical notation -->
+    <script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$']],
+            displayMath: [['$$', '$$']],
+            processEscapes: true
+        },
+        svg: {
+            fontCache: 'global'
+        }
+    };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    
+    <!-- Syntax Highlighting with highlight.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="../assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../assets/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="../assets/android-chrome-512x512.png">
+    
+    <!-- Core Stylesheets -->
+    <link rel="stylesheet" href=../assets/colours.css>
+    <link rel="stylesheet" href="../assets/shared-styles.css">
+    <link rel="stylesheet" href="../assets/nav-bar.css">
+    <link rel="stylesheet" href="../assets/module_card.css">
+    <link rel="stylesheet" href="../assets/learning_outcomes.css">
+    <link rel="stylesheet" href="../assets/learning_lists.css">
+    <link rel="stylesheet" href="../assets/box_styles.css">
+    <link rel="stylesheet" href="../assets/code_styles.css">
+    <link rel="stylesheet" href="../assets/static_output.css">
+
+    <!-- Meta Tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L2D - ML1 - scikit-learn</title>
+        
+</head>
+<body>
+    
+    <!-- Sidebar Navigation -->
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <a href="../homepage.html" style="text-decoration: none; display: inline-block;">
+                <img src="../assets/l2d-brain-logo.png" alt="scryptIQ Logo" class="sidebar-logo">
+            </a>
+        </div>
+
+        <h3>Content</h3>
+        <ul>
+            <li><a href="./introduction.html" class="">Introduction</a></li>
+            <li>
+                <div class="nav-toggle active" data-target="expandable-section-1">
+                    scikit-learn
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <ul class="nested-nav expanded" id="expandable-section-1"><li><a href="#learning-objectives">Learning Objectives</a></li><li><a href="#example--visual-classification">Example: Visual Classification</a></li><li><a href="#supervised-learning--training-a-model">Supervised Learning: Training a Model</a></li>
+                </ul>
+            </li><li><a href="./classification.html">Untitled</a></li><li><a href="./application.html">Untitled</a></li><li><a href="./improvement.html">Improvement</a></li><li><a href="./models.html">Untitled</a></li><li><a href="./sss.html">Untitled</a></li><li><a href="./evaluation.html">Untitled</a></li><li><a href="./assignment.html">Assignment</a></li><li><a href="./feedback.html">Feedback</a></li>
+        </ul>
+
+        <h3 class="collapsible-header collapsed">
+            Resources
+            <span class="collapse-icon">►</span>
+        </h3>
+        <div class="collapsible-content collapsed">
+            <ul>
+                <li><a href="./glossary.html">Glossary</a></li><li><a href="./downloads.html">Downloads</a></li><li><a href="../HB/introduction.html">Handbook</a></li>
+            </ul>
+        </div>
+
+        <h3>
+            <li><a href="./report-issue.html">Report an Issue</a></li>
+        </h3>
+    </div>
+    
+    <!-- Sidebar Toggle Button -->
+    <button id="sidebar-toggle" class="sidebar-toggle">❮</button>
+    
+    <!-- Main Content Area -->
+    <div id="main-content" class="main-content">
+        <!-- Top Navigation Bar -->
+        <div class="top-navbar">
+            <h1 class="page-title">Machine Learning 1</h1>
+            <div class="nav-actions">
+                <a href="../homepage.html" class="text-button" title="Materials homepage">
+                    Homepage
+                </a>
+                <a href="https://learntodiscover.ai/my-cohorts/" class="text-button" title="Find out more about us">
+                    Learn to Discover
+                </a>
+            </div>
+        </div>
+
+        
+            <div class="module-card" id="learning-objectives">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Learning Objectives</h3>
+                        <p><ul class="nested-list"><li>Understanding the classification challenge.</li><br><li>Training a classifier model.</li><br><li>Understanding the state space plot of model predictions.</li><br><li>Obtaining prediction probabilities.</li><br><li>Finding important features.</li></ul></p>
+        <div class="video-container">
+            <iframe 
+                src="https://www.youtube.com/embed/NIU1JO26Jgk"
+                width="560"
+                height="315"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+            </iframe>
+        </div>
+        
+        <div class="video-container">
+            <iframe 
+                src="https://www.youtube.com/embed/3f627wXK6z0"
+                width="560"
+                height="315"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+            </iframe>
+        </div>
+        
+        <div class="video-container">
+            <iframe 
+                src="https://www.youtube.com/embed/EUrxpMr5bG4"
+                width="560"
+                height="315"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+            </iframe>
+        </div>
+        <h4>Import functions</h4>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-1">from pandas import read_csv
+
+from numpy import arange, asarray, linspace, c_, meshgrid, zeros, ones
+
+from numpy.random import uniform, seed
+
+from matplotlib.pyplot import subplots, scatter, xlabel, ylabel, xticks, show</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+ModuleNotFoundError                       Traceback (most recent call last)
+Cell In[1], line 3
+      1 # FIXED WITH OUTPUT
+----&gt; 3 from pandas import read_csv
+      5 from numpy import arange, asarray, linspace, c_, meshgrid, zeros, ones
+      7 from numpy.random import uniform, seed
+
+ModuleNotFoundError: No module named &#x27;pandas&#x27;</pre></div>
+        </div>
+        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="example--visual-classification">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Example: Visual Classification</h3>
+                        <p>Import the <code>patients_data.csv</code> toy dataset and scatter the data for Height and Weight.<br><br></p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-2"># Please adjust your path to the file
+df = read_csv(&#x27;data/patients_data.csv&#x27;)
+
+print(df.shape)
+
+# Convert inches to cm and pounds to kg:
+df[&#x27;Height&#x27;] = 2.540*df[&#x27;Height&#x27;]
+df[&#x27;Weight&#x27;] = 0.454*df[&#x27;Weight&#x27;]
+
+df.head(10)</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[2], line 4
+      1 # FIXED WITH OUTPUT
+      2 
+      3 # Please adjust your path to the file
+----&gt; 4 df = read_csv(&#x27;data/patients_data.csv&#x27;)
+      6 print(df.shape)
+      8 # Convert inches to cm and pounds to kg:
+
+NameError: name &#x27;read_csv&#x27; is not defined</pre></div>
+        </div>
+        <p><br>Note that data in the first five columns are either integers (age) or real numbers (floating point). The classes (categorical data) in the last two columns come as binary (0/1) for &#x27;smokers/non-smokers&#x27; and as strings for &#x27;male/female&#x27;. Both can be used for classification.<br><br></p>
+        <div class="info-box note-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                NOTE
+            </div>
+            <div class="box-content">
+                <p><strong>The classification challenge</strong><br><br>I am given a set of data from a single subject and feed them to a computational model. The model then predicts to what (predefined) _class_ this subject belongs. Example: given height and weight data, the model might try to predict whether the subject is a smoker or a non-smoker. A naive model will, of course, not be able to predict reasonably. The _supervised_ approach in machine learning is to provide the model with a set of data where the class has been verified beforehand and the model can test its (initially random) predictions against the provided class. An optimisation algorithm is then run to adjust the (internal) model setting such that the predictions improve as much as possible. When no further improvement is achieved, the algorithm stops. The model is then _trained_ and ready to predict.<br><br></p>
+            </div>
+        </div>
+        <p><br>The act of classification is to assign labels to unlabelled data after model exposure to previously labelled data (e.g. based on medical knowledge in the case of disease data).<br>In contrast, in _unsupervised machine learning_ the assignment is done based on exposure to unlabelled data following a search for distinctive features or &#x27;structure&#x27; in the data.<br>We can first check if we are able to distinguish classes visually. For this, we scatter the data of two columns of a dataframe using the column names. That is, we look at the distribution of points in a plane. Then we use the class __label__ to color each point in the plane according to the class it belongs to. String labels like &#x27;male&#x27; / &#x27;female&#x27; first need to be converted to Boolean (binary). 0/1 labels as in the &#x27;smokers/non-smokers&#x27; column can be used directly.<br><br>Let us plot the height-weight data and label them for both cases.<br><br></p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-3">fig, ax = subplots(figsize=(12,6),ncols=2,nrows=1)
+
+gender_boolean = df[&#x27;Gender&#x27;] == &#x27;Female&#x27;
+
+ax[0].scatter(df[&#x27;Height&#x27;], df[&#x27;Weight&#x27;], c=gender_boolean, cmap=&#x27;bwr&#x27;)
+ax[0].set_xlabel(&#x27;Height&#x27;, fontsize=14)
+ax[0].set_ylabel(&#x27;Weight&#x27;, fontsize=14)
+ax[0].set_title(&#x27;Female (red), Male (blue)&#x27;, fontsize=16)
+
+ax[1].scatter(df[&#x27;Height&#x27;], df[&#x27;Weight&#x27;], c=df[&#x27;Smoker&#x27;], cmap=&#x27;bwr&#x27;)
+ax[1].set_xlabel(&#x27;Height&#x27;, fontsize=16)
+ax[1].set_ylabel(&#x27;Weight&#x27;, fontsize=16)
+ax[1].set_title(&#x27;Smoker (red), Non-Smoker (blue)&#x27;, fontsize=16);
+
+show()
+</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[3], line 3
+      1 # FIXED WITH OUTPUT
+----&gt; 3 fig, ax = subplots(figsize=(12,6),ncols=2,nrows=1)
+      5 gender_boolean = df[&#x27;Gender&#x27;] == &#x27;Female&#x27;
+      7 ax[0].scatter(df[&#x27;Height&#x27;], df[&#x27;Weight&#x27;], c=gender_boolean, cmap=&#x27;bwr&#x27;)
+
+NameError: name &#x27;subplots&#x27; is not defined</pre></div>
+        </div>
+        <p><br>It appears from these graphs that based on height and weight data it is possible to distinguish male and female. Based on visual inspection one could conclude that everybody with a weight lower than 70kg is female and everybody with a weight above 70kg is male. That would be a classification based on the weight alone. It also appears that the data points classified as &#x27;male&#x27; are taller on average, so it might be helpful to have the height recorded as well. E.g it could improve the prediction of gender for new subjects with a weight around 70 kg. But it would not be the best choice if only a single quantity was used. Thus, a second conclusion is that based on these data the weight is more important for the classification than the height.<br><br>On the other hand, based on the smoker / non-smoker data it will not be possible to distinguish smokers from non-smokers. Red dots and blue dots are scattered throughout the graph. The conclusion is that height and weight cannot be used to predict whether a subject is a smoker.<br><br></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="supervised-learning--training-a-model">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Supervised Learning: Training a Model</h3>
+                        <p>This lesson deals with labelled data. Labelled data are numerical data with an extra column of a __label__ for each sample. A sample can consist of any number of individual observations but must be at least two.<br>Examples of labels include &#x27;control group / test group&#x27;; &#x27;male / female&#x27;; &#x27;healthy / diseased&#x27;; &#x27;before treatment / after treatment&#x27;.<br><br>The task in Supervised Machine Learning is to fit (train) a model to distinguish between the groups by &#x27;learning&#x27; from so-called training data. After training, the optimised model automatically labels incoming (unlabeled) data. The better the model, the better the labelling (prediction).<br><br>The model itself is a black box. It has set default parameters to start with and thus performs badly in the beginning. Essentially, it starts by predicting a label at random. The process of training consists in repeatedly changing the model parameters such that the performance improves. After the training, the model parameters are supposed to be optimal. Of course, the model cannot be expected to reveal anything about the mechanism or cause that underlies the distinction between the labels.<br><br>The performance of the model is tested by splitting a dataset with labels into:<br><ul class="nested-list"><li>the <code>train data</code>, those that will be used for model fitting, and</li><br><li>the <code>test data</code>, those that will be used to check how well the model predicts.</li></ul>The result of the model fitting is then assessed by checking how many of the (withheld) labels in the test data were correctly predicted by the trained model. We can also retrieve the confidence of the model prediction, i.e. the probability that the assigned label is correct.<br><br>As an additional result, the procedure will generate the so-called feature importances: similar to how we concluded above that weight is more important than height for gender prediction, the feature importance informs to which degree each of the data columns actually contributes to the predictions.<br><br></p><p>We will import our machine learning functionality from the <a href="https://scikit-learn.org/stable/">scikit-learn library</a>.<br><br>scikit-learn is a renowned open source application programming interface (API) for machine learning. It enjoys a vibrant community and is well maintained. It is always beneficial to use the official documentations for every API. scikit-learn provides an exceptional documentation with detailed explanations and examples at every level.<br><br>The implementation of algorithms in scikit-learn follows a very specific protocol. First and foremost, it uses a programming paradigm known as object-oriented programming (OOP). Thanks to Python, this does not mean that you as the user are also forced to use OOP. But you need to follow a specific protocol to use the tools that are provided by scikit-learn.<br><br>Unlike functions that perform a specific task and return the results, in OOP, we use _classes_ to encapsulate interconnected components and functionalities. In accordance with the convention of best practices for Python programming (also known as PEP8), classes are implemented with camel-case characters; e.g. <code>RandomForestClassifier</code>. In contrast, functions should be implemented using lower-case characters only; e.g. <code>min</code> or <code>round</code>.</p>
+                    </div>
+                </div>
+            </div>
+            
+        
+        <div class="page-navigation">
+            <a href="./introduction.html" class="nav-button prev">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                </svg>
+                Previous
+            </a>
+            <a href="./classification.html" class="nav-button next">
+                Next
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                </svg>
+            </a></div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <div>© All materials are copyright scryptIQ 2025</div>
+            <div>Static Notebook - Pre-executed Content</div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="../assets/main.js"></script>
+    
+    <!-- Initialize syntax highlighting -->
+    <script>
+        // Set page ready flag immediately for PDF generation
+        window.pageReady = true;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
+        });
+    </script>
+</body>
+</html>
+    

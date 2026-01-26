@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- MathJax for mathematical notation -->
+    <script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$']],
+            displayMath: [['$$', '$$']],
+            processEscapes: true
+        },
+        svg: {
+            fontCache: 'global'
+        }
+    };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    
+    <!-- Syntax Highlighting with highlight.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="../assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../assets/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="../assets/android-chrome-512x512.png">
+    
+    <!-- Core Stylesheets -->
+    <link rel="stylesheet" href=../assets/colours.css>
+    <link rel="stylesheet" href="../assets/shared-styles.css">
+    <link rel="stylesheet" href="../assets/nav-bar.css">
+    <link rel="stylesheet" href="../assets/module_card.css">
+    <link rel="stylesheet" href="../assets/learning_outcomes.css">
+    <link rel="stylesheet" href="../assets/learning_lists.css">
+    <link rel="stylesheet" href="../assets/box_styles.css">
+    <link rel="stylesheet" href="../assets/code_styles.css">
+    <link rel="stylesheet" href="../assets/static_output.css">
+
+    <!-- Meta Tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L2D - ML1 - Untitled</title>
+        
+</head>
+<body>
+    
+    <!-- Sidebar Navigation -->
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <a href="../homepage.html" style="text-decoration: none; display: inline-block;">
+                <img src="../assets/l2d-brain-logo.png" alt="scryptIQ Logo" class="sidebar-logo">
+            </a>
+        </div>
+
+        <h3>Content</h3>
+        <ul>
+            <li><a href="./introduction.html" class="">Introduction</a></li><li><a href="./scikit-learn.html">scikit-learn</a></li><li><a href="./classification.html">Untitled</a></li><li><a href="./application.html">Untitled</a></li><li><a href="./improvement.html">Improvement</a></li>
+            <li>
+                <div class="nav-toggle active" data-target="expandable-section-5">
+                    Untitled
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <ul class="nested-nav expanded" id="expandable-section-5"><li><a href="#training-multiple-machine-learning-models">Training multiple machine learning models</a></li><li><a href="#classification-models">Classification models</a></li>
+                </ul>
+            </li><li><a href="./sss.html">Untitled</a></li><li><a href="./evaluation.html">Untitled</a></li><li><a href="./assignment.html">Assignment</a></li><li><a href="./feedback.html">Feedback</a></li>
+        </ul>
+
+        <h3 class="collapsible-header collapsed">
+            Resources
+            <span class="collapse-icon">►</span>
+        </h3>
+        <div class="collapsible-content collapsed">
+            <ul>
+                <li><a href="./glossary.html">Glossary</a></li><li><a href="./downloads.html">Downloads</a></li><li><a href="../HB/introduction.html">Handbook</a></li>
+            </ul>
+        </div>
+
+        <h3>
+            <li><a href="./report-issue.html">Report an Issue</a></li>
+        </h3>
+    </div>
+    
+    <!-- Sidebar Toggle Button -->
+    <button id="sidebar-toggle" class="sidebar-toggle">❮</button>
+    
+    <!-- Main Content Area -->
+    <div id="main-content" class="main-content">
+        <!-- Top Navigation Bar -->
+        <div class="top-navbar">
+            <h1 class="page-title">Machine Learning 1</h1>
+            <div class="nav-actions">
+                <a href="../homepage.html" class="text-button" title="Materials homepage">
+                    Homepage
+                </a>
+                <a href="https://learntodiscover.ai/my-cohorts/" class="text-button" title="Find out more about us">
+                    Learn to Discover
+                </a>
+            </div>
+        </div>
+
+        
+            <div class="module-card" id="training-multiple-machine-learning-models">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Training multiple machine learning models</h3>
+                        <p><br><code>scikit-learn</code> provides the means to generate practice datasets with specific qualities. In this section, we will use the <code>make_circles</code> function to generate a toy dataset which consists of two concentric circles (see the function&#x27;s <a href="https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_circles.html">documentation.</a>) for more information.</p><h4>Seeding</h4><p>Common to both functions that generate practice datasets and machine learning models, is the use of random number generation to produce results. Therefore, one simple, but important adjustment is to seed the number generator with an integer using the keyword argument <code>random_state</code>, and thereby making our comparisons more consistent. This will ensure that all models use the same set of random numbers and, practically, means that results are reproducible upon re-running the same code.<br><br>Seeding helps to make the random processes within model training both consistent and reproducible. It does not fix the hyperparameters themselves, but rather ensures that operations involving randomness (such as train-test splits) produce the same results each time the code is run. In <code>scikit-learn</code>, this is typically done using the keyword argument <code>random_state</code>, which accepts an integer seed to initialise the random number generator.<br><br>For the sake of clarity, <strong>hyperparameters</strong> are fixed <em>before</em> training. They are not updated iteratively. Conversely, model <strong>parameters</strong>, such as the weights in a logistic regression, are what get updated <em>during</em> training. Thus, seeding using <code>random_state</code>, ensures that any randomness involved in the process, such as the order of data shuffling or initial parameter values, is reproducible.</p><h4>Circular Test Data</h4>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-36"># Assign an integer to a variable for specifying a random_state
+RANDOM_STATE  = 1234
+
+# Generates synthetic circular data: &#x27;n_samples&#x27; sets the total number of datapoints to 500.
+# &#x27;factor&#x27; controls the inner circle to be 30% of the radius of the outer circle.
+# &#x27;noise&#x27; adds a very small amount of Gaussian noise.
+X, y = make_circles(n_samples=500, factor=0.3, noise=.05, random_state=RANDOM_STATE)
+
+# This obtains the overall maximum and minimum feature values:
+feature_1, feature_2 = 0, 1
+ft_min, ft_max = X.min(), X.max()
+
+print(&#x27;Shape of X:&#x27;, X.shape)
+
+# Plotting:
+fig, ax = subplots(figsize=(10, 5), nrows=1, ncols=2)
+ax[0].scatter(X[:, feature_1], X[:, feature_2], c=y, s=4, cmap=&#x27;bwr&#x27;);
+ax[1].hist(X);
+
+show()</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[1], line 9
+      4 RANDOM_STATE  = 1234
+      6 # Generates synthetic circular data: &#x27;n_samples&#x27; sets the total number of datapoints to 500.
+      7 # &#x27;factor&#x27; controls the inner circle to be 30% of the radius of the outer circle.
+      8 # &#x27;noise&#x27; adds a very small amount of Gaussian noise.
+----&gt; 9 X, y = make_circles(n_samples=500, factor=0.3, noise=.05, random_state=RANDOM_STATE)
+     11 # This obtains the overall maximum and minimum feature values:
+     12 feature_1, feature_2 = 0, 1
+
+NameError: name &#x27;make_circles&#x27; is not defined</pre></div>
+        </div>
+        <p><br><br>The function yields only two features. The reason is that with two features we can visualise the complete state space in a two-dimensional scatter plot. The data of both labels are organised along a ring. There is a certain amount of randomness added to create data distributed normally around the ring.<br><br>The tricky thing about such a data distribution is that in a standard view of the data, the histogram, the clear state space organisation is not visible. There are e.g. no two distinct mean values of the distributions. Also, while the two features are clearly dependent on each other (as seen in the scatter plot), it is not possible to regress one with the other by means of fits of the type y = f(x).<br><br>We will now use different classes of machine learning models to fit to these labelled data.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="classification-models">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Classification models</h3>
+                        <p>Different classification algorithms approach problems differently. Let us name the algorithms in <code>scikit-learn</code>.<br><br><code>scikit-learn</code> provides the following algorithms for classification problems. Each listed classifier is hyperlinked to its relevant scikit-learn Documentation page.<br><ul class="nested-list"><li>Ensemble: Averaging:</li><ul class="nested-list"><li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html">Random Forest</a></li><br><li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.ExtraTreesClassifier.html">Extra Tree</a></li><br><li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.IsolationForest.html">Isolation Forest</a></li><br><li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.BaggingClassifier.html">Bagging</a></li><br><li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.VotingClassifier.html">Voting</a></li></ul></li><br><li>Boosting:</li><ul class="nested-list"><li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingClassifier.html">Gradient Boosting</a></li><br><li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.AdaBoostClassifier.html">AdaBoost</a></li></ul></li><br><li>Decision Trees:</li><ul class="nested-list"><li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html">Decision Tree</a></li><br><li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.tree.ExtraTreeClassifier.html">Extra Tree</a></li></ul></li><br><li>Nearest Neighbour:</li><ul class="nested-list"><li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html">K Nearest Neighbour</a></li><br><li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.RadiusNeighborsClassifier.html">Radius Neighbours</a></li><br><li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.NearestCentroid.html">Nearest Centroid</a></li></ul></li><br><li>Support Vector Machine:</li><ul class="nested-list"><li>with non-linear kernel:</li><ul class="nested-list"><li><a href="https://scikit-learn.org/stable/modules/svm.html#svm-kernels">Radial Basis Function (RBF)</a></li><br><li><a href="https://scikit-learn.org/stable/modules/svm.html#svm-kernels">Polynomial</a></li><br><li><a href="https://scikit-learn.org/stable/modules/svm.html#svm-kernels">Sigmoid</a></li></ul></li><br><li>with linear kernel:</li><ul class="nested-list"><li><a href="https://scikit-learn.org/stable/modules/svm.html#svm-kernels">Linear kernel</a></li></ul></li><br><li>parametrised with non-linear kernel:</li><ul class="nested-list"><li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.svm.NuSVC.html">Nu-Support Vector Classification</a></li></ul></li></ul></li><br><li>Neural Networks:</li><ul class="nested-list"><li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPClassifier.html">Multi-layer Perceptron</a></li><br><li>Gaussian:</li><ul class="nested-list"><li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.gaussian_process.GaussianProcessClassifier.html">Gaussian Process</a></li></ul></li><br><li>Linear Models:</li><ul class="nested-list"><li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html">Logistic Regression</a></li><br><li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.PassiveAggressiveClassifier.html">Passive Aggressive</a></li><br><li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.RidgeClassifier.html">Ridge</a></li><br><li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.SGDClassifier.html">Linear classifiers with Stochastic Gradient Descent</a></li></ul></li></ul></li><br><li>Baysian:</li><ul class="nested-list"><li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.naive_bayes.BernoulliNB.html">Bernoulli</a></li><br><li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.naive_bayes.MultinomialNB.html">Multinomial</a></li><br><li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.naive_bayes.ComplementNB.html">Complement</a></li></ul></ul>Some of these algorithms require a more in-depth understanding of how they work. To that end, we only review the performance of those that are easier to implement and adjust.</p><h4>Boosting algorithms</h4><p>Boosting algorithms are unique in that they do not work on their own. They operate differently to other ensemble algorithms, such as Random Forest by sequentially training their weaker classifiers (i.e. a single decision tree), rather than training them, collectively. As a result of training these weaker classifiers sequentially, you can improve the performance of subsequent trees on misclassified samples. However, it is important to note that boosting the performance in this way does not necessarily translate into a better fit. This is because boosting algorithms are generally robust against over-fitting, meaning that they always try to produce generalisable models.</p><h4>Training and Testing</h4><p>Here is code to import a number of classifiers from scikit-learn, fit them to the training data and predict the (complete) state space. The result is plotted below.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-37">from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier, GradientBoostingClassifier, AdaBoostClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.svm import SVC, LinearSVC
+from sklearn.neural_network import MLPClassifier
+from sklearn.neighbors import KNeighborsClassifier
+
+classifiers = {
+    &#x27;Decision Tree&#x27;: DecisionTreeClassifier(random_state=RANDOM_STATE),
+    &#x27;Random Forest&#x27;: RandomForestClassifier(random_state=RANDOM_STATE),
+    &#x27;AdaBoost (Random Forest)&#x27;: AdaBoostClassifier(RandomForestClassifier(random_state=RANDOM_STATE)),
+    &#x27;Gradient Boost (Random Forest)&#x27;: GradientBoostingClassifier(random_state=RANDOM_STATE),
+    &#x27;k-nearest neighbour&#x27;: KNeighborsClassifier(),
+    &#x27;SVC (RBF)&#x27;: SVC(random_state=RANDOM_STATE),
+    &#x27;SVC (Linear)&#x27;: LinearSVC(random_state=RANDOM_STATE),
+    &#x27;Multi-layer Perceptron&#x27;: MLPClassifier(max_iter=5000, random_state=RANDOM_STATE)
+}
+
+</code></pre>
+            </div>
+            
+        </div>
+        
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-38">ft_min, ft_max = -1.5, 1.5
+
+# Constructing (2 grids x 300 rows x 300 cols):
+grid_1, grid_2 = mgrid[ft_min:ft_max:.01, ft_min:ft_max:.01]
+
+# We need only the shape for one of the grids (i.e. 300 x  300):
+grid_shape = grid_1.shape
+
+# state space grid for testing
+new_obs = c_[grid_1.ravel(), grid_2.ravel()]
+
+</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[3], line 6
+      3 ft_min, ft_max = -1.5, 1.5
+      5 # Constructing (2 grids x 300 rows x 300 cols):
+----&gt; 6 grid_1, grid_2 = mgrid[ft_min:ft_max:.01, ft_min:ft_max:.01]
+      8 # We need only the shape for one of the grids (i.e. 300 x  300):
+      9 grid_shape = grid_1.shape
+
+NameError: name &#x27;mgrid&#x27; is not defined</pre></div>
+        </div>
+        
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-39">contour_levels = linspace(0, 1, 6)
+
+fig, all_axes = subplots(figsize=[15, 5], ncols=4, nrows=2, sharey=True, sharex=True)
+
+for ax, (name, clf) in zip(all_axes.ravel(), classifiers.items()):
+    clf.fit(X, y)
+    y_pred = clf.predict(new_obs)
+    y_pred_grid = y_pred.reshape(grid_shape)
+
+    ax.scatter(X[:, feature_1], X[:, feature_2], c=y, s=1, cmap=&#x27;bwr_r&#x27;)
+    ax.contourf(grid_1, grid_2, y_pred_grid, cmap=&#x27;gray_r&#x27;, alpha=.2, levels=contour_levels)
+    ax.set_ylim(ft_min, ft_max)
+    ax.set_xlim(ft_min, ft_max)
+    ax.set_yticks([-1.5, 0, 1.5])
+    ax.set_xticks([-1.5, 0, 1.5])
+    ax.set_title(name, fontsize=10);
+
+show()
+
+</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[4], line 3
+      1 # FIXED WITH OUTPUT
+----&gt; 3 contour_levels = linspace(0, 1, 6)
+      5 fig, all_axes = subplots(figsize=[15, 5], ncols=4, nrows=2, sharey=True, sharex=True)
+      7 for ax, (name, clf) in zip(all_axes.ravel(), classifiers.items()):
+
+NameError: name &#x27;linspace&#x27; is not defined</pre></div>
+        </div>
+        <p>Seven of the eight classifiers were able to separate the inner data set from the outer data set successfully. The main difference is that some algorithms ended up with a more rectangular shape of the boundary whereas the others found a more circular form which reflects the original data distribution more closely. One classifier simply fails: the support vector classifier (SVC) with linear basis functions: it tries to fit a straight line to separate the classes which in this case is impossible.</p><h4>**The Train-Test Split**</h4><p>We will now modify our workflow to avoid the need to create separate testing data (the typical situation when dealing with recorded data). For this we start with a data set of n labelled samples. Of these n samples, a certain percentage is used for training (using the provided labels) and the rest for testing (withholding the labels). The testing data then do not need to be prepared separately.<br><br>The function we use is <code>train_test_split</code> from SciKit Learn. A nice feature of this function is that it tries to preserve the ratio of labels in the split. E.g. if the data contain 70% of <code>True</code> and 30 % of <code>False</code> labels, the algorithm tries to preserve this ratio in the split as good as possible: around 70% of the training data and of the testing data will have the <code>True</code> label.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-40">from sklearn.model_selection import train_test_split
+
+X, y = make_circles(n_samples=1000, factor=0.3, noise=.05, random_state=RANDOM_STATE)
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.3, random_state=RANDOM_STATE, shuffle=True)
+
+print(X_train.shape, X_test.shape)
+
+</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[5], line 5
+      1 # FIXED WITH OUTPUT
+      3 from sklearn.model_selection import train_test_split
+----&gt; 5 X, y = make_circles(n_samples=1000, factor=0.3, noise=.05, random_state=RANDOM_STATE)
+      7 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.3, random_state=RANDOM_STATE, shuffle=True)
+      9 print(X_train.shape, X_test.shape)
+
+NameError: name &#x27;make_circles&#x27; is not defined</pre></div>
+        </div>
+        <p><br><br>Here is an illustration of the two sets of data. The splitting into testing and training data is done randomly. Picking test data randomly is particularly important for real data as it helps to reduce potential bias in the recording order.<br><br></p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-41">fig, ax = subplots(figsize=(7, 6), ncols=2, nrows=2, sharex=True)
+
+ax[0, 0].scatter(X_train[:, feature_1], X_train[:, feature_2], c=y_train, s=4, cmap=&#x27;bwr&#x27;)
+ax[0, 1].scatter(X_test[:, feature_1], X_test[:, feature_2], c=y_test, s=4, cmap=&#x27;bwr&#x27;)
+
+ax[1, 0].hist(X_train)
+ax[1, 1].hist(X_test)
+
+ax[0, 0].set_title(&#x27;Training data&#x27;)
+ax[0, 1].set_title(&#x27;Test data&#x27;)
+
+ax[0, 0].set_ylim(ft_min, ft_max)
+ax[0, 1].set_ylim(ft_min, ft_max)
+
+ax[1, 0].set_ylim(0, 100)
+ax[1, 1].set_ylim(0, 100);
+
+show()
+
+</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[6], line 3
+      1 # FIXED WITH OUTPUT
+----&gt; 3 fig, ax = subplots(figsize=(7, 6), ncols=2, nrows=2, sharex=True)
+      5 ax[0, 0].scatter(X_train[:, feature_1], X_train[:, feature_2], c=y_train, s=4, cmap=&#x27;bwr&#x27;)
+      6 ax[0, 1].scatter(X_test[:, feature_1], X_test[:, feature_2], c=y_test, s=4, cmap=&#x27;bwr&#x27;)
+
+NameError: name &#x27;subplots&#x27; is not defined</pre></div>
+        </div>
+        <p><br>Now we can repeat the training with this split dataset using eight types of models as above.<br><br>To compare the model performances, we use <strong>scoring</strong>: the method <code>.score</code> takes as input arguments the testing samples and their true labels. It then uses the model predictions to calculate the fraction of labels in the testing data that were predicted correctly.<br><br>There are different techniques to evaluate the performance, but the <code>.score</code> method provides a quick, simple, and handy way to assess a model. As far as classification algorithms in scikit-learn are concerned, the method usually produces the <strong>mean accuracy</strong>, which is between 0 and 1; and the higher the score, the better the fit.<br><br></p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-42">fig, all_axes = subplots(figsize=[15, 5], ncols=4, nrows=2, sharey=True, sharex=True)
+
+for ax, (name, clf) in zip(all_axes.ravel(), classifiers.items()):
+    # Training the model using training data:
+    clf.fit(X_train, y_train)
+
+    y_pred = clf.predict(new_obs)
+    y_pred_grid = y_pred.reshape(grid_shape)
+
+    # Evaluating the score using test data:
+    score = clf.score(X_test, y_test)
+
+    # Scattering the test data only:
+    ax.scatter(X_test[:, feature_1], X_test[:, feature_2], c=y_test, s=4, cmap=&#x27;bwr&#x27;, marker=&#x27;.&#x27;)
+
+    ax.contourf(grid_1, grid_2, y_pred_grid, cmap=&#x27;gray_r&#x27;, alpha=.2, levels=contour_levels)
+#    ax.contourf(grid[0], grid[1], y_pred_grid, cmap=&#x27;gray_r&#x27;, alpha=.2, levels=contour_levels)
+
+    ax.set_ylim(ft_min, ft_max)
+    ax.set_xlim(ft_min, ft_max)
+    ax.set_yticks([-1.5, 0, 1.5])
+    ax.set_xticks([-1.5, 0, 1.5])
+
+    label = &#x27;{} - Score: {:.2f}&#x27;.format(name, score)
+    ax.set_title(label , fontsize=10);
+
+show()
+
+</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[7], line 3
+      1 # FIXED WITH OUTPUT
+----&gt; 3 fig, all_axes = subplots(figsize=[15, 5], ncols=4, nrows=2, sharey=True, sharex=True)
+      5 for ax, (name, clf) in zip(all_axes.ravel(), classifiers.items()):
+      6     # Training the model using training data:
+      7     clf.fit(X_train, y_train)
+
+NameError: name &#x27;subplots&#x27; is not defined</pre></div>
+        </div>
+        <p><br><br>Here, we only plotted the test data, those that were classified based on the trained model. The gray area shows the result of the classification: within the gray area the prediction is 1 (the red samples) and outside it is 0 (the blue samples). The result is that testing data are classified correctly in all but one of the classifiers, so their performance is 1, or 100 %. This is excellent because it demonstrates that most classifiers are able to deal with embedded topologies.<br><br>Let us now repeat the procedure with a higher level of noise to make the task more complicated.<br><br></p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-43">X, y = make_circles(n_samples=1000, factor=.5, noise=.3, random_state=RANDOM_STATE)
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.3, random_state=RANDOM_STATE, shuffle=True)
+
+fig, ax = subplots(figsize=(7, 6), ncols=2, nrows=2, sharex=True)
+
+ax[0, 0].scatter(X_train[:, feature_1], X_train[:, feature_2], c=y_train, s=4, cmap=&#x27;bwr&#x27;)
+ax[0, 1].scatter(X_test[:, feature_1], X_test[:, feature_2], c=y_test, s=4, cmap=&#x27;bwr&#x27;)
+
+
+ax[1, 0].hist(X_train)
+
+ax[1, 1].hist(X_test)
+
+ax[0, 0].set_title(&#x27;Training data&#x27;)
+ax[0, 1].set_title(&#x27;Test data&#x27;)
+
+ax[0, 0].set_ylim(-3, 3)
+ax[0, 1].set_ylim(-3, 3)
+
+ax[1, 0].set_ylim(0, 200)
+ax[1, 1].set_ylim(0, 200);
+
+show()
+</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[8], line 3
+      1 # FIXED WITH OUTPUT
+----&gt; 3 X, y = make_circles(n_samples=1000, factor=.5, noise=.3, random_state=RANDOM_STATE)
+      5 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.3, random_state=RANDOM_STATE, shuffle=True)
+      7 fig, ax = subplots(figsize=(7, 6), ncols=2, nrows=2, sharex=True)
+
+NameError: name &#x27;make_circles&#x27; is not defined</pre></div>
+        </div>
+        
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-44">fig, all_axes = subplots(figsize=[15, 5], ncols=4, nrows=2, sharey=True, sharex=True)
+
+for ax, (name, clf) in zip(all_axes.ravel(), classifiers.items()):
+    # Training the model using training data:
+    clf.fit(X_train, y_train)
+
+    y_pred = clf.predict(new_obs)
+    y_pred_grid = y_pred.reshape(grid_shape)
+
+    # Evaluating the score using test data:
+    score = clf.score(X_test, y_test)
+
+    # Scattering the test data only:
+    ax.scatter(X_test[:, feature_1], X_test[:, feature_2], c=y_test, s=4, cmap=&#x27;bwr&#x27;, marker=&#x27;.&#x27;)
+
+    ax.contourf(grid_1, grid_2, y_pred_grid, cmap=&#x27;gray_r&#x27;, alpha=.2, levels=contour_levels)
+
+    ax.set_ylim(ft_min, ft_max)
+    ax.set_xlim(ft_min, ft_max)
+    ax.set_yticks([-1.5, 0, 1.5])
+    ax.set_xticks([-1.5, 0, 1.5])
+
+    label = &#x27;{} - Score: {:.2f}&#x27;.format(name, score)
+    ax.set_title(label , fontsize=10);
+
+show()
+
+</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[9], line 3
+      1 # FIXED WITH OUTPUT
+----&gt; 3 fig, all_axes = subplots(figsize=[15, 5], ncols=4, nrows=2, sharey=True, sharex=True)
+      5 for ax, (name, clf) in zip(all_axes.ravel(), classifiers.items()):
+      6     # Training the model using training data:
+      7     clf.fit(X_train, y_train)
+
+NameError: name &#x27;subplots&#x27; is not defined</pre></div>
+        </div>
+        <p><br><br>Now the data are mixed in the plane and there is no simple way to separate the two classes. We can see in the plots how the algorithms try to cope with their different strategies. One thing that is immediately obvious is that the fitting patterns are different. Particularly, we can see the fragmented outcome of the <em>decision tree</em> classifier and the smooth elliptic area found by the <em>support vector classifier (SVC)</em> with radial basis functions (RBF) and the neural network (MLP). On a closer look, you may also notice that with ensemble methods in the upper row, the patterns are somewhat disorganised. This is due to the way ensemble methods work: they sample the data randomly and then class them into different categories based on their labels.<br><br>If the prediction was made by chance (throwing a dice), one would expect a 50 % score. Thus, the example also shows that the performance depends on the type of problem and that this testing helps to find an optimal classifier.<br><br></p>
+        <div class="info-box warning-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                WARNING
+            </div>
+            <div class="box-content">
+                <p><strong>Never expose the test data.</strong> Testing a model on data that is used in training is a methodological mistake. It is therefore vital that the test data is <strong>never, ever</strong> used for training a model at any stage. This is one of the most fundamental principles of machine learning, and its importance cannot be exaggerated. There are numerous examples of people making this mistake one way or another, especially where multiple classification algorithms are used to address a problem.</p>
+            </div>
+        </div>
+        
+                    </div>
+                </div>
+            </div>
+            
+        
+        <div class="page-navigation">
+            <a href="./improvement.html" class="nav-button prev">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                </svg>
+                Previous
+            </a>
+            <a href="./sss.html" class="nav-button next">
+                Next
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                </svg>
+            </a></div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <div>© All materials are copyright scryptIQ 2025</div>
+            <div>Static Notebook - Pre-executed Content</div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="../assets/main.js"></script>
+    
+    <!-- Initialize syntax highlighting -->
+    <script>
+        // Set page ready flag immediately for PDF generation
+        window.pageReady = true;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
+        });
+    </script>
+</body>
+</html>
+    
