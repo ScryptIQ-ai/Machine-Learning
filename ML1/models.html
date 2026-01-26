@@ -43,7 +43,7 @@
     <!-- Meta Tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>L2D - ML1 - Untitled</title>
+    <title>L2D - ML1 - Training multiple machine learning models</title>
         
 </head>
 <body>
@@ -58,15 +58,15 @@
 
         <h3>Content</h3>
         <ul>
-            <li><a href="./introduction.html" class="">Introduction</a></li><li><a href="./scikit-learn.html">scikit-learn</a></li><li><a href="./classification.html">Untitled</a></li><li><a href="./application.html">Untitled</a></li><li><a href="./improvement.html">Improvement</a></li>
+            <li><a href="./introduction.html" class="">Introduction</a></li><li><a href="./scikit-learn.html">scikit-learn</a></li><li><a href="./classification.html">Classification</a></li><li><a href="./application.html">Application</a></li><li><a href="./improvement.html">Improvement</a></li>
             <li>
                 <div class="nav-toggle active" data-target="expandable-section-5">
-                    Untitled
+                    Training multiple machine learning models
                     <span class="toggle-icon">▼</span>
                 </div>
-                <ul class="nested-nav expanded" id="expandable-section-5"><li><a href="#training-multiple-machine-learning-models">Training multiple machine learning models</a></li><li><a href="#classification-models">Classification models</a></li>
+                <ul class="nested-nav expanded" id="expandable-section-5"><li><a href="#classification-models">Classification models</a></li>
                 </ul>
-            </li><li><a href="./sss.html">Untitled</a></li><li><a href="./evaluation.html">Untitled</a></li><li><a href="./assignment.html">Assignment</a></li><li><a href="./feedback.html">Feedback</a></li>
+            </li><li><a href="./sss.html">Stratified shuffle split</a></li><li><a href="./evaluation.html">Evaluation: ROC & AUC</a></li><li><a href="./assignment.html">Assignment</a></li><li><a href="./feedback.html">Feedback</a></li>
         </ul>
 
         <h3 class="collapsible-header collapsed">
@@ -103,10 +103,10 @@
         </div>
 
         
-            <div class="module-card" id="training-multiple-machine-learning-models">
+            <div class="module-card" id="card">
                 <div class="module-body">
                     <div class="module-section">
-                        <h3>Training multiple machine learning models</h3>
+                        <h3>None</h3>
                         <p><br><code>scikit-learn</code> provides the means to generate practice datasets with specific qualities. In this section, we will use the <code>make_circles</code> function to generate a toy dataset which consists of two concentric circles (see the function&#x27;s <a href="https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_circles.html">documentation.</a>) for more information.</p><h4>Seeding</h4><p>Common to both functions that generate practice datasets and machine learning models, is the use of random number generation to produce results. Therefore, one simple, but important adjustment is to seed the number generator with an integer using the keyword argument <code>random_state</code>, and thereby making our comparisons more consistent. This will ensure that all models use the same set of random numbers and, practically, means that results are reproducible upon re-running the same code.<br><br>Seeding helps to make the random processes within model training both consistent and reproducible. It does not fix the hyperparameters themselves, but rather ensures that operations involving randomness (such as train-test splits) produce the same results each time the code is run. In <code>scikit-learn</code>, this is typically done using the keyword argument <code>random_state</code>, which accepts an integer seed to initialise the random number generator.<br><br>For the sake of clarity, <strong>hyperparameters</strong> are fixed <em>before</em> training. They are not updated iteratively. Conversely, model <strong>parameters</strong>, such as the weights in a logistic regression, are what get updated <em>during</em> training. Thus, seeding using <code>random_state</code>, ensures that any randomness involved in the process, such as the order of data shuffling or initial parameter values, is reproducible.</p><h4>Circular Test Data</h4>
         <div class="code-area">
             <div class="code-container code-fixed">

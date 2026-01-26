@@ -43,7 +43,7 @@
     <!-- Meta Tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>L2D - ML1 - Untitled</title>
+    <title>L2D - ML1 - Evaluation: ROC & AUC</title>
         
 </head>
 <body>
@@ -58,13 +58,13 @@
 
         <h3>Content</h3>
         <ul>
-            <li><a href="./introduction.html" class="">Introduction</a></li><li><a href="./scikit-learn.html">scikit-learn</a></li><li><a href="./classification.html">Untitled</a></li><li><a href="./application.html">Untitled</a></li><li><a href="./improvement.html">Improvement</a></li><li><a href="./models.html">Untitled</a></li><li><a href="./sss.html">Untitled</a></li>
+            <li><a href="./introduction.html" class="">Introduction</a></li><li><a href="./scikit-learn.html">scikit-learn</a></li><li><a href="./classification.html">Classification</a></li><li><a href="./application.html">Application</a></li><li><a href="./improvement.html">Improvement</a></li><li><a href="./models.html">Training multiple machine learning models</a></li><li><a href="./sss.html">Stratified shuffle split</a></li>
             <li>
                 <div class="nav-toggle active" data-target="expandable-section-7">
-                    Untitled
+                    Evaluation: ROC & AUC
                     <span class="toggle-icon">▼</span>
                 </div>
-                <ul class="nested-nav expanded" id="expandable-section-7"><li><a href="#evaluation--roc---auc">Evaluation: ROC & AUC</a></li>
+                <ul class="nested-nav expanded" id="expandable-section-7">
                 </ul>
             </li><li><a href="./assignment.html">Assignment</a></li><li><a href="./feedback.html">Feedback</a></li>
         </ul>
@@ -103,10 +103,10 @@
         </div>
 
         
-            <div class="module-card" id="evaluation--roc---auc">
+            <div class="module-card" id="card">
                 <div class="module-body">
                     <div class="module-section">
-                        <h3>Evaluation: ROC & AUC</h3>
+                        <h3>None</h3>
                         <p>There are various measures that may be used to evaluate the performance of a machine learning model. Such measures look at different characteristics, including the goodness of fit and generalisability of a model. Evaluation measures used with regards to classification models include, but are not limited to:<br><ul class="nested-list"><li>Receiver Operation Characteristic (ROC) and Area Under the Curve (AUC) - for binary classifiers.</li><br><li>Accuracy</li><br><li>Precision</li><br><li>Recall</li></ul>There are many other metrics that, depending on the problem, we may use to evaluate a machine learning model. Please see <a href="https://scikit-learn.org/stable/modules/model_evaluation.html">the official documentation</a> for additional information on these measures and their implementation in scikit-learn.<br><br>The quantities we are going to look at are the <strong>Receiver Operation Characteristic (ROC)</strong> and the <strong>Area Under the Curve (AUC)</strong>.<br><br>A receiver operation characteristic, often referred to as the <strong>ROC curve</strong>, is a visualisation of the discrimination threshold in a binary classification model. It illustrates the rate of true positives (TPR) against the rate of false positives (FPR) at different thresholds. The aforementioned rates are essentially defined as:<br><ul class="nested-list"><li>True Positive Rate (TPR): the sensitivity of the model</li><br><li>False Positive Rate (FPR): one minus the specificity of the model</li></ul>This makes ROC a measure of sensitivity versus specificity.<br><br>We can see that our classifiers now reach different degrees of prediction. The degree can be quantified by the <strong>Area Under the Curve (AUC)</strong>. It refers to the area between the blue ROC curve and the orange diagonal. The area under the ROC curve, often referred to as AUC, reduces the information contained within a ROC curve down to a value between and 0 and 1, with 1 being a perfect fit. An AUC value of 0.5 represents a random guess, and values below the diagonal demonstrate a performance that’s even worse than a guess!</p>
         <div class="info-box note-box">
             <div class="box-title">

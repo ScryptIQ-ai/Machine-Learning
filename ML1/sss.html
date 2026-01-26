@@ -43,7 +43,7 @@
     <!-- Meta Tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>L2D - ML1 - Untitled</title>
+    <title>L2D - ML1 - Stratified shuffle split</title>
         
 </head>
 <body>
@@ -58,15 +58,15 @@
 
         <h3>Content</h3>
         <ul>
-            <li><a href="./introduction.html" class="">Introduction</a></li><li><a href="./scikit-learn.html">scikit-learn</a></li><li><a href="./classification.html">Untitled</a></li><li><a href="./application.html">Untitled</a></li><li><a href="./improvement.html">Improvement</a></li><li><a href="./models.html">Untitled</a></li>
+            <li><a href="./introduction.html" class="">Introduction</a></li><li><a href="./scikit-learn.html">scikit-learn</a></li><li><a href="./classification.html">Classification</a></li><li><a href="./application.html">Application</a></li><li><a href="./improvement.html">Improvement</a></li><li><a href="./models.html">Training multiple machine learning models</a></li>
             <li>
                 <div class="nav-toggle active" data-target="expandable-section-6">
-                    Untitled
+                    Stratified shuffle split
                     <span class="toggle-icon">▼</span>
                 </div>
-                <ul class="nested-nav expanded" id="expandable-section-6"><li><a href="#stratified-shuffle-split">Stratified shuffle split</a></li>
+                <ul class="nested-nav expanded" id="expandable-section-6">
                 </ul>
-            </li><li><a href="./evaluation.html">Untitled</a></li><li><a href="./assignment.html">Assignment</a></li><li><a href="./feedback.html">Feedback</a></li>
+            </li><li><a href="./evaluation.html">Evaluation: ROC & AUC</a></li><li><a href="./assignment.html">Assignment</a></li><li><a href="./feedback.html">Feedback</a></li>
         </ul>
 
         <h3 class="collapsible-header collapsed">
@@ -103,10 +103,10 @@
         </div>
 
         
-            <div class="module-card" id="stratified-shuffle-split">
+            <div class="module-card" id="card">
                 <div class="module-body">
                     <div class="module-section">
-                        <h3>Stratified shuffle split</h3>
+                        <h3>None</h3>
                         <p><br><br>When training a model, a common source of bias is the choice of which data points are used to train the classifier, and which are used for testing. Each train-test group within your data will have its own statistical skew, which can can sometimes lead to overly optimistic performance estimates, that do not necessarily generalise well to unseen data. The <code>stratified_shuffle_split</code> function within scikit-learn seeks to overcome this problem by iteratively creating different train-test splits of your data. It then proceeds to train your model on these different splits, averaging the results in an attempt to overcome this bias. Additionally, the proportion of labels for each class within the dataset as a whole, is maintained within each split.<br><br>We first need to import and instantiate the splitter. We set key word argument <code>n_splits</code> to determine the number of different splits. <code>test_size</code> lets us determine what fraction of samples is used for the testing data.<br><br></p>
         <div class="code-area">
             <div class="code-container code-fixed">
