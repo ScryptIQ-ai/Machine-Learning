@@ -99,6 +99,127 @@
         </div>
 
         
+            <div class="module-card" id="introduction">
+                <div class="module-header">
+                    Introduction <span class="module-tag">ML1</span>
+                </div>
+                <div class="module-body">
+                    <p>Welcome to this lesson on <strong>classification with scikit-learn</strong>, where we move from basic machine learning concepts into a complete, practical classification workflow. Building on earlier experience with data preparation and visualisation, this lesson introduces the structure of scikit-learn models, the process of training classifiers, and the interpretation of their predictions in both categorical and probabilistic terms.<br><br>Across the lesson, you will work with both real-world and synthetic datasets to explore how different classification algorithms behave under varying conditions. You will learn how to train and compare multiple models, visualise decision boundaries in state space, reduce bias through robust train–test splitting strategies, and evaluate classifier performance using standard metrics such as ROC curves and AUC.</p>
+                </div>
+            </div>
+            
+            <div class="module-card" id="learning-overview">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Learning Overview</h3>
+                        <table class="markdown-table">
+<thead>
+<tr>
+<th>Concept</th>
+<th>Synergy</th>
+<th>Syntax & Functions</th>
+<th>Objective / Application</th>
+<th>Common Pitfalls / Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>scikit-learn Estimators</td>
+<td>Introduces the unified ML interface used throughout the lesson</td>
+<td><code>model.fit()</code>, <code>model.predict()</code></td>
+<td>Understand the standard workflow for training and using classifiers</td>
+<td>Forgetting that models must be fitted before prediction</td>
+</tr>
+<tr>
+<td>Classification Workflow</td>
+<td>Extends earlier data analysis into supervised learning</td>
+<td><code>fit(X, y)</code>, <code>predict(X)</code></td>
+<td>Train classifiers and generate predictions from labelled data</td>
+<td>Confusing features and labels</td>
+</tr>
+<tr>
+<td>Categorical Labels</td>
+<td>Builds on data preprocessing concepts</td>
+<td>Manual label encoding</td>
+<td>Convert string labels into numerical categories</td>
+<td>Inconsistent label encoding between train and test sets</td>
+</tr>
+<tr>
+<td>Prediction Probabilities</td>
+<td>Extends basic classification outputs</td>
+<td><code>predict_proba()</code></td>
+<td>Quantify confidence in model predictions</td>
+<td>Misinterpreting probability columns</td>
+</tr>
+<tr>
+<td>State Space Visualisation</td>
+<td>Builds on scatter plots and grids</td>
+<td>Meshgrid generation and prediction</td>
+<td>Visualise decision boundaries across feature space</td>
+<td>Assuming smooth boundaries imply better models</td>
+</tr>
+<tr>
+<td>Train–Test Split</td>
+<td>Introduces standard ML validation practice</td>
+<td><code>train_test_split()</code></td>
+<td>Separate data for unbiased testing</td>
+<td>Data leakage between training and testing</td>
+</tr>
+<tr>
+<td>Synthetic Datasets</td>
+<td>Enables controlled model comparison</td>
+<td><code>make_circles()</code></td>
+<td>Test models on non-linearly separable data</td>
+<td>Over-interpreting toy data results</td>
+</tr>
+<tr>
+<td>Multiple Classifiers</td>
+<td>Broadens exposure to ML strategies</td>
+<td>Various scikit-learn classifiers</td>
+<td>Compare how different models handle the same task</td>
+<td>Comparing models without consistent random states</td>
+</tr>
+<tr>
+<td>Random Seeding</td>
+<td>Reinforces reproducibility principles</td>
+<td><code>random_state</code></td>
+<td>Ensure reproducible training and evaluation</td>
+<td>Confusing reproducibility with model optimisation</td>
+</tr>
+<tr>
+<td>Stratified Shuffle Split</td>
+<td>Improves evaluation robustness</td>
+<td><code>StratifiedShuffleSplit</code></td>
+<td>Reduce bias by averaging over multiple splits</td>
+<td>Using too few splits for noisy data</td>
+</tr>
+<tr>
+<td>Model Evaluation Metrics</td>
+<td>Extends prediction analysis</td>
+<td>Accuracy, ROC, AUC</td>
+<td>Quantify classifier performance beyond accuracy</td>
+<td>Relying on a single metric</td>
+</tr>
+<tr>
+<td>ROC and AUC</td>
+<td>Introduces threshold-based evaluation</td>
+<td><code>roc_curve()</code>, <code>roc_auc_score()</code></td>
+<td>Assess sensitivity and specificity trade-offs</td>
+<td>Using wrong probability column for ROC</td>
+</tr>
+<tr>
+<td>Decision Function vs Probability</td>
+<td>Deepens understanding of classifier outputs</td>
+<td><code>.decision_function()</code>, <code>.predict_proba()</code></td>
+<td>Select appropriate scores for evaluation</td>
+<td>Mixing incompatible score types</td>
+</tr>
+</tbody>
+</table>
+                    </div>
+                </div>
+            </div>
+            
         
         <div class="page-navigation"><div></div>
             <a href="./scikit-learn.html" class="nav-button next">
