@@ -107,48 +107,15 @@
                 <div class="module-body">
                     <div class="module-section">
                         <h3>Learning Objectives</h3>
-                        <p><ul class="nested-list"><li>Understanding the classification challenge.</li><br><li>Training a classifier model.</li><br><li>Understanding the state space plot of model predictions.</li><br><li>Obtaining prediction probabilities.</li><br><li>Finding important features.</li></ul></p>
-        <div class="video-container">
-            <iframe 
-                src="https://www.youtube.com/embed/NIU1JO26Jgk"
-                width="560"
-                height="315"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen>
-            </iframe>
-        </div>
-        
-        <div class="video-container">
-            <iframe 
-                src="https://www.youtube.com/embed/3f627wXK6z0"
-                width="560"
-                height="315"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen>
-            </iframe>
-        </div>
-        
-        <div class="video-container">
-            <iframe 
-                src="https://www.youtube.com/embed/EUrxpMr5bG4"
-                width="560"
-                height="315"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen>
-            </iframe>
-        </div>
-        <h4>Import functions</h4>
+                        <p><ul class="nested-list"><li>Understanding the classification challenge.</li><br><li>Training a classifier model.</li><br><li>Understanding the state space plot of model predictions.</li><br><li>Obtaining prediction probabilities.</li><br><li>Finding important features.</li></ul></p><h4>Import functions</h4>
         <div class="code-area">
             <div class="code-container code-fixed">
-                <pre><code class="language-python" id="code-1">from matplotlib.pyplot import subplots, scatter, xlabel, ylabel, xticks, show
+                <pre><code class="language-python" id="code-1">from pandas import read_csv
+
 from numpy import arange, asarray, linspace, c_, meshgrid, zeros, ones
 from numpy.random import uniform, seed
-from pandas import read_csv
 
-</code></pre>
+from matplotlib.pyplot import subplots, scatter, xlabel, ylabel, xticks, show</code></pre>
             </div>
             
         </div>
@@ -319,17 +286,9 @@ df.head(10)</code></pre>
 </table>
 </div></div>
         </div>
-        <p><br>Note that data in the first five columns are either integers (age) or real numbers (floating point). The classes (categorical data) in the last two columns come as binary (0/1) for &#x27;smokers/non-smokers&#x27; and as strings for &#x27;male/female&#x27;. Both can be used for classification.<br><br></p>
-        <div class="info-box note-box">
-            <div class="box-title">
-                <span class="box-icon"></span>
-                NOTE
-            </div>
-            <div class="box-content">
-                <p><strong>The classification challenge</strong><br><br>I am given a set of data from a single subject and feed them to a computational model. The model then predicts to what (predefined) _class_ this subject belongs. Example: given height and weight data, the model might try to predict whether the subject is a smoker or a non-smoker. A naive model will, of course, not be able to predict reasonably. The _supervised_ approach in machine learning is to provide the model with a set of data where the class has been verified beforehand and the model can test its (initially random) predictions against the provided class. An optimisation algorithm is then run to adjust the (internal) model setting such that the predictions improve as much as possible. When no further improvement is achieved, the algorithm stops. The model is then _trained_ and ready to predict.<br><br></p>
-            </div>
-        </div>
-        <p><br>The act of classification is to assign labels to unlabelled data after model exposure to previously labelled data (e.g. based on medical knowledge in the case of disease data).<br>In contrast, in _unsupervised machine learning_ the assignment is done based on exposure to unlabelled data following a search for distinctive features or &#x27;structure&#x27; in the data.<br>We can first check if we are able to distinguish classes visually. For this, we scatter the data of two columns of a dataframe using the column names. That is, we look at the distribution of points in a plane. Then we use the class __label__ to color each point in the plane according to the class it belongs to. String labels like &#x27;male&#x27; / &#x27;female&#x27; first need to be converted to Boolean (binary). 0/1 labels as in the &#x27;smokers/non-smokers&#x27; column can be used directly.<br><br>Let us plot the height-weight data and label them for both cases.<br><br></p>
+        <p><br>Note that data in the first five columns are either integers (age) or real numbers (floating point). The classes (categorical data) in the last two columns come as binary (0/1) for &#x27;smokers/non-smokers&#x27; and as strings for &#x27;male/female&#x27;. Both can be used for classification.<br><br></p><h4>The classification challenge
+
+I am given a set of data from a single subject and feed them to a computational model. The model then predicts to what (predefined) _class_ this subject belongs. Example: given height and weight data, the model might try to predict whether the subject is a smoker or a non-smoker. A naive model will, of course, not be able to predict reasonably. The _supervised_ approach in machine learning is to provide the model with a set of data where the class has been verified beforehand and the model can test its (initially random) predictions against the provided class. An optimisation algorithm is then run to adjust the (internal) model setting such that the predictions improve as much as possible. When no further improvement is achieved, the algorithm stops. The model is then _trained_ and ready to predict.</h4><p>The purpose of classification is to assign labels to unlabelled data after model exposure to previously labelled data (e.g. based on medical knowledge in the case of disease data).<br>In contrast, in _unsupervised machine learning_ the assignment is done based on exposure to unlabelled data following a search for distinctive features or &#x27;structure&#x27; in the data.<br>We can first check if we are able to distinguish classes visually. For this, we scatter the data of two columns of a dataframe using the column names. That is, we look at the distribution of points in a plane. Then we use the class __label__ to color each point in the plane according to the class it belongs to. String labels like &#x27;male&#x27; / &#x27;female&#x27; first need to be converted to Boolean (binary). 0/1 labels as in the &#x27;smokers/non-smokers&#x27; column can be used directly.<br><br>Let us plot the height-weight data and label them for both cases.<br><br></p>
         <div class="code-area">
             <div class="code-container code-fixed">
                 <pre><code class="language-python" id="code-3">fig, ax = subplots(figsize=(12,6),ncols=2,nrows=1)
@@ -361,6 +320,39 @@ show()
                     <div class="module-section">
                         <h3>Supervised Learning: Training a Model</h3>
                         <p>This lesson deals with labelled data. Labelled data are numerical data with an extra column of a __label__ for each sample. A sample can consist of any number of individual observations but must be at least two.<br>Examples of labels include &#x27;control group / test group&#x27;; &#x27;male / female&#x27;; &#x27;healthy / diseased&#x27;; &#x27;before treatment / after treatment&#x27;.<br><br>The task in Supervised Machine Learning is to fit (train) a model to distinguish between the groups by &#x27;learning&#x27; from so-called training data. After training, the optimised model automatically labels incoming (unlabeled) data. The better the model, the better the labelling (prediction).<br><br>The model itself is a black box. It has set default parameters to start with and thus performs badly in the beginning. Essentially, it starts by predicting a label at random. The process of training consists in repeatedly changing the model parameters such that the performance improves. After the training, the model parameters are supposed to be optimal. Of course, the model cannot be expected to reveal anything about the mechanism or cause that underlies the distinction between the labels.<br><br>The performance of the model is tested by splitting a dataset with labels into:<br><ul class="nested-list"><li>the <code>train data</code>, those that will be used for model fitting, and</li><br><li>the <code>test data</code>, those that will be used to check how well the model predicts.</li></ul>The result of the model fitting is then assessed by checking how many of the (withheld) labels in the test data were correctly predicted by the trained model. We can also retrieve the confidence of the model prediction, i.e. the probability that the assigned label is correct.<br><br>As an additional result, the procedure will generate the so-called feature importances: similar to how we concluded above that weight is more important than height for gender prediction, the feature importance informs to which degree each of the data columns actually contributes to the predictions.<br><br></p><p>We will import our machine learning functionality from the <a href="https://scikit-learn.org/stable/">scikit-learn library</a>.<br><br>scikit-learn is a renowned open source application programming interface (API) for machine learning. It enjoys a vibrant community and is well maintained. It is always beneficial to use the official documentations for every API. scikit-learn provides an exceptional documentation with detailed explanations and examples at every level.<br><br>The implementation of algorithms in scikit-learn follows a very specific protocol. First and foremost, it uses a programming paradigm known as object-oriented programming (OOP). Thanks to Python, this does not mean that you as the user are also forced to use OOP. But you need to follow a specific protocol to use the tools that are provided by scikit-learn.<br><br>Unlike functions that perform a specific task and return the results, in OOP, we use _classes_ to encapsulate interconnected components and functionalities. In accordance with the convention of best practices for Python programming (also known as PEP8), classes are implemented with camel-case characters; e.g. <code>RandomForestClassifier</code>. In contrast, functions should be implemented using lower-case characters only; e.g. <code>min</code> or <code>round</code>.</p>
+        <div class="video-container">
+            <iframe 
+                src="https://www.youtube.com/embed/NIU1JO26Jgk"
+                width="560"
+                height="315"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+            </iframe>
+        </div>
+        
+        <div class="video-container">
+            <iframe 
+                src="https://www.youtube.com/embed/3f627wXK6z0"
+                width="560"
+                height="315"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+            </iframe>
+        </div>
+        
+        <div class="video-container">
+            <iframe 
+                src="https://www.youtube.com/embed/EUrxpMr5bG4"
+                width="560"
+                height="315"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+            </iframe>
+        </div>
+        
                     </div>
                 </div>
             </div>
