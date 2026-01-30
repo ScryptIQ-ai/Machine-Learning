@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- MathJax for mathematical notation -->
+    <script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$']],
+            displayMath: [['$$', '$$']],
+            processEscapes: true
+        },
+        svg: {
+            fontCache: 'global'
+        }
+    };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    
+    <!-- Syntax Highlighting with highlight.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="../assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../assets/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="../assets/android-chrome-512x512.png">
+    
+    <!-- Core Stylesheets -->
+    <link rel="stylesheet" href=../assets/colours.css>
+    <link rel="stylesheet" href="../assets/shared-styles.css">
+    <link rel="stylesheet" href="../assets/nav-bar.css">
+    <link rel="stylesheet" href="../assets/module_card.css">
+    <link rel="stylesheet" href="../assets/learning_outcomes.css">
+    <link rel="stylesheet" href="../assets/learning_lists.css">
+    <link rel="stylesheet" href="../assets/box_styles.css">
+    <link rel="stylesheet" href="../assets/code_styles.css">
+    <link rel="stylesheet" href="../assets/static_output.css">
+
+    <!-- Meta Tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L2D - ML3 - Application</title>
+        
+</head>
+<body>
+    
+    <!-- Sidebar Navigation -->
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <a href="../homepage.html" style="text-decoration: none; display: inline-block;">
+                <img src="../assets/l2d-brain-logo.png" alt="scryptIQ Logo" class="sidebar-logo">
+            </a>
+        </div>
+
+        <h3>Content</h3>
+        <ul>
+            <li><a href="./introduction.html" class="">Introduction</a></li><li><a href="./GMMs.html">Clustering</a></li><li><a href="./parameters.html">Optimal model parameters</a></li>
+            <li>
+                <div class="nav-toggle active" data-target="expandable-section-3">
+                    Application
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <ul class="nested-nav expanded" id="expandable-section-3"><li><a href="#introduction">Introduction</a></li>
+                </ul>
+            </li><li><a href="./images.html">Clustering images</a></li><li><a href="./segmentation.html">Image segmentation</a></li><li><a href="./assignment.html">Assignment</a></li><li><a href="./feedback.html">Feedback</a></li>
+        </ul>
+
+        <h3 class="collapsible-header collapsed">
+            Resources
+            <span class="collapse-icon">►</span>
+        </h3>
+        <div class="collapsible-content collapsed">
+            <ul>
+                <li><a href="./glossary.html">Glossary</a></li><li><a href="./downloads.html">Downloads</a></li><li><a href="../HB/introduction.html">Handbook</a></li>
+            </ul>
+        </div>
+
+        <h3 class="collapsible-header collapsed">
+            Previous Modules
+            <span class="collapse-icon">►</span>
+        </h3>
+        <div class="collapsible-content collapsed">
+            <ul>
+            <li><a href="../ML1/introduction.html">ML1</a></li>
+            <li><a href="../ML2/introduction.html">ML2</a></li>
+        </ul>
+        </div>
+
+        <h3>
+            <li><a href="./report-issue.html">Report an Issue</a></li>
+        </h3>
+    </div>
+    
+    <!-- Sidebar Toggle Button -->
+    <button id="sidebar-toggle" class="sidebar-toggle">❮</button>
+    
+    <!-- Main Content Area -->
+    <div id="main-content" class="main-content">
+        <!-- Top Navigation Bar -->
+        <div class="top-navbar">
+            <h1 class="page-title">Machine Learning 3</h1>
+            <div class="nav-actions">
+                <a href="../homepage.html" class="text-button" title="Materials homepage">
+                    Homepage
+                </a>
+                <a href="https://learntodiscover.ai/my-cohorts/" class="text-button" title="Find out more about us">
+                    Learn to Discover
+                </a>
+            </div>
+        </div>
+
+        
+            <div class="module-card" id="introduction">
+                <div class="module-header">
+                    Application <span class="module-tag">ML3</span>
+                </div>
+                <div class="module-body">
+                    <p><strong>Learning objectives</strong><br><ul class="nested-list"><li>Apply Gaussian Mixture Models (GMMs) to perform unsupervised image segmentation.</li><br><li>Compare segmentation results across different numbers of clusters.</li><br><li>Combine multiple MR image contrasts to improve clustering performance.</li><br><li>Map clustered labels back onto image slices and volumes.</li><br><li>Visualise and interpret segmentation results using image plots and exploratory feature visualisations.</li></ul></p><p>This part of the lesson seeks to demonstrate how Gaussian Mixture Models can be applied beyond controlled synthetic examples to more realistic data scenarios. By working with fitted models and visualising their behaviour across a continuous state space, it illustrates how probabilistic predictions and likelihood surfaces can be interpreted, spatially. The focus is on connecting the mathematical outputs of a GMM to intuitive, visual insights about structure, uncertainty, and model behaviour in practice.</p><h4>Application to example data</h4><p>Let us now apply the GMM approach to the example at the beginning of the lesson.</p>
+        <div class="code-area">
+            <div class="code-collapse-header" onclick="toggleCodeCollapse('code-20')">
+                <span class="code-collapse-icon">▶</span>
+                <span class="code-collapse-label">Show code</span>
+            </div>
+            <div class="code-container code-fixed code-collapsed" id="code-20-container">
+                <pre><code class="language-python" id="code-20"># Let&#x27;s reinstantiate our seed and set out our import statements.
+
+from numpy import array, c_, linspace, logspace, meshgrid, min, max
+from numpy.random import seed, multivariate_normal
+
+from matplotlib.pyplot import subplots, scatter, title, axis, show
+from matplotlib.colors import LogNorm
+
+from pandas import read_csv
+
+from sklearn.mixture import GaussianMixture
+from sklearn.metrics import adjusted_rand_score
+
+RANDOM_NUMBER = 1
+seed(RANDOM_NUMBER)</code></pre>
+            </div>
+            
+        </div>
+        
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-21">from pandas import read_csv
+
+df = read_csv(&quot;data/patients_data.csv&quot;)
+
+df[&#x27;Weight&#x27;] = 0.45*df[&#x27;Weight&#x27;]
+df[&#x27;Height&#x27;] = 2.54*df[&#x27;Height&#x27;]
+
+X_train = df[[&#x27;Weight&#x27;, &#x27;Height&#x27;]]
+X_train = X_train.to_numpy()
+
+print(X_train.shape)</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+ModuleNotFoundError                       Traceback (most recent call last)
+Cell In[2], line 3
+      1 # FIXED WITH OUTPUT
+----&gt; 3 from pandas import read_csv
+      5 df = read_csv(&quot;data/patients_data.csv&quot;)
+      7 df[&#x27;Weight&#x27;] = 0.45*df[&#x27;Weight&#x27;]
+
+ModuleNotFoundError: No module named &#x27;pandas&#x27;</pre></div>
+        </div>
+        <p>Now we can fit the GMM estimator using the suspected number of two components.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-22">clf = GaussianMixture(n_components=2)
+
+clf.fit(X_train)
+
+resolution = 100
+
+vec_a = linspace(0.8*min(X_train[:,0]), 1.2*max(X_train[:,0]), resolution)
+vec_b = linspace(0.8*min(X_train[:,1]), 1.2*max(X_train[:,1]), resolution)
+
+grid_a, grid_b = meshgrid(vec_a, vec_b)
+
+XY_statespace = c_[grid_a.ravel(), grid_b.ravel()]
+
+Z_score = clf.score_samples(XY_statespace)
+
+Z_s = Z_score.reshape(grid_a.shape)
+
+
+fig, ax = subplots(figsize=(8, 6))
+
+cax = ax.contour(grid_a, grid_b, -Z_s,
+           norm=LogNorm(vmin=1.0, vmax=1000.0),
+           levels=logspace(0, 3, 10),
+           cmap=&#x27;magma&#x27;
+          )
+
+fig.colorbar(cax);
+
+ax.scatter(X_train[:, 0], X_train[:, 1], .8)
+
+title(&#x27;Negative log-likelihood of Prediction&#x27;, fontsize=16)
+axis(&#x27;tight&#x27;);
+
+show()</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[3], line 2
+      1 # FIXED WITH OUTPUT
+----&gt; 2 clf = GaussianMixture(n_components=2)
+      4 clf.fit(X_train)
+      6 resolution = 100
+
+NameError: name &#x27;GaussianMixture&#x27; is not defined</pre></div>
+        </div>
+        <p>These predictions can now be compared with labels in the data, for example the Gender. To check the outcome of the fitted model versus the gender, we obtain the predicted labels from the model. We can compare this with the gender labels in the data:</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-23">y_predict = clf.predict(X_train)
+
+gender_boolean = df[&#x27;Gender&#x27;] == &#x27;Female&#x27;
+
+y_gender = gender_boolean.to_numpy()
+
+scoring = adjusted_rand_score(y_gender, y_predict)
+
+print(scoring)</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[4], line 3
+      1 # FIXED WITH OUTPUT
+----&gt; 3 y_predict = clf.predict(X_train)
+      5 gender_boolean = df[&#x27;Gender&#x27;] == &#x27;Female&#x27;
+      7 y_gender = gender_boolean.to_numpy()
+
+NameError: name &#x27;clf&#x27; is not defined</pre></div>
+        </div>
+        <p>In this case, the predictions from the GMM match closely with the gender label in the data. The outcome is therefore strong in this dataset.<br><br>We can also compare the predictions with the smoker labels:</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-24">y_smoker = df[&#x27;Smoker&#x27;]
+
+scoring = adjusted_rand_score(y_smoker, y_predict)
+
+print(scoring)</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[5], line 3
+      1 # FIXED WITH OUTPUT
+----&gt; 3 y_smoker = df[&#x27;Smoker&#x27;]
+      5 scoring = adjusted_rand_score(y_smoker, y_predict)
+      7 print(scoring)
+
+NameError: name &#x27;df&#x27; is not defined</pre></div>
+        </div>
+        <p>This result shows that the GMM labelling is arbitrary when compared with the smoker labels in the data.<br><br>From the trained model we create the individual predicted distributions for each group.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <pre><code class="language-python" id="code-25">group1_mean = clf.means_[0]
+group1_cov  = clf.covariances_[0]
+
+group2_mean = clf.means_[1]
+group2_cov  = clf.covariances_[1]
+
+samples = 1000
+
+
+group1_data = multivariate_normal(group1_mean, group1_cov, samples)
+group2_data = multivariate_normal(group2_mean, group2_cov, samples)
+
+fig, ax = subplots(ncols=2, figsize=(12, 6))
+
+ax[1].scatter(group1_data[:, 0], group1_data[:, 1], c=&#x27;r&#x27;);
+ax[1].scatter(group2_data[:, 0], group2_data[:, 1], c=&#x27;b&#x27;);
+ax[1].set_xlabel(&#x27;Weight&#x27;, fontsize=16)
+ax[1].set_ylabel(&#x27;Height&#x27;, fontsize=16)
+
+ax[0].scatter(df[&#x27;Weight&#x27;], df[&#x27;Height&#x27;]);
+ax[0].set_xlabel(&#x27;Weight&#x27;, fontsize=16)
+ax[0].set_ylabel(&#x27;Height&#x27;, fontsize=16)
+
+fig.suptitle(&#x27;Scatter plot from Data (left) and Model (right)&#x27;, fontsize=16);
+
+show()</code></pre>
+            </div>
+            <div class="output-container"><pre class="output-error">---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[6], line 3
+      1 # FIXED WITH OUTPUT
+----&gt; 3 group1_mean = clf.means_[0]
+      4 group1_cov  = clf.covariances_[0]
+      6 group2_mean = clf.means_[1]
+
+NameError: name &#x27;clf&#x27; is not defined</pre></div>
+        </div>
+        
+                </div>
+            </div>
+            
+        
+        <div class="page-navigation">
+            <a href="./parameters.html" class="nav-button prev">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                </svg>
+                Previous
+            </a>
+            <a href="./images.html" class="nav-button next">
+                Next
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                </svg>
+            </a></div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <div>© All materials are copyright scryptIQ 2025</div>
+            <div>Static Notebook - Pre-executed Content</div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="../assets/main.js"></script>
+    
+    <!-- Initialize syntax highlighting -->
+    <script>
+        // Set page ready flag immediately for PDF generation
+        window.pageReady = true;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
+        });
+    </script>
+</body>
+</html>
+    
