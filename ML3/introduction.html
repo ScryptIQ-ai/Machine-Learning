@@ -115,7 +115,7 @@
                     Introduction <span class="module-tag">ML3</span>
                 </div>
                 <div class="module-body">
-                    <p>Two paragraphs of intro text...</p>
+                    <p>This lesson develops unsupervised learning through a focused exploration of <strong>Gaussian Mixture Models (GMMs)</strong> and their use in <strong>clustering</strong> both synthetic and image data. Building on earlier lessons which delved into <code>NumPy</code> arrays, visualisation and basic modelling, this lesson introduces probabilistic clustering as a way to describe <strong>structure</strong> in data without labelled outcomes, emphasising both conceptual understanding and practical implementation.<br><br>Across the lesson, GMMs are applied progressively, first to simple synthetic data, then to real datasets, and finally to <em>medical images</em>. Throughout, the role of model assumptions, parameter choice and data representation is examined, culminating in image segmentation tasks that demonstrate how clustering can be used to partition images into meaningful regions for further, subsequent analysis.</p>
                 </div>
             </div>
             
@@ -126,104 +126,97 @@
                         <table class="markdown-table">
 <thead>
 <tr>
-<th><strong>Concept</strong></th>
-<th><strong>Synergy</strong></th>
-<th><strong>Syntax & Functions</strong></th>
-<th><strong>Objective / Application</strong></th>
-<th><strong>Common Pitfalls / Notes</strong></th>
+<th>Concept</th>
+<th>Synergy</th>
+<th>Syntax & Functions</th>
+<th>Objective / Application</th>
+<th>Common Pitfalls / Notes</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Images as Arrays</strong></td>
-<td>Builds on DH1 NumPy arrays; extends to 2-D and 3-D spatial data</td>
-<td><code>imread()</code>, <code>.shape</code>, <code>type()</code></td>
-<td>Understand that images are N-dimensional arrays of pixel/voxel intensity values</td>
-<td>Confusing pixel coordinates with array indexing; forgetting images use (height, width) not (x, y)</td>
+<td>Clustering (unsupervised learning)</td>
+<td>Builds on array handling and plotting from earlier lessons</td>
+<td><code>GaussianMixture(n_components=...)</code></td>
+<td>Identify structure in data without labelled targets</td>
+<td>Expecting clusters to map directly to real classes</td>
 </tr>
 <tr>
-<td><strong>Reading & Plotting Images</strong></td>
-<td>Extends DH1 plotting with matplotlib; applies array slicing from DH1</td>
-<td><code>imread(path)</code>, <code>ax.imshow(img, cmap='gray')</code></td>
-<td>Load image files (jpg, png, tif) and visualize them as arrays</td>
-<td>Not setting appropriate colormap; imread returns different types for different formats</td>
+<td>Gaussian Mixture Models (GMMs)</td>
+<td>Extends clustering into a probabilistic model</td>
+<td><code>GaussianMixture</code>, <code>.fit()</code></td>
+<td>Model data as a mixture of Gaussian components</td>
+<td>Treating components as perfectly separated groups</td>
 </tr>
 <tr>
-<td><strong>Pixel Intensity Values</strong></td>
-<td>Uses NumPy array indexing from DH1; foundation for quantitative image analysis</td>
-<td><code>img[row, col]</code>, <code>img[:50, :70]</code></td>
-<td>Access and interpret individual pixel values (0-255 for 8-bit images)</td>
-<td>Confusing row/column order; not understanding that lower values = darker in grayscale</td>
+<td>Synthetic data exploration</td>
+<td>Supports intuition-building for clustering behaviour</td>
+<td><code>multivariate_normal(...)</code>, <code>randn(...)</code></td>
+<td>Visualise how GMMs fit structured point clouds</td>
+<td>Forgetting randomness affects results</td>
 </tr>
 <tr>
-<td><strong>RGB Color Images</strong></td>
-<td>Extends 2-D arrays to 3-D with channel dimension; builds on array slicing from DH1</td>
-<td><code>img[:, :, 0]</code>, <code>img[:, :, 1]</code>, <code>img[:, :, 2]</code></td>
-<td>Work with 3-channel color images where each pixel has R, G, B intensity values</td>
-<td>Forgetting third dimension is channels not depth; mixing up channel order (0=red, 1=green, 2=blue)</td>
+<td>Inspecting learned parameters</td>
+<td>Makes the fitted model interpretable</td>
+<td><code>.weights_</code>, <code>.means_</code>, <code>.covariances_</code></td>
+<td>Examine what the model has learned</td>
+<td>Assuming component index order has meaning</td>
 </tr>
 <tr>
-<td><strong>Image Histograms</strong></td>
-<td>Applies DH1 histogram plotting to pixel intensity distributions</td>
-<td><code>ax.hist(img.flatten(), bins=50)</code></td>
-<td>Visualize distribution of pixel intensities to inform thresholding decisions</td>
-<td>Not using enough bins; forgetting to flatten multi-dimensional arrays before plotting</td>
+<td>Density evaluation in state space</td>
+<td>Links models to probability landscapes</td>
+<td><code>.score_samples(...)</code>, <code>meshgrid(...)</code></td>
+<td>Evaluate likelihood across feature space</td>
+<td>Confusing log-likelihood with probability</td>
 </tr>
 <tr>
-<td><strong>Boolean Masks</strong></td>
-<td>Builds on DH1 conditional filtering; applies logical operations to arrays</td>
-<td><code>mask = img < threshold</code>, <code>mask = img > threshold</code></td>
-<td>Create binary True/False arrays based on intensity thresholds</td>
-<td>Confusing direction of inequality; not understanding True=1, False=0 in operations</td>
+<td>Predicting cluster labels</td>
+<td>Converts fitted models into assignments</td>
+<td><code>.predict()</code>, <code>.fit_predict()</code></td>
+<td>Assign samples to mixture components</td>
+<td>Assuming labels have semantic meaning</td>
 </tr>
 <tr>
-<td><strong>Applying Masks</strong></td>
-<td>Extends DH1 filtering operations; element-wise multiplication from NumPy</td>
-<td><code>img_masked = img * mask</code></td>
-<td>Filter images to isolate regions of interest based on intensity criteria</td>
-<td>Forgetting multiplication zeros out False regions; not preserving original intensity values</td>
+<td>Probabilistic membership</td>
+<td>Highlights overlap and uncertainty</td>
+<td><code>.predict_proba()</code></td>
+<td>Examine soft cluster membership</td>
+<td>Treating probabilities as hard decisions</td>
 </tr>
 <tr>
-<td><strong>Mask Inversion</strong></td>
-<td>Logical NOT operation on boolean arrays</td>
-<td><code>~mask</code>, <code>img[~mask, :] = background</code></td>
-<td>Flip boolean mask values (True↔False) to select opposite regions</td>
-<td>Forgetting ~ inverts the selection; not understanding when to invert for assignment operations</td>
+<td>Applying GMMs to real datasets</td>
+<td>Transfers methods to empirical data</td>
+<td><code>read_csv(...)</code>, <code>.to_numpy()</code></td>
+<td>Cluster real measurements</td>
+<td>Ignoring feature scaling and units</td>
 </tr>
 <tr>
-<td><strong>Large Image Handling</strong></td>
-<td>Memory management considerations; extends DH1 efficiency concepts</td>
-<td><code>Image.MAX_IMAGE_PIXELS</code>, <code>.resize()</code>, <code>extract_patches_2d()</code></td>
-<td>Process high-resolution images that exceed memory limits</td>
-<td>Running out of memory; not recognizing decompression bomb warnings</td>
+<td>Images as numerical arrays</td>
+<td>Builds on NumPy array concepts</td>
+<td><code>imread()</code>, <code>nib.load()</code>, <code>.get_fdata()</code></td>
+<td>Treat images as data suitable for modelling</td>
+<td>Confusing spatial dimensions and features</td>
 </tr>
 <tr>
-<td><strong>PIL/Pillow Library</strong></td>
-<td>Alternative to matplotlib for image I/O; specialized image processing tools</td>
-<td><code>Image.open(path)</code>, <code>img.resize((w, h))</code>, <code>array(img_pil)</code></td>
-<td>Load, resize, and manipulate images with PIL before converting to NumPy</td>
-<td>Confusing PIL Image objects with NumPy arrays; forgetting to convert back to array</td>
+<td>Intensity-based image segmentation</td>
+<td>Applies clustering to image data</td>
+<td><code>reshape(-1, 1)</code>, <code>.fit_predict()</code></td>
+<td>Segment images based on intensity values</td>
+<td>Forgetting required reshaping for single features</td>
 </tr>
 <tr>
-<td><strong>Remote Image Loading</strong></td>
-<td>Combines URL handling with image I/O; extends file operations from PF4</td>
-<td><code>urlopen(url)</code>, <code>BytesIO()</code>, <code>imread(remote_image)</code></td>
-<td>Load images from remote URLs instead of local files</td>
-<td>SSL certificate issues; slow downloads; not handling network errors</td>
+<td>Mapping segmentation back to space</td>
+<td>Restores spatial structure</td>
+<td>boolean masks, array assignment</td>
+<td>Visualise clustered voxels in image space</td>
+<td>Forgetting only masked voxels receive labels</td>
 </tr>
 <tr>
-<td><strong>Voxels</strong></td>
-<td>3-D extension of pixels; volume elements in 3-D images</td>
-<td><code>img_data[x, y, z]</code>, <code>img_data.shape</code> (returns 3-D dimensions)</td>
-<td>Access and manipulate 3-D volume elements in medical images</td>
-<td>Confusing voxel coordinates across different anatomical planes</td>
-</tr>
-<tr>
-<td><strong>3-D Image Slicing</strong></td>
-<td>Applies DH1 slicing to three dimensions; visualize planes through volumes</td>
-<td><code>img[:, :, z]</code> (transverse), <code>img[:, y, :]</code> (coronal), <code>img[x, :, :]</code> (sagittal)</td>
-<td>Extract 2-D slices from 3-D volumes across different anatomical planes</td>
-<td>Forgetting to use <code>.T</code> for proper orientation; confusing which dimension to fix</td>
+<td>Multi-modal image clustering</td>
+<td>Extends clustering to multiple contrasts</td>
+<td><code>stack(..., axis=1)</code></td>
+<td>Segment images using multiple modalities</td>
+<td>Mixing up feature and spatial axes</td>
 </tr>
 </tbody>
 </table>
