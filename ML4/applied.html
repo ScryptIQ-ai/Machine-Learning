@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- MathJax for mathematical notation -->
+    <script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$']],
+            displayMath: [['$$', '$$']],
+            processEscapes: true
+        },
+        svg: {
+            fontCache: 'global'
+        }
+    };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    
+    <!-- Pyodide and CodeMirror -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/pastel-on-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="../assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../assets/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="../assets/android-chrome-512x512.png">
+    
+    <!-- Core Stylesheets -->
+    <link rel="stylesheet" href=../assets/colours.css>
+    <link rel="stylesheet" href="../assets/shared-styles.css">
+    <link rel="stylesheet" href="../assets/nav-bar.css">
+    <link rel="stylesheet" href="../assets/module_card.css">
+    <link rel="stylesheet" href="../assets/learning_outcomes.css">
+    <link rel="stylesheet" href="../assets/learning_lists.css">
+    <link rel="stylesheet" href="../assets/box_styles.css">
+    <link rel="stylesheet" href="../assets/code_styles.css">
+
+    <!-- Meta Tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L2D - ML4 - Exploring PCA</title>
+    
+    <!-- File URLs for this lesson -->
+    <script>window.LESSON_FILES = []; window.LESSON_PACKAGES = [];</script>
+        
+</head>
+<body>
+    
+    <!-- Sidebar Navigation -->
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <a href="../homepage.html" style="text-decoration: none; display: inline-block;">
+                <img src="../assets/l2d-brain-logo.png" alt="scryptIQ Logo" class="sidebar-logo">
+            </a>
+        </div>
+
+        <h3>Content</h3>
+        <ul>
+            <li><a href="./introduction.html" class="">Introduction</a></li><li><a href="./dimensionality.html">Dimensionality reduction</a></li>
+            <li>
+                <div class="nav-toggle active" data-target="expandable-section-2">
+                    Exploring PCA
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <ul class="nested-nav expanded" id="expandable-section-2"><li><a href="#introduction">Introduction</a></li><li><a href="#1-d-descriptions-with-pca">1-D descriptions with PCA</a></li><li><a href="#2-d-descriptions-with-pca">2-D descriptions with PCA</a></li><li><a href="#gene-expression-data">Gene expression data</a></li><li><a href="#visualisation">Visualisation</a></li><li><a href="#beyond-dimensionality-reduction">Beyond dimensionality reduction</a></li><li><a href="#resources">Resources</a></li><li><a href="#summary">Summary</a></li>
+                </ul>
+            </li><li><a href="./assignment.html">Assignment</a></li><li><a href="./feedback.html">Feedback</a></li>
+        </ul>
+
+        <h3 class="collapsible-header collapsed">
+            Resources
+            <span class="collapse-icon">►</span>
+        </h3>
+        <div class="collapsible-content collapsed">
+            <ul>
+                <li><a href="./glossary.html">Glossary</a></li><li><a href="./downloads.html">Downloads</a></li><li><a href="../HB/introduction.html">Handbook</a></li>
+            </ul>
+        </div>
+
+        <h3 class="collapsible-header collapsed">
+            Previous Modules
+            <span class="collapse-icon">►</span>
+        </h3>
+        <div class="collapsible-content collapsed">
+            <ul>
+            <li><a href="../ML1/introduction.html">ML1</a></li>
+            <li><a href="../ML2/introduction.html">ML2</a></li>
+            <li><a href="../ML3/introduction.html">ML3</a></li>
+        </ul>
+        </div>
+
+        <h3>
+            <li><a href="./report-issue.html">Report an Issue</a></li>
+        </h3>
+    </div>
+    
+    <!-- Sidebar Toggle Button -->
+    <button id="sidebar-toggle" class="sidebar-toggle">❮</button>
+    
+    <!-- Main Content Area -->
+    <div id="main-content" class="main-content">
+        <!-- Top Navigation Bar -->
+        <div class="top-navbar">
+            <h1 class="page-title">Machine Learning 4</h1>
+            <div class="nav-actions">
+                <a href="../homepage.html" class="text-button" title="Materials homepage">
+                    Homepage
+                </a>
+                <a href="https://learntodiscover.ai/my-cohorts/" class="text-button" title="Find out more about us">
+                    Learn to Discover
+                </a>
+            </div>
+        </div>
+
+        
+            <div class="module-card" id="introduction">
+                <div class="module-header">
+                    Exploring PCA <span class="module-tag">ML4</span>
+                </div>
+                <div class="module-body">
+                    <h3>Learning Objectives</h3>
+                    <div class="learning-outcomes">
+                        <div class="outcome-item">
+                    <span class="outcome-number">1</span>
+                    <span class="outcome-text">Explain PCA as a geometric projection onto directions of maximal variance</span>
+                </div>
+<div class="outcome-item">
+                    <span class="outcome-number">2</span>
+                    <span class="outcome-text">Apply PCA to obtain one-dimensional and two-dimensional representations of data</span>
+                </div>
+<div class="outcome-item">
+                    <span class="outcome-number">3</span>
+                    <span class="outcome-text">Interpret principal components in terms of variance captured and orientation in feature space</span>
+                </div>
+<div class="outcome-item">
+                    <span class="outcome-number">4</span>
+                    <span class="outcome-text">Use explained variance ratios to assess information retained after dimensionality reduction</span>
+                </div>
+<div class="outcome-item">
+                    <span class="outcome-number">5</span>
+                    <span class="outcome-text">Select an appropriate number of principal components using variance-based heuristics</span>
+                </div>
+<div class="outcome-item">
+                    <span class="outcome-number">6</span>
+                    <span class="outcome-text">Apply PCA to high-dimensional biological data such as gene expression datasets</span>
+                </div>
+<div class="outcome-item">
+                    <span class="outcome-number">7</span>
+                    <span class="outcome-text">Recognise the limitations of PCA, including its linearity and sensitivity to feature scaling</span>
+                </div>
+                    </div>
+                    <h3>Introduction</h3>
+                    <p>In this section of the lesson, we&#x27;ll apply Principal Component Analysis (PCA) to some examples. As a <em>linear</em> dimensionality reduction technique, PCA represents data in terms of new <em>orthogonal</em> directions which capture maximal variance. Rather than describing samples using the original feature axes, PCA <em>re-expresses</em> the data as <em>projections</em> onto these principal directions, allowing dominant patterns and structure to be identified, more clearly.<br><br>By examining how variance is distributed across components, PCA provides both a compact representation of high-dimensional data and a quantitative basis for deciding how many dimensions are required to retain meaningful information.</p>
+                </div>
+            </div>
+            
+            <div class="module-card" id="1-d-descriptions-with-pca">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>1-D descriptions with PCA</h3>
+                        <p>Let us now use dimensionality reduction <code>PCA</code> to find the direction that captures maximal variance. For an n-dimensional dataset, PCA finds a set of <em>n</em> new features, ranked by the variance along each feature. See the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html">scikit-learn documentation</a> for information.<br><br>To get the best 1-D representation of data, we instantiate the class with one component (<em>n_components</em> = 1) to be returned, and transform the data to the feature space of that component.</p>
+        <div class="code-area">
+            <div class="code-collapse-header" onclick="toggleCodeCollapse('code-cell-9')">
+                <span class="code-collapse-icon">▶</span>
+                <span class="code-collapse-label">Show code</span>
+            </div>
+            <div class="code-container code-fixed code-collapsed" id="code-cell-9-container">
+                <textarea id="code-cell-9">from numpy import reshape, append, mean, pi, linspace, var, array, cumsum, arange
+from numpy.random import seed, multivariate_normal, binomial
+from numpy.linalg import norm
+
+from math import cos, sin, atan2
+from matplotlib.pyplot import subplots, xlabel, ylabel, scatter, title
+from matplotlib.pyplot import figure, plot, xticks, xlabel, ylabel, suptitle, show
+
+import glob
+from pathlib import Path
+from pandas import read_csv, DataFrame
+import csv
+
+RND_SEED = 7890
+seed(RND_SEED)
+
+# Set up 2D multivariate Gaussians
+means = [20, 20]
+
+cov_mat = [[1, .85], [.85, 1.5]] # 2x2 covariance matrix must be symmetric and positive-semidefinite(&gt;=0)
+
+# Generate data
+nSamples = 300
+
+data = multivariate_normal(means, cov_mat, nSamples)
+
+zdata = data - mean(data, axis=0)</textarea>
+            </div>
+            <div id="code-cell-9-output" class="output"></div>
+        </div>
+        
+        <div class="code-area">
+            <div class="code-container code-editor">
+                <textarea id="code-cell-10">from sklearn.decomposition import PCA
+
+# Initialize the PCA model
+pcaResults = PCA(n_components=1, whiten=False) # specify no. of components, and whether to standardize
+
+# Fit to data
+pcaResults = pcaResults.fit(data)
+
+# Transform the data, using our learned PCA representation
+dim1_data = pcaResults.transform(data)
+
+print( &quot;Size of new dataset: &quot;, dim1_data.shape )</textarea>
+            </div>
+            <button id="run-code-cell-10" class="run-button">Run Code</button>
+            <div id="code-cell-10-output" class="output"></div>
+        </div>
+        <p>From the fitted model &#x27;pcaResults&#x27; we can now get:<br><ul class="nested-list"><li>The fractional variance using <code>explained_variance_ratio_</code>. It tells us what fraction of the total variance is retained by the reduced 1-D description of the data.</li><br><li>The direction (angle) of this first PC as calculate from the arcus tangens <code>atan2</code> of the vector. You can compare it directly to the angle in the above plot.</li></ul></p>
+        <div class="code-area">
+            <div class="code-container code-editor">
+                <textarea id="code-cell-11"># How much variance was captured compared to original data?
+print(&quot;Fractional variance captured by first PC: {:1.4f}.&quot;.format(pcaResults.explained_variance_ratio_[0]))
+
+vec1 = pcaResults.components_[0,:]
+print(&quot;Direction of PC1 is at angle = {:1.2f} radians&quot;.format(atan2(vec1[1],vec1[0])))
+</textarea>
+            </div>
+            <button id="run-code-cell-11" class="run-button">Run Code</button>
+            <div id="code-cell-11-output" class="output"></div>
+        </div>
+        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="1-d-descriptions-with-pca">
+                <div class="module-body">
+                    <div class="module-section">
+                        
+        <div class="info-box practice-exercise-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                PRACTICE EXERCISE
+            </div>
+            <div class="box-content">
+                <p><strong>1.</strong></p>
+                <p>Change the covariance of the synthetic data, and repeat the above steps.<br>Try to infer the relationship between the shape of the scatter, the strength of correlation between the two dimensions, and the variance captured by the first PC.</p>
+            </div>
+        </div>
+        
+        <div class="code-area">
+            <div class="code-container code-editor">
+                <textarea id="code-cell-12"></textarea>
+            </div>
+            <button id="run-code-cell-12" class="run-button">Run Code</button>
+            <div id="code-cell-12-output" class="output"></div>
+        </div>
+        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="2-d-descriptions-with-pca">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>2-D descriptions with PCA</h3>
+                        <p>Our dataset has two features. We can thus obtain two principal components. The two components must be orthogonal to each other (form a right angle). Let us get the corresponding vectors and plot them on the scatterplot.</p>
+        <div class="code-area">
+            <div class="code-container code-editor">
+                <textarea id="code-cell-13"># Initialize the PCA model
+pcaResults = PCA(n_components=2, whiten=False) # specify no. of components, and whether to standardize
+
+# Fit to data
+pcaResults = pcaResults.fit(data)
+
+# Transform the data, using our learned PCA representation
+dim1_data = pcaResults.transform(data)
+
+print( &quot;Size of new dataset: &quot;, dim1_data.shape )
+
+print(pcaResults.components_)
+
+vec1 = pcaResults.components_[0,:]
+vec2 = pcaResults.components_[1,:]
+
+
+fig, ax = subplots(figsize=(6, 6))
+
+# Plot data and the feature direction
+ax.scatter(zdata[:, 0], zdata[:, 1]);
+ax.quiver([0], [0], vec1[0], vec1[1], scale=3, color=&#x27;r&#x27;);
+ax.quiver([0], [0], vec2[0], vec2[1], scale=3, color=&#x27;r&#x27;);
+
+ax.set_title(&#x27;Sample Data&#x27;, fontsize=16, fontweight=&#x27;bold&#x27;)
+ax.set_xlabel(&#x27;Dim 1&#x27;, fontsize=14); ax.set_xlim([-4,4]);
+ax.set_ylabel(&#x27;Dim 2&#x27;, fontsize=14); ax.set_ylim([-4,4]);
+
+show()</textarea>
+            </div>
+            <button id="run-code-cell-13" class="run-button">Run Code</button>
+            <div id="code-cell-13-output" class="output"></div>
+        </div>
+        <p>The red arrows show the new coordinate system, defined by the principal components. It also shows that the more correlated the data are, the less information we lose by reducing the data representation using PCA.</p><p>IMPORTANT BOX<br><br>When reading about PCA you will come across the term <strong>Singular Value Decomposition (SVD)</strong>. As mentioned in the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html#sklearn.decomposition.PCA">scikit-learn documentation for PCA</a>, when you apply <code>PCA</code> the algorithm in the background uses SVD to return the results. The difference between the two is technical but SVD is the more general method. Wikipedia has as <a href="https://en.wikipedia.org/wiki/Principal_component_analysis#Singular_value_decomposition">mathematical introduction to PCA</a> which also discusses <a href="https://en.wikipedia.org/wiki/Principal_component_analysis#Singular_value_decomposition">the relationship to SVD</a>.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="gene-expression-data">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Gene expression data</h3>
+                        <p>Now, we will use PCA to find a few features that capture most of the variability in the gene expression dataset. We arbitrarily start with 50 components assuming that this will include the important features.</p>
+        <div class="code-area">
+            <div class="code-container code-editor">
+                <textarea id="code-cell-14"># Load all data
+nGenes = 1000 # keep only these genes for now
+
+filectr=0
+
+datapath = Path(&quot;./data/childhood_data&quot;)    #/relative/path/to/folder/with/data
+
+for txt in datapath.glob(&quot;*.txt&quot;):
+    b=read_csv(txt, sep=&#x27;\t&#x27;, usecols=[1])
+    b=reshape(b.values, (1,54675)) # each file is 1 observation sample i.e. 1 row.
+    if filectr==0:
+        coln =  read_csv(txt, sep=&#x27;\t&#x27;, usecols=[0])
+        a = b
+    else:
+        a=append( a, b, axis=0)
+    filectr+=1
+
+# convert 2D array to DataFrame
+geneData = DataFrame( data=a[:,range(nGenes)]- mean(a[:,range(nGenes)], axis=0), columns = coln.values[range(nGenes)])
+</textarea>
+            </div>
+            <button id="run-code-cell-14" class="run-button">Run Code</button>
+            <div id="code-cell-14-output" class="output"></div>
+        </div>
+        
+        <div class="code-area">
+            <div class="code-container code-editor">
+                <textarea id="code-cell-15">nComp = 50 # Number of PCs to be returned
+#trainIndx = binomial(1,0.9,size=filectr)
+
+GenePCA = PCA(n_components=nComp, whiten=True)
+GenePCA = GenePCA.fit(geneData) #.values[trainIndx==1,:]</textarea>
+            </div>
+            <button id="run-code-cell-15" class="run-button">Run Code</button>
+            <div id="code-cell-15-output" class="output"></div>
+        </div>
+        <p>How many features should we retain? To investigate this question, we plot the total (cumulative) variance for retaining the top <em>k</em> modes. The more we use, the higher the cumulative variance.<br></p>
+        <div class="code-area">
+            <div class="code-container code-editor">
+                <textarea id="code-cell-16">cumExpVar = cumsum(GenePCA.explained_variance_ratio_)
+fig = figure(figsize=(5, 5))
+im  = plot( range(nComp), cumExpVar )
+xticks(arange(0,nComp,5));
+xlabel( &#x27;Number of PCs&#x27;, fontsize=14);
+ylabel(&#x27;Cumulative explained variance&#x27;, fontsize=14);
+
+show()</textarea>
+            </div>
+            <button id="run-code-cell-16" class="run-button">Run Code</button>
+            <div id="code-cell-16-output" class="output"></div>
+        </div>
+        <p>A common heuristic for choosing the number of components is by defining a set threshold for the total explained variance.<br><br>Thresholds commonly vary between 0.8-0.9, depending on the structure of the PCs, e.g. depending on whether there are a few top PCs or many small PCs, but also depending on the expected noise in data, and on the desirable accuracy of the reduced dataset. While a dimensionality reduction is convenient, it always loses some information.<br><br>As an example, we can check how many PCs we need to retain 99 % of the variance.</p>
+        <div class="code-area">
+            <div class="code-container code-editor">
+                <textarea id="code-cell-17">threshold = 0.99
+
+# index of first PC whose cumulative variance reaches threshold
+index = [i for i, v in enumerate(cumExpVar) if v &gt;= threshold][0]
+keepPC = index + 1  # number of PCs to keep
+
+print(
+    &#x27;Number of features needed to explain {:1.2f} fraction of total variance is {:2d}. &#x27;
+    .format(threshold, keepPC)
+)</textarea>
+            </div>
+            <button id="run-code-cell-17" class="run-button">Run Code</button>
+            <div id="code-cell-17-output" class="output"></div>
+        </div>
+        <p>There are many alternative methods for estimating the number of features. These include:<br><ul class="nested-list"><li>Plot explained variance of individual PCs and cut off when there is a sharp drop/saturation in the values.</li><br><li>Cross-validation - Find number of PCs that maximize explained variance on held-out data (using a bi-cross validation scheme).</li><br><li>Visual inspection or interpretable PCs</li></ul></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="visualisation">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Visualisation</h3>
+                        <p>Now that we have selected the number of features to be used, we can see what the data along those features looks like, and visualise the reduced dataset.</p>
+        <div class="code-area">
+            <div class="code-container code-editor">
+                <textarea id="code-cell-18">newGeneData = GenePCA.transform(geneData)[:, :keepPC]
+
+fig, ax = subplots(ncols=3, nrows=2, figsize=(18, 8))
+suptitle(&#x27;Data in new Feature space&#x27;, fontsize=20)
+
+ax[0, 0].scatter(newGeneData[:,0], newGeneData[:,1], c=range(filectr), cmap=&#x27;summer&#x27;);
+ax[0, 0].set_xlabel(&#x27;PC1&#x27;, fontsize=14); ax[0, 0].set_xlim([-2,2]);
+ax[0, 0].set_ylabel(&#x27;PC2&#x27;, fontsize=14); ax[0, 0].set_ylim([-2,2]);
+
+
+ax[0, 1].scatter(newGeneData[:,0], newGeneData[:,2], c=range(filectr), cmap=&#x27;summer&#x27;);
+ax[0, 1].set_xlabel(&#x27;PC1&#x27;, fontsize=14); ax[0, 1].set_xlim([-2,2]);
+ax[0, 1].set_ylabel(&#x27;PC3&#x27;, fontsize=14); ax[0, 1].set_ylim([-2,2]);
+
+
+ax[0, 2].scatter(newGeneData[:,0], newGeneData[:,3], c=range(filectr), cmap=&#x27;summer&#x27;);
+ax[0, 2].set_xlabel(&#x27;PC1&#x27;, fontsize=14); ax[0, 2].set_xlim([-2,2]);
+ax[0, 2].set_ylabel(&#x27;PC4&#x27;, fontsize=14); ax[0, 2].set_ylim([-2,2]);
+
+
+
+ax[1, 0].scatter(newGeneData[:,1], newGeneData[:,2], c=range(filectr), cmap=&#x27;summer&#x27;);
+ax[1, 0].set_xlabel(&#x27;PC2&#x27;, fontsize=14); ax[1, 0].set_xlim([-2,2]);
+ax[1, 0].set_ylabel(&#x27;PC3&#x27;, fontsize=14); ax[1, 0].set_ylim([-2,2]);
+
+
+ax[1, 1].scatter(newGeneData[:,1], newGeneData[:,3], c=range(filectr), cmap=&#x27;summer&#x27;);
+ax[1, 1].set_xlabel(&#x27;PC2&#x27;, fontsize=14); ax[1, 1].set_xlim([-2,2]);
+ax[1, 1].set_ylabel(&#x27;PC4&#x27;, fontsize=14); ax[1, 1].set_ylim([-2,2]);
+
+
+ax[1, 2].scatter(newGeneData[:,3], newGeneData[:,2], c=range(filectr), cmap=&#x27;summer&#x27;);
+ax[1, 2].set_xlabel(&#x27;PC4&#x27;, fontsize=14); ax[1, 2].set_xlim([-2,2]);
+ax[1, 2].set_ylabel(&#x27;PC3&#x27;, fontsize=14); ax[1, 2].set_ylim([-2,2]);
+
+show()</textarea>
+            </div>
+            <button id="run-code-cell-18" class="run-button">Run Code</button>
+            <div id="code-cell-18-output" class="output"></div>
+        </div>
+        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="beyond-dimensionality-reduction">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Beyond dimensionality reduction</h3>
+                        <p>After reducing the dataset from hundreds or thousands of genes to fewer features (PCs), it can be used:<br><ul class="nested-list"><li>To find groups of genes that seem to be co-regulated (using clustering).</li><br><li>To build classifiers to predict the likelihood of juvenile or late-onset rheumatoid disease. For example, one feature can be highly variable in the sampled population and therefore has high explained variance, but it may not be predictive for the current objective of predicting disease phenotype (e.g. eye pigmentation genes).</li><br><li>To find what combination of genes the top features correspond to.</li><br><li>To suggest what individual genes are most variable.</li><br><li>To discover co-expression patterns of multiple genes.</li></ul></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="beyond-dimensionality-reduction">
+                <div class="module-body">
+                    <div class="module-section">
+                        
+        <div class="info-box practice-exercise-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                PRACTICE EXERCISE
+            </div>
+            <div class="box-content">
+                <p><strong>2.</strong></p>
+                <p><ol class="nested-list"><li>The dataset contains two types of samples, expression in neutrophils and expression in peripheral blood mononuclear cells (PBMC). Download the <a href="https://www.ebi.ac.uk/arrayexpress/experiments/E-GEOD-11083/samples/">sample-data table</a> to get the category of each sample. Make a scatter plot of two (original) features and set the colour of the scatter based on the sample&#x27;s origin. Do a PCA, scatter the top scoring components and colour the samples in the same way.  Do the top PCs capture gene expression differences in the two types of cells?</li><br><li>The dataset similarly contains samples from individuals with differing phenotypes - healthy, as well as 2 different disease characteristics. Similar to the previous exercise, colour the scatter based on the disease phenotypes. Do the top PCs capture variability in gene expression for different phenotypes?</li></ol></p>
+            </div>
+        </div>
+        
+        <div class="code-area">
+            <div class="code-container code-editor">
+                <textarea id="code-cell-19"></textarea>
+            </div>
+            <button id="run-code-cell-19" class="run-button">Run Code</button>
+            <div id="code-cell-19-output" class="output"></div>
+        </div>
+        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="when-does-pca-fail">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>When does PCA fail?</h3>
+                        <p>Although PCA is the first and simplest method of exploring high-dimensional datasets, there are important caveats to keep in mind:<br><ol class="nested-list"><li><em>PCA is a linear method</em></li></ol>Nonlinear patterns of co-expression will be seemingly broken up into many features. Thus, the ability to find whether genes are co-regulated may be reduced if the effects are nonlinear.<br><ol class="nested-list"><li><em>PCA depends on scaling of individual measurements.</em></li></ol>As PCA measures variance along different directions, changing the scale of one variable (for example from cm to mm, or fold-change to actual levels) may drastically change the dominant &quot;features&quot; extracted.<br><br>The lesson on clustering of images with Gaussian mixture models contained instructions to scale data. You can explore the original dataset of this lesson, to investigate how scaling of variables impacts the results.<br><ol class="nested-list"><li><em>Estimating number of features is heuristic, and depends on the purpose.</em></li></ol>The definition of what is the &#x27;relevant&#x27; number of features can depend on:<br><ul class="nested-list"><li>the signal-to-noise ratio in data. For example, noisier or smaller datasets make it harder to accurately estimate smaller PCs. In such cases, a more conservative threshold should be used.</li><br><li>the classifier or regression performance following the dimensionality reduction.</li></ul></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="resources">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Resources</h3>
+                        <p><ul class="nested-list"><li><a href="http://sebastianraschka.com/Articles/2015_pca_in_3_steps.html">Detailed tutorial on PCA</a></li><br><li><a href="https://towardsdatascience.com/dimension-reduction-techniques-with-python-f36ca7009e5c">Other methods for dimensionality reduction</a>:</li><br><li><a href="https://scikit-learn.org/stable/modules/decomposition.html">Matrix factorization methods</a></li><br><li><a href="https://scikit-learn.org/stable/modules/manifold.html">Manifold learning or topological methods</a></li><br><li><a href="https://scikit-learn.org/stable/modules/unsupervised_reduction.html">Example pipelines with Scikit-learn</a></li></ul>Dataset from:<br><br>Frank MB, Wang S, Aggarwal A, et al. <strong>Disease-associated pathophysiologic structures in pediatric rheumatic diseases show characteristics of scale-free networks seen in physiologic systems: implications for pathogenesis and treatment.</strong> _BMC Med Genomics. 2009;2:9._  Published 2009 Feb 23. doi:10.1186/1755-8794-2-9<br><br>Download data from: https://www.ebi.ac.uk/arrayexpress/experiments/E-GEOD-11083/<br></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="summary">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Summary</h3>
+                        <p>We introduced and looked at dimensionality reduction as a practical and conceptual response to the challenges posed by high-dimensional data. We observed how data can be re-expressed as projections onto orthogonal directions that capture maximal variance. By examining variance along different directions, PCA provides a principled way to identify dominant structure, reduce redundancy between correlated features, and construct lower-dimensional representations of complex datasets. The lessons demonstrate how explained variance can be used to guide the choice of dimensionality, while also highlighting the assumptions and limitations of PCA, including its linear nature and sensitivity to feature scaling. Together, these ideas establish PCA as a foundational tool for exploring, visualising, and simplifying high-dimensional biological data.</p>
+                    </div>
+                </div>
+            </div>
+            
+        
+        <div class="page-navigation">
+            <a href="./dimensionality.html" class="nav-button prev">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                </svg>
+                Previous
+            </a>
+            <a href="./assignment.html" class="nav-button next">
+                Next
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                </svg>
+            </a></div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <div>© All materials are copyright scryptIQ 2025</div>
+            <div>Powered by Pyodide</div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="../assets/main.js"></script>
+    
+    <!-- Pyodide Initialisation Script -->
+    <script>
+
+// Generalisable Pyodide Initialisation Script
+// Variables and state build up naturally as code blocks execute in order
+
+async function main() {
+    // Show loading message for all output elements
+    document.querySelectorAll(".output").forEach(el => {
+        el.textContent = "Loading Pyodide...";
+        el.classList.add("loading-message");
+    });
+    
+    try {
+        // Load Pyodide
+        console.log("Loading Pyodide...");
+        const pyodideStartTime = performance.now();
+        let pyodide = await loadPyodide();
+        const pyodideLoadTime = performance.now() - pyodideStartTime;
+        console.log(`Pyodide loaded in ${pyodideLoadTime.toFixed(2)}ms`);
+        
+        // Load required packages only if specified
+        const lessonPackages = window.LESSON_PACKAGES || [];
+        
+        if (lessonPackages.length > 0) {
+            console.log("Loading required Python packages...");
+            const packagesStartTime = performance.now();
+            
+            // Separate built-in packages from PyPI packages
+            const builtInPackages = lessonPackages.filter(pkg => 
+                ['numpy', 'scipy', 'matplotlib', 'pandas', 'scikit-learn', 'pillow', 'regex'].includes(pkg)
+            );
+            
+            const micropipPackages = lessonPackages.filter(pkg => !builtInPackages.includes(pkg));
+            
+            // Load built-in packages (fast)
+            if (builtInPackages.length > 0) {
+                await pyodide.loadPackage(builtInPackages);
+                console.log(`Loaded built-in packages: ${builtInPackages.join(', ')}`);
+            }
+            
+            // Install PyPI packages (slower)
+            if (micropipPackages.length > 0) {
+                await pyodide.loadPackage(['micropip']);
+                const micropip = pyodide.pyimport('micropip');
+                await micropip.install(micropipPackages);
+                console.log(`Installed PyPI packages: ${micropipPackages.join(', ')}`);
+            }
+            
+            const packagesLoadTime = performance.now() - packagesStartTime;
+            console.log(`Packages loaded in ${packagesLoadTime.toFixed(2)}ms`);
+            console.log(`Total initialisation time: ${(pyodideLoadTime + packagesLoadTime).toFixed(2)}ms`);
+        } else {
+            console.log("No packages to load for this lesson");
+            console.log(`Total initialisation time: ${pyodideLoadTime.toFixed(2)}ms`);
+        }
+
+        // Only set up basic Python environment - no pre-loaded variables
+        await pyodide.runPythonAsync(`
+            import sys
+            from io import StringIO
+        `);
+
+        // Only set up matplotlib if it's in the loaded packages
+        if (lessonPackages.includes('matplotlib')) {
+            await pyodide.runPythonAsync(`
+                # Set up matplotlib for web rendering
+                import matplotlib
+                matplotlib.use('AGG')
+                import matplotlib.pyplot as plt
+                import io
+                import base64
+                
+                def capture_matplotlib():
+                    """Capture current matplotlib figure as HTML img tag"""
+                    buf = io.BytesIO()
+                    plt.savefig(buf, format='png', bbox_inches='tight', dpi=100)
+                    buf.seek(0)
+                    img_base64 = base64.b64encode(buf.read()).decode('utf-8')
+                    plt.close()
+                    return f'<img src="data:image/png;base64,{img_base64}" style="max-width: 100%; height: auto;" />'
+            `);
+            console.log('Matplotlib capture function set up');
+        }
+        
+        console.log("Pyodide loaded successfully");
+        
+        // Load remote files if URLs are specified
+        const lessonFiles = window.LESSON_FILES || [];
+        
+        if (lessonFiles.length > 0) {
+            try {
+                console.log(`Checking for ${lessonFiles.length} remote file(s) to load...`);
+                
+                // Build Python code to load all files dynamically
+                let pythonCode = `
+from pyodide.http import pyfetch
+import os
+
+# Create data directory if it doesn't exist
+os.makedirs('./data', exist_ok=True)
+`;
+                
+                // Add loading code for each file
+                for (const file of lessonFiles) {
+                    if (file.is_binary) {
+                        // Binary files (images, etc.) - use bytes
+                        pythonCode += `
+# Load ${file.filename} (binary)
+try:
+    response = await pyfetch("${file.url}")
+    content = await response.bytes()
+    with open('./data/${file.filename}', 'wb') as f:
+        f.write(bytes(content))
+    print("Loaded: ${file.filename}")
+except Exception as e:
+    print(f"Could not load ${file.filename}: {e}")
+`;
+                    } else {
+                        // Text files (CSV, etc.) - use string
+                        pythonCode += `
+# Load ${file.filename} (text)
+try:
+    response = await pyfetch("${file.url}")
+    content = await response.string()
+    with open('./data/${file.filename}', 'w') as f:
+        f.write(content)
+    print("Loaded: ${file.filename}")
+except Exception as e:
+    print(f"Could not load ${file.filename}: {e}")
+`;
+                    }
+                }
+                
+                await pyodide.runPythonAsync(pythonCode);
+                console.log("Remote files loaded successfully");
+            } catch (error) {
+                console.warn("Error loading remote files (continuing anyway):", error);
+            }
+        } else {
+            console.log("No remote files to load for this lesson");
+        }
+        
+        // Function to execute Python code and capture output
+        async function executePythonCode(code) {
+            try {
+                // Redirect Python stdout to capture print statements
+                await pyodide.runPythonAsync(`
+                    old_stdout = sys.stdout
+                    sys.stdout = mystdout = StringIO()
+                `);
+                
+                // Run the user code
+                const result = await pyodide.runPythonAsync(code);
+                
+                // Get the captured stdout
+                let stdout = await pyodide.runPythonAsync(`
+                    sys.stdout = old_stdout
+                    mystdout.getvalue()
+                `);
+                
+                // Check for matplotlib figures only if matplotlib was loaded
+                const lessonPackages = window.LESSON_PACKAGES || [];
+                if (lessonPackages.includes('matplotlib')) {
+                    const hasFigures = await pyodide.runPythonAsync(`
+                        import matplotlib.pyplot as plt
+                        len(plt.get_fignums()) > 0
+                    `);
+                    
+                    if (hasFigures) {
+                        const figureHtml = await pyodide.runPythonAsync(`capture_matplotlib()`);
+                        if (stdout) stdout += "\n";
+                        stdout += figureHtml;
+                    }
+                }
+                
+                // Combine stdout and result
+                let output = stdout;
+                if (result !== undefined && result !== null && String(result).trim() !== '') {
+                    if (output) output += "\n";
+                    output += String(result);
+                }
+                
+                return { success: true, output: output || "Code executed successfully (no output)" };
+                
+            } catch (error) {
+                return { success: false, output: "Error: " + error.message };
+            }
+        }
+        
+        // Execute all hidden code blocks first (for setup code like imports)
+        const hiddenCodeBlocks = Array.from(document.querySelectorAll('.hidden-code textarea'));
+        console.log(`Found ${hiddenCodeBlocks.length} hidden code blocks`);
+
+        for (const textarea of hiddenCodeBlocks) {
+            const code = textarea.value.trim();
+            if (!code) continue;
+            
+            console.log(`Executing hidden code block: ${textarea.id}`);
+            console.log(`Hidden code content: ${code.substring(0, 100)}...`);
+            const result = await executePythonCode(code);
+            
+            if (!result.success) {
+                console.error(`Error in hidden code block ${textarea.id}:`, result.output);
+            } else {
+                console.log(`Hidden code block ${textarea.id} executed successfully`);
+                console.log(`Result: ${result.output}`);
+            }
+        }
+
+        console.log("All hidden code blocks executed");
+        
+        // Get all fixed code blocks in document order
+        const fixedCodeBlocks = Array.from(document.querySelectorAll('.code-fixed textarea'));
+        
+        // Setup and execute fixed code blocks sequentially
+        for (const textarea of fixedCodeBlocks) {
+            const code = textarea.value.trim();
+            if (!code) continue;
+            
+            // Set up CodeMirror editor (read-only)
+            const editor = CodeMirror.fromTextArea(textarea, {
+                mode: "python",
+                theme: "pastel-on-dark",
+                lineNumbers: true,
+                readOnly: true,
+                viewportMargin: Infinity
+            });
+            
+            // Find corresponding output element
+            const outputId = textarea.id + '-output';
+            const outputElement = document.getElementById(outputId);
+            
+            if (outputElement) {
+                outputElement.textContent = "Running code...";
+                outputElement.classList.add("loading-message");
+                
+                // Execute the code (this maintains state for subsequent blocks)
+                const result = await executePythonCode(code);
+                
+                // Display the output - check if it's HTML
+                const trimmedOutput = result.output.trim();
+                console.log('Output length:', trimmedOutput.length);
+                console.log('Output starts with:', trimmedOutput.substring(0, 100));
+                
+                if (trimmedOutput.includes('<script') && trimmedOutput.includes('Plotly')) {
+                    // It's Plotly HTML output - extract just the body content
+                    console.log('Rendering as Plotly HTML');
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(result.output, 'text/html');
+                    // Clear the output element and append the body content
+                    outputElement.innerHTML = '';
+                    
+                    // Find and load external scripts first (like Plotly CDN)
+                    const externalScripts = Array.from(doc.querySelectorAll('script[src]'));
+                    const inlineScripts = Array.from(doc.querySelectorAll('script:not([src])'));
+                    
+                    // Append non-script content first
+                    Array.from(doc.body.children).forEach(child => {
+                        if (child.tagName !== 'SCRIPT') {
+                            outputElement.appendChild(child.cloneNode(true));
+                        }
+                    });
+                    
+                    // Load external scripts sequentially
+                    const loadScript = (src) => {
+                        return new Promise((resolve, reject) => {
+                            const script = document.createElement('script');
+                            script.src = src;
+                            script.onload = resolve;
+                            script.onerror = reject;
+                            document.head.appendChild(script);
+                        });
+                    };
+                    
+                    // Load all external scripts first
+                    Promise.all(externalScripts.map(s => loadScript(s.src)))
+                        .then(() => {
+                            console.log('External scripts loaded, executing inline scripts');
+                            // Now execute inline scripts
+                            inlineScripts.forEach(oldScript => {
+                                const newScript = document.createElement('script');
+                                newScript.textContent = oldScript.textContent;
+                                outputElement.appendChild(newScript);
+                            });
+                            console.log('Output element after processing:', outputElement.children.length, 'children');
+                        })
+                        .catch(err => {
+                            console.error('Failed to load external scripts:', err);
+                            outputElement.textContent = 'Error loading Plotly: ' + err.message;
+                        });
+                } else if (trimmedOutput.startsWith('<!DOCTYPE') || 
+                           trimmedOutput.startsWith('<html') ||
+                            trimmedOutput.startsWith('<div') ||
+                            trimmedOutput.startsWith('<img')) {
+                    console.log('Rendering as generic HTML');
+                    outputElement.innerHTML = result.output;
+                    console.log('Output element after innerHTML:', outputElement.children.length, 'children');
+                } else {
+                    console.log('Rendering as plain text');
+                    outputElement.textContent = result.output;
+                }
+                outputElement.classList.remove("loading-message");
+                if (result.success) {
+                    outputElement.classList.add("success-message");
+                    outputElement.classList.remove("error-message");
+                } else {
+                    outputElement.classList.add("error-message");
+                    outputElement.classList.remove("success-message");
+                }
+            }
+            
+            // Small delay to show progression
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        
+        // Set flag to indicate all FIXED cells have been executed
+        // This is used by PDF generation to ensure all outputs are ready
+        window.allCellsExecuted = true;
+        console.log("All FIXED cells executed successfully");
+        
+        // Setup all editable code blocks (but don't execute them)
+        document.querySelectorAll('.code-editor textarea').forEach((textarea) => {
+            // Set up CodeMirror editor (editable)
+            const editor = CodeMirror.fromTextArea(textarea, {
+                mode: "python",
+                theme: "pastel-on-dark",
+                lineNumbers: true,
+                viewportMargin: Infinity
+            });
+            
+            // Find corresponding run button and output element
+            const baseId = textarea.id;
+            const runButtonId = 'run-' + baseId;
+            const outputId = baseId + '-output';
+            
+            const runButton = document.getElementById(runButtonId);
+            const outputElement = document.getElementById(outputId);
+            
+            if (runButton && outputElement) {
+                // Set initial state
+                outputElement.textContent = "Ready to run code!";
+                outputElement.classList.remove("loading-message");
+                
+                runButton.addEventListener("click", async () => {
+                    const code = editor.getValue().trim();
+                    if (!code) {
+                        outputElement.textContent = "No code to run";
+                        return;
+                    }
+                    
+                    outputElement.textContent = "Running...";
+                    outputElement.classList.remove("error-message", "success-message");
+                    outputElement.classList.add("loading-message");
+                    
+                    // Execute the code (this also maintains state for future blocks)
+                    const result = await executePythonCode(code);
+                    
+                    // Display the output - check if it's HTML
+                    const trimmedOutput = result.output.trim();
+                    console.log('Output length:', trimmedOutput.length);
+                    console.log('Output starts with:', trimmedOutput.substring(0, 100));
+                    
+                    if (trimmedOutput.includes('<script') && trimmedOutput.includes('Plotly')) {
+                        // It's Plotly HTML output - extract just the body content
+                        console.log('Rendering as Plotly HTML');
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(result.output, 'text/html');
+                        // Clear the output element and append the body content
+                        outputElement.innerHTML = '';
+                        
+                        // Find and load external scripts first (like Plotly CDN)
+                        const externalScripts = Array.from(doc.querySelectorAll('script[src]'));
+                        const inlineScripts = Array.from(doc.querySelectorAll('script:not([src])'));
+                        
+                        // Append non-script content first
+                        Array.from(doc.body.children).forEach(child => {
+                            if (child.tagName !== 'SCRIPT') {
+                                outputElement.appendChild(child.cloneNode(true));
+                            }
+                        });
+                        
+                        // Load external scripts sequentially
+                        const loadScript = (src) => {
+                            return new Promise((resolve, reject) => {
+                                const script = document.createElement('script');
+                                script.src = src;
+                                script.onload = resolve;
+                                script.onerror = reject;
+                                document.head.appendChild(script);
+                            });
+                        };
+                        
+                        // Load all external scripts first
+                        Promise.all(externalScripts.map(s => loadScript(s.src)))
+                            .then(() => {
+                                console.log('External scripts loaded, executing inline scripts');
+                                // Now execute inline scripts
+                                inlineScripts.forEach(oldScript => {
+                                    const newScript = document.createElement('script');
+                                    newScript.textContent = oldScript.textContent;
+                                    outputElement.appendChild(newScript);
+                                });
+                                console.log('Output element after processing:', outputElement.children.length, 'children');
+                            })
+                            .catch(err => {
+                                console.error('Failed to load external scripts:', err);
+                                outputElement.textContent = 'Error loading Plotly: ' + err.message;
+                            });
+                    } else if (trimmedOutput.startsWith('<!DOCTYPE') || 
+                               trimmedOutput.startsWith('<html') ||
+                               trimmedOutput.startsWith('<div') ||
+                               trimmedOutput.startsWith('<img')) {
+                        outputElement.innerHTML = result.output;
+                    } else {
+                        outputElement.textContent = result.output;
+                    }
+                    outputElement.classList.remove("loading-message");
+                    if (result.success) {
+                        outputElement.classList.add("success-message");
+                        outputElement.classList.remove("error-message");
+                    } else {
+                        outputElement.classList.add("error-message");
+                        outputElement.classList.remove("success-message");
+                    }
+                });
+            }
+        });
+        
+        console.log("All code blocks initialised successfully");
+
+        // Set flag to indicate Pyodide is fully ready
+        window.pyodideReady = true;
+        console.log("Pyodide fully ready");
+        
+    } catch (error) {
+        console.error("Failed to initialise Pyodide:", error);
+        document.querySelectorAll(".output").forEach(el => {
+            el.textContent = "Error loading Pyodide: " + error.message;
+            el.classList.remove("loading-message");
+            el.classList.add("error-message");
+        });
+    }
+}
+
+// Start the application when DOM is loaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', main);
+} else {
+    main();
+}
+    </script>
+</body>
+</html>
+    

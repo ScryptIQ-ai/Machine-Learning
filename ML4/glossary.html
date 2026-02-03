@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="../assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../assets/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="../assets/android-chrome-512x512.png">
+    
+    <!-- Core Stylesheets -->
+    <link rel="stylesheet" href=../assets/colours.css>
+    <link rel="stylesheet" href="../assets/shared-styles.css">
+    <link rel="stylesheet" href="../assets/module_card.css">
+    
+    <!-- Meta Tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L2D - ML4 - Glossary</title>
+    
+    <style>
+        /* Override sidebar styling since we're not using it */
+        body {
+            background-color: var(--background) !important;
+            color: var(--text-primary);
+            margin: 0 !important;
+            padding: 0 !important;
+            min-height: 100vh;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: flex-start !important;
+            flex-direction: column !important;
+        }
+
+        .main-content {
+            width: 100% !important;
+            max-width: 1200px !important;
+            padding: 0 20px !important;
+            box-sizing: border-box !important;
+            margin: 0 auto !important;
+            position: relative !important;
+            left: auto !important;
+            right: auto !important;
+            transform: none !important;
+        }
+
+        /* Additional centering overrides */
+        #main-content {
+            margin-left: auto !important;
+            margin-right: auto !important;
+            text-align: left !important;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .logo-container img {
+            width: clamp(60px, 10vw, 120px);
+            height: clamp(60px, 10vw, 120px);
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .glossary-entry {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .glossary-entry:last-child {
+            border-bottom: none;
+        }
+
+        .glossary-term {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--remember);
+            margin-bottom: 8px;
+        }
+
+        .glossary-definition {
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .logo-container img {
+                height: 60px;
+            }
+            
+            .glossary-term {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="main-content" class="main-content">
+        <div class="top-navbar">
+            <div class="logo-container">
+                <h1 class="page-title">Machine Learning 4 - Glossary</h1>
+            </div>
+        </div>
+
+        <div class="module-card">
+            <div class="module-header">
+                Glossary <span class="module-tag">ML4</span>
+            </div>
+            <div class="module-body">
+                
+                <div class="glossary-entry">
+                    <strong>Dimensionality Reduction</strong>: The process of transforming data from a high-dimensional feature space into a lower-dimensional representation while preserving as much meaningful structure or variability as possible.
+                </div>
+                <div class="glossary-entry">
+                    <strong>High-Dimensional Data</strong>: Data characterised by a large number of features or variables, often where many features are correlated or redundant.
+                </div>
+                <div class="glossary-entry">
+                    <strong>Variance</strong>: A statistical measure of how widely data values are spread around their mean, used in PCA as a proxy for information content.
+                </div>
+                <div class="glossary-entry">
+                    <strong>Projection</strong>: The operation of mapping data points onto a vector or subspace, typically by taking a dot product, to obtain a lower-dimensional representation.
+                </div>
+                <div class="glossary-entry">
+                    <strong>Unit Vector</strong>: A vector with magnitude one, commonly used to define a direction for projection without scaling the data.
+                </div>
+                <div class="glossary-entry">
+                    <strong>Principal Component Analysis (PCA)</strong>: A linear dimensionality reduction technique that identifies orthogonal directions in feature space along which data variance is maximised.
+                </div>
+                <div class="glossary-entry">
+                    <strong>Principal Component</strong>: An orthogonal direction in feature space that captures the maximum remaining variance after previous components have been accounted for.
+                </div>
+                <div class="glossary-entry">
+                    <strong>Orthogonality</strong>: A geometric property indicating that two vectors are perpendicular, ensuring that principal components capture independent sources of variance.
+                </div>
+                <div class="glossary-entry">
+                    <strong>Explained Variance</strong>: The amount of total data variance captured by a given principal component.
+                </div>
+                <div class="glossary-entry">
+                    <strong>Explained Variance Ratio</strong>: The proportion of total variance accounted for by each principal component, often used to guide dimensionality selection.
+                </div>
+                <div class="glossary-entry">
+                    <strong>Cumulative Explained Variance</strong>: The running total of explained variance across successive principal components, used to determine how many components are needed to retain sufficient information.
+                </div>
+                <div class="glossary-entry">
+                    <strong>Feature Space</strong>: The coordinate system defined by the original variables or features of a dataset.
+                </div>
+                <div class="glossary-entry">
+                    <strong>Component Space</strong>: The transformed coordinate system defined by the principal components after applying PCA.
+                </div>
+                <div class="glossary-entry">
+                    <strong>Linear Transformation</strong>: A transformation that preserves linear relationships between variables, characteristic of PCA.
+                </div>
+                <div class="glossary-entry">
+                    <strong>Feature Scaling</strong>: The process of standardising or normalising features prior to PCA to prevent variance being dominated by differences in scale.
+                </div>
+                <div class="glossary-entry">
+                    <strong>Dimensionality Selection</strong>: The process of choosing how many principal components to retain based on explained variance or analytical goals.
+                </div>
+                <div class="glossary-entry">
+                    <strong>Limitations of PCA</strong>: Constraints arising from PCA’s linearity and variance-based nature, including sensitivity to scaling and inability to capture non-linear structure.
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div>© Built with parchmentIQ copyright of scryptIQ</div>
+            <div>© L2D is copyright UCL 2025</div>
+        </div>
+    </div>
+</body>
+</html>
+        
