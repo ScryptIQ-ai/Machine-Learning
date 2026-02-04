@@ -119,7 +119,52 @@
                 <div class="module-body">
                     <div class="module-section">
                         <h3>Assignment Background:</h3>
-                        <p>This short assignment contains three sections of questions that build upon and incorporate methods, techniques and concepts taught and demonstrated in the lesson materials.<br><br>All questions aim to consider biological context. Timely submission will result in your assignment being returned within 14 days of the submission deadline. Marked Jupyter Notebook manuscripts will be returned with comments from your marker If you receive a pass or distinction, your marker will attach the model solutions for this assignment <em>via</em> the open pull request on your lesson&#x27;s GitHub repository.<br><br><em>Note: You will only be assessed on your code, questions asking about the results are solely for you to contemplate.</em></p>
+                        <p>This short assignment contains three sections of questions that build upon and incorporate methods, techniques and concepts taught and demonstrated in the lesson materials.<br><br>This assignment aims to look at the ideas behind dimensionality reduction using <strong>Principal Component Analysis (PCA)</strong>. We&#x27;ll use simple synthetic and real-valued datasets to understand how variance is distributed in high-dimensional data, how PCA identifies dominant directions of variation, and how low-dimensional representations can be interpreted.<br><br><em>Note: You will only be assessed on your code, questions asking about the results are solely for you to contemplate.</em></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="question-1">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Question 1</h3>
+                        <p>Let&#x27;s look at a dataset consisting of two measured variables. Before applying PCA, it is often useful to inspect how these variables relate to one another.<br><ul class="nested-list"><li>A. Load the dataset provided below.</li><br><li>B. Compute the correlation matrix between the two variables.</li><br><li>C. Produce a scatter plot of the data.</li><br><li>D. Briefly comment on whether PCA is likely to find a dominant direction of variance.</li></ul><strong>Comment here</strong> (double click this cell to enter your answer):</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="question-2">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Question 2</h3>
+                        <p>As we have stated multiple times in the lesson materials, PCA can be understood as a projection of data onto directions that capture maximal variance.<br><ul class="nested-list"><li>A. Apply PCA to the dataset from Question 1.</li><br><li>B. Extract the first principal component.</li><br><li>C. Project the original data onto this one-dimensional representation.</li><br><li>D. Plot the projected values along a single axis.</li></ul></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="question-3">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Question 3</h3>
+                        <p>One of the key outputs of PCA is the proportion of variance explained by each principal component.<br><ul class="nested-list"><li>A. Fit PCA with two components to the dataset.</li><br><li>B. Extract the explained variance ratio.</li><br><li>C. Report how much variance is captured by the first component.</li><br><li>D. Explain what this tells you about the structure of the data.</li></ul></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="question-4---higher-dimensional-data">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Question 4 - Higher-Dimensional Data</h3>
+                        <p>Dimensionality reduction is especially useful when working with datasets containing many variables.<br><ul class="nested-list"><li>A. Load the high-dimensional dataset provided.</li><br><li>B. Apply PCA without specifying the number of components.</li><br><li>C. Plot the cumulative explained variance as a function of the number of components.</li><br><li>D. Identify how many components are required to explain at least 90% of the variance.</li></ul></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="question-5">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Question 5</h3>
+                        <p>Reducing high-dimensional data to two dimensions can help with visualisation and interpretation.<br><br><ul class="nested-list"><li>A. Apply PCA with two components to the high-dimensional dataset.</li><br><li>B. Create a scatter plot of the data in PCA space.</li><br><li>C. Describe any visible structure or clustering in the projected data.</li></ul></p>
                     </div>
                 </div>
             </div>
