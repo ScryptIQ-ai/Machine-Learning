@@ -191,7 +191,9 @@ import csv</textarea>
         
         <div class="code-area">
             <div class="code-container code-fixed">
-                <textarea id="code-cell-2">print(list(datapath.glob(&quot;*.txt&quot;)))
+                <textarea id="code-cell-2">datapath = Path(&quot;./data/childhood_data&quot;)    #/relative/path/to/folder/with/data
+
+print(list(datapath.glob(&quot;*.txt&quot;)))
 
 # TEST BLOCK</textarea>
             </div>
