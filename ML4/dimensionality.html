@@ -75,7 +75,7 @@
                 </div>
                 <ul class="nested-nav expanded" id="expandable-section-1"><li><a href="#introduction">Introduction</a></li><li><a href="#worked-example">Worked example</a></li><li><a href="#principal-component-analysis--pca">Principal Component Analysis (PCA)</a></li>
                 </ul>
-            </li><li><a href="./applied.html">Exploring PCA</a></li><li><a href="./notebook.html">Testing</a></li><li><a href="./assignment.html">Assignment</a></li><li><a href="./feedback.html">Feedback</a></li>
+            </li><li><a href="./applied.html">Exploring PCA</a></li><li><a href="./assignment.html">Assignment</a></li><li><a href="./feedback.html">Feedback</a></li>
         </ul>
 
         <h3 class="collapsible-header collapsed">
@@ -341,64 +341,7 @@ show()</textarea>
             </div>
             <div id="code-cell-7-output" class="output"></div>
         </div>
-        
-                    </div>
-                </div>
-            </div>
-            
-            <div class="module-card" id="principal-component-analysis--pca">
-                <div class="module-body">
-                    <div class="module-section">
-                        
-        <div class="info-box practice-exercise-box">
-            <div class="box-title">
-                <span class="box-icon"></span>
-                PRACTICE EXERCISE
-            </div>
-            <div class="box-content">
-                <p><strong>1.</strong></p>
-                <p>Change the angle in the code above and see how distribution of projected data changes. Use e.g. 0,  $\pi$ /2,   2/3*$\pi$,  and $\pi$. Try to estimate how much the variance changes.</p>
-            </div>
-        </div>
-        
-        <div class="code-area">
-            <div class="code-container code-editor">
-                <textarea id="code-cell-8"></textarea>
-            </div>
-            <button id="run-code-cell-8" class="run-button">Run Code</button>
-            <div id="code-cell-8-output" class="output"></div>
-        </div>
-        
-                    </div>
-                </div>
-            </div>
-            
-            <div class="module-card" id="ctice-exercise--now-let-s-formally-calculate-the-variance-by-projecting-along-a-set-of-different-directions--we-use-angles-between-0-and---pi---i-e--between-0-and-180-degrees---for-each-direction--projection--we--calculate-the-variance-and-plot-it-against-the-angle">
-                <div class="module-body">
-                    <div class="module-section">
-                        <h3>CTICE EXERCISE
-
-Now let's formally calculate the variance by projecting along a set of different directions. We use angles between 0 and $\pi$ (i.e. between 0 and 180 degrees). For each direction (projection) we  calculate the variance and plot it against the angle.</h3>
-                        
-        <div class="code-area">
-            <div class="code-container code-editor">
-                <textarea id="code-cell-9">allAngles = linspace( start=0, stop=pi, num=20)
-allVar = []
-for angle in allAngles:
-    vec = array([cos(angle), sin(angle)]) #Unit length vector on which data will be projected
-    dim1_data = data.dot(vec)
-    allVar.append( var(dim1_data))
-
-# Plot variance captured by different features
-scatter( allAngles, allVar );
-title(&#x27;Variance along different directions&#x27;, fontsize=16, fontweight=&#x27;bold&#x27;)
-xlabel(&#x27;Direction (angle in radians)&#x27;, fontsize=14);
-ylabel(&#x27;Variance of projected data&#x27;, fontsize=14);</textarea>
-            </div>
-            <button id="run-code-cell-9" class="run-button">Run Code</button>
-            <div id="code-cell-9-output" class="output"></div>
-        </div>
-        <p>It can be seen there is a particular direction that retains maximal variance. This would be the optimal feature to give a 1D description of the 2D data while retaining maximum variability. PCA is the method that directly find this optimal direction. This makes it especially powerful for high dimensional datasets.<br></p>
+        <p>It can be seen there is a particular direction that retains maximal variance. This would be the optimal feature to give a 1-D description of the 2-D data while retaining maximum variability. PCA is the method that directly find this optimal direction. This makes it especially powerful for high dimensional datasets.<br></p>
         <div class="video-container">
             <iframe 
                 src="https://www.youtube.com/embed/ql80ZoyiWKY"
