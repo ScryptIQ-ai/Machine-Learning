@@ -187,12 +187,20 @@ from pathlib import Path
 from pandas import read_csv, DataFrame
 import csv</textarea>
             </div>
-            <div id="code-cell-1-output" class="output"></div>
         </div>
         
         <div class="code-area">
             <div class="code-container code-fixed">
-                <textarea id="code-cell-2"># Load all data
+                <textarea id="code-cell-2">print(list(datapath.glob(&quot;*.txt&quot;)))
+
+# TEST BLOCK</textarea>
+            </div>
+            <div id="code-cell-2-output" class="output"></div>
+        </div>
+        
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-3"># Load all data
 nGenes = 1000 # keep only these genes for now
 
 filectr=0
@@ -213,12 +221,11 @@ for txt in datapath.glob(&quot;*.txt&quot;):
 geneData = DataFrame( data=a[:,range(nGenes)]- mean(a[:,range(nGenes)], axis=0), columns = coln.values[range(nGenes)])
 </textarea>
             </div>
-            <div id="code-cell-2-output" class="output"></div>
         </div>
         <p>The DataFrame has 80 samples and 1000 features. Apart from the large number of variables (compared to number of samples), we also have strongly correlated expression of various markers. We can see that by plotting the correlation matrix of the DataFrame.</p>
         <div class="code-area">
             <div class="code-container code-fixed">
-                <textarea id="code-cell-3">fig, ax = subplots(figsize=(8,8))
+                <textarea id="code-cell-4">fig, ax = subplots(figsize=(8,8))
 im = ax.matshow(geneData.corr())
 cbar = fig.colorbar(im, shrink=0.82)
 xlabel(&#x27;Locus #&#x27;, fontsize=14);
@@ -226,7 +233,7 @@ ylabel(&#x27;Locus #&#x27;, fontsize=14);
 
 show()</textarea>
             </div>
-            <div id="code-cell-3-output" class="output"></div>
+            <div id="code-cell-4-output" class="output"></div>
         </div>
         <p>The little yellow blocks indicate that various features are strongly correlated (values around 1). Further analyses (e.g. checking if we find clusters mapping to healthy individuals and patients, respectively, or whether patients with different patterns of marker expression can be identified for future diagnostic purposes) can be thus be improved if we perform a dimensionality reduction, i.e. decrease the number of features while maintaining relevant information.<br><br>We will return to this dataset in an example in the next section of this lesson.</p>
                     </div>
@@ -240,7 +247,7 @@ show()</textarea>
                         <p><strong>Principal component analysis (PCA)</strong> is one of the most commonly used dimensionality reduction methods. Instead of describing the data using the original measurements, it finds a new set of ranked features (the &quot;basis&quot;). The new &quot;features&quot; are linear combinations of the original variables, such that they are all <em>orthogonal</em> to each other, and the &quot;importance&quot; of a feature (called the <strong>principal component</strong>) is generally given by how much of the variability in the dataset it captures (the so-called <em>explained variance</em>). Thus, we first transform the data from the original variables into a new set of features or principal components (PCs).<br><br>To get a lower dimensional description of the data, we retain only the top features (PCs) such that the largest variations or &#x27;patterns&#x27; in the dataset are preserved.<br></p><h4>2-D synthetic dataset</h4><p>To first explore what dimensionality reduction with PCA looks like, we will work with a simple 2-dimensional (2D) dataset, where we want to find a 1D description instead.<br><br>We start with generating some observations from a two-dimensional (multivariate) Gaussian distribution, with mean and covariance specified.<br></p>
         <div class="code-area">
             <div class="code-container code-fixed">
-                <textarea id="code-cell-4">RND_SEED = 7890
+                <textarea id="code-cell-5">RND_SEED = 7890
 seed(RND_SEED)
 
 # Set up 2D multivariate Gaussians
@@ -255,12 +262,12 @@ data = multivariate_normal(means, cov_mat, nSamples)
 
 print(data.shape)</textarea>
             </div>
-            <div id="code-cell-4-output" class="output"></div>
+            <div id="code-cell-5-output" class="output"></div>
         </div>
         <p>We can check the distribution of the two features in histograms, and we can see how the two data dimensions relate to each other in the scatter plot.</p>
         <div class="code-area">
             <div class="code-container code-fixed">
-                <textarea id="code-cell-5"># Center data
+                <textarea id="code-cell-6"># Center data
 zdata = data - mean(data, axis=0)
 
 fig, ax = subplots(ncols=3, nrows=1, figsize=(15, 4))
@@ -282,7 +289,7 @@ ax[2].set_ylabel(&#x27;Dim 2&#x27;, fontsize=14);
 
 show()</textarea>
             </div>
-            <div id="code-cell-5-output" class="output"></div>
+            <div id="code-cell-6-output" class="output"></div>
         </div>
         
         <div class="info-box note-box">
@@ -299,7 +306,7 @@ f(d_1, d_2) = \cos(\theta)\, d_1 + \sin(\theta)\, d_2
 $$</p>
         <div class="code-area">
             <div class="code-container code-fixed">
-                <textarea id="code-cell-6">## Centre data at origin by subtracting mean
+                <textarea id="code-cell-7">## Centre data at origin by subtracting mean
 zdata = data - mean(data, axis=0)
 
 # Define a feature as a direction in the 2D space using the angle
@@ -330,7 +337,7 @@ ax[1].set_ylabel(&#x27;Frequency&#x27;, fontsize=14);
 
 show()</textarea>
             </div>
-            <div id="code-cell-6-output" class="output"></div>
+            <div id="code-cell-7-output" class="output"></div>
         </div>
         
                     </div>
@@ -354,10 +361,10 @@ show()</textarea>
         
         <div class="code-area">
             <div class="code-container code-editor">
-                <textarea id="code-cell-7"></textarea>
+                <textarea id="code-cell-8"></textarea>
             </div>
-            <button id="run-code-cell-7" class="run-button">Run Code</button>
-            <div id="code-cell-7-output" class="output"></div>
+            <button id="run-code-cell-8" class="run-button">Run Code</button>
+            <div id="code-cell-8-output" class="output"></div>
         </div>
         
                     </div>
@@ -373,7 +380,7 @@ Now let's formally calculate the variance by projecting along a set of different
                         
         <div class="code-area">
             <div class="code-container code-editor">
-                <textarea id="code-cell-8">allAngles = linspace( start=0, stop=pi, num=20)
+                <textarea id="code-cell-9">allAngles = linspace( start=0, stop=pi, num=20)
 allVar = []
 for angle in allAngles:
     vec = array([cos(angle), sin(angle)]) #Unit length vector on which data will be projected
@@ -386,8 +393,8 @@ title(&#x27;Variance along different directions&#x27;, fontsize=16, fontweight=&
 xlabel(&#x27;Direction (angle in radians)&#x27;, fontsize=14);
 ylabel(&#x27;Variance of projected data&#x27;, fontsize=14);</textarea>
             </div>
-            <button id="run-code-cell-8" class="run-button">Run Code</button>
-            <div id="code-cell-8-output" class="output"></div>
+            <button id="run-code-cell-9" class="run-button">Run Code</button>
+            <div id="code-cell-9-output" class="output"></div>
         </div>
         <p>It can be seen there is a particular direction that retains maximal variance. This would be the optimal feature to give a 1D description of the 2D data while retaining maximum variability. PCA is the method that directly find this optimal direction. This makes it especially powerful for high dimensional datasets.<br></p>
         <div class="video-container">
