@@ -228,6 +228,25 @@ print( &quot;Size of new dataset: &quot;, dim1_data.shape )</code></pre>
 </pre></div>
         </div>
         <p>From the fitted model &#x27;pcaResults&#x27; we can now get:<br><ul class="nested-list"><li>The fractional variance using <code>explained_variance_ratio_</code>. It tells us what fraction of the total variance is retained by the reduced 1-D description of the data.</li><br><li>The direction (angle) of this first PC as calculate from the arcus tangens <code>atan2</code> of the vector. You can compare it directly to the angle in the above plot.</li></ul></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="1-d-descriptions-with-pca">
+                <div class="module-body">
+                    <div class="module-section">
+                        
+        <div class="info-box practice-exercise-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                PRACTICE EXERCISE
+            </div>
+            <div class="box-content">
+                <p><strong>1.</strong></p>
+                <p>See Practice Exercise 3 in your GitHub repository&#x27;s <code>Practice_Exercises</code> folder, to practice what we&#x27;ve learned up to this point.</p>
+            </div>
+        </div>
+        
         <div class="code-area">
             <div class="code-container code-fixed">
                 <pre><code class="language-python" id="code-9"># How much variance was captured compared to original data?
@@ -425,7 +444,35 @@ show()</code></pre>
                 <div class="module-body">
                     <div class="module-section">
                         <h3>Beyond dimensionality reduction</h3>
-                        <p>After reducing the dataset from hundreds or thousands of genes to fewer features (PCs), it can be used:<br><ul class="nested-list"><li>To find groups of genes that seem to be co-regulated (using clustering).</li><br><li>To build classifiers to predict the likelihood of juvenile or late-onset rheumatoid disease. For example, one feature can be highly variable in the sampled population and therefore has high explained variance, but it may not be predictive for the current objective of predicting disease phenotype (e.g. eye pigmentation genes).</li><br><li>To find what combination of genes the top features correspond to.</li><br><li>To suggest what individual genes are most variable.</li><br><li>To discover co-expression patterns of multiple genes.</li></ul></p><h4>When does PCA fail?</h4><p>Although PCA is the first and simplest method of exploring high-dimensional datasets, there are important caveats to keep in mind:<br><ol class="nested-list"><li><em>PCA is a linear method</em></li></ol>Nonlinear patterns of co-expression will be seemingly broken up into many features. Thus, the ability to find whether genes are co-regulated may be reduced if the effects are nonlinear.<br><ol class="nested-list"><li><em>PCA depends on scaling of individual measurements.</em></li></ol>As PCA measures variance along different directions, changing the scale of one variable (for example from cm to mm, or fold-change to actual levels) may drastically change the dominant &quot;features&quot; extracted.<br><br>The lesson on clustering of images with Gaussian mixture models contained instructions to scale data. You can explore the original dataset of this lesson, to investigate how scaling of variables impacts the results.<br><ol class="nested-list"><li><em>Estimating number of features is heuristic, and depends on the purpose.</em></li></ol>The definition of what is the &#x27;relevant&#x27; number of features can depend on:<br><ul class="nested-list"><li>the signal-to-noise ratio in data. For example, noisier or smaller datasets make it harder to accurately estimate smaller PCs. In such cases, a more conservative threshold should be used.</li><br><li>the classifier or regression performance following the dimensionality reduction.</li></ul></p>
+                        <p>After reducing the dataset from hundreds or thousands of genes to fewer features (PCs), it can be used:<br><ul class="nested-list"><li>To find groups of genes that seem to be co-regulated (using clustering).</li><br><li>To build classifiers to predict the likelihood of juvenile or late-onset rheumatoid disease. For example, one feature can be highly variable in the sampled population and therefore has high explained variance, but it may not be predictive for the current objective of predicting disease phenotype (e.g. eye pigmentation genes).</li><br><li>To find what combination of genes the top features correspond to.</li><br><li>To suggest what individual genes are most variable.</li><br><li>To discover co-expression patterns of multiple genes.</li></ul></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="beyond-dimensionality-reduction">
+                <div class="module-body">
+                    <div class="module-section">
+                        
+        <div class="info-box practice-exercise-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                PRACTICE EXERCISE
+            </div>
+            <div class="box-content">
+                <p><strong>2.</strong></p>
+                <p>See Practice Exercise 2 in your GitHub repository&#x27;s <code>Practice_Exercises</code> folder, to practice what we&#x27;ve learned up to this point.</p>
+            </div>
+        </div>
+        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="when-does-pca-fail">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>When does PCA fail?</h3>
+                        <p>Although PCA is the first and simplest method of exploring high-dimensional datasets, there are important caveats to keep in mind:<br><ol class="nested-list"><li><em>PCA is a linear method</em></li></ol>Nonlinear patterns of co-expression will be seemingly broken up into many features. Thus, the ability to find whether genes are co-regulated may be reduced if the effects are nonlinear.<br><ol class="nested-list"><li><em>PCA depends on scaling of individual measurements.</em></li></ol>As PCA measures variance along different directions, changing the scale of one variable (for example from cm to mm, or fold-change to actual levels) may drastically change the dominant &quot;features&quot; extracted.<br><br>The lesson on clustering of images with Gaussian mixture models contained instructions to scale data. You can explore the original dataset of this lesson, to investigate how scaling of variables impacts the results.<br><ol class="nested-list"><li><em>Estimating number of features is heuristic, and depends on the purpose.</em></li></ol>The definition of what is the &#x27;relevant&#x27; number of features can depend on:<br><ul class="nested-list"><li>the signal-to-noise ratio in data. For example, noisier or smaller datasets make it harder to accurately estimate smaller PCs. In such cases, a more conservative threshold should be used.</li><br><li>the classifier or regression performance following the dimensionality reduction.</li></ul></p>
                     </div>
                 </div>
             </div>
