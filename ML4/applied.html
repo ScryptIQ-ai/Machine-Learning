@@ -162,12 +162,12 @@
                         <h3>1-D descriptions with PCA</h3>
                         <p>Let us now use dimensionality reduction <code>PCA</code> to find the direction that captures maximal variance. For an n-dimensional dataset, PCA finds a set of <em>n</em> new features, ranked by the variance along each feature. See the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html">scikit-learn documentation</a> for information.<br><br>To get the best 1-D representation of data, we instantiate the class with one component (<em>n_components</em> = 1) to be returned, and transform the data to the feature space of that component.</p>
         <div class="code-area">
-            <div class="code-collapse-header" onclick="toggleCodeCollapse('code-8')">
+            <div class="code-collapse-header" onclick="toggleCodeCollapse('code-7')">
                 <span class="code-collapse-icon">▶</span>
                 <span class="code-collapse-label">Show code</span>
             </div>
-            <div class="code-container code-fixed code-collapsed" id="code-8-container">
-                <pre><code class="language-python" id="code-8">from numpy import reshape, append, mean, pi, linspace, var, array, cumsum, arange
+            <div class="code-container code-fixed code-collapsed" id="code-7-container">
+                <pre><code class="language-python" id="code-7">from numpy import reshape, append, mean, pi, linspace, var, array, cumsum, arange
 from numpy.random import seed, multivariate_normal, binomial
 from numpy.linalg import norm
 
@@ -200,7 +200,7 @@ zdata = data - mean(data, axis=0)</code></pre>
         
         <div class="code-area">
             <div class="code-container code-fixed">
-                <pre><code class="language-python" id="code-9">from sklearn.decomposition import PCA
+                <pre><code class="language-python" id="code-8">from sklearn.decomposition import PCA
 
 # Initialize the PCA model
 pcaResults = PCA(n_components=1, whiten=False) # specify no. of components, and whether to standardize
@@ -219,7 +219,7 @@ print( &quot;Size of new dataset: &quot;, dim1_data.shape )</code></pre>
         <p>From the fitted model &#x27;pcaResults&#x27; we can now get:<br><ul class="nested-list"><li>The fractional variance using <code>explained_variance_ratio_</code>. It tells us what fraction of the total variance is retained by the reduced 1-D description of the data.</li><br><li>The direction (angle) of this first PC as calculate from the arcus tangens <code>atan2</code> of the vector. You can compare it directly to the angle in the above plot.</li></ul></p>
         <div class="code-area">
             <div class="code-container code-fixed">
-                <pre><code class="language-python" id="code-10"># How much variance was captured compared to original data?
+                <pre><code class="language-python" id="code-9"># How much variance was captured compared to original data?
 print(&quot;Fractional variance captured by first PC: {:1.4f}.&quot;.format(pcaResults.explained_variance_ratio_[0]))
 
 vec1 = pcaResults.components_[0,:]
@@ -242,7 +242,7 @@ Direction of PC1 is at angle = 0.99 radians
                         <p>Our dataset has two features. We can thus obtain two principal components. The two components must be orthogonal to each other (form a right angle). Let us get the corresponding vectors and plot them on the scatterplot.</p>
         <div class="code-area">
             <div class="code-container code-fixed">
-                <pre><code class="language-python" id="code-11"># Initialize the PCA model
+                <pre><code class="language-python" id="code-10"># Initialize the PCA model
 pcaResults = PCA(n_components=2, whiten=False) # specify no. of components, and whether to standardize
 
 # Fit to data
@@ -289,7 +289,7 @@ show()</code></pre>
                         <p>Now, we will use PCA to find a few features that capture most of the variability in the gene expression dataset. We arbitrarily start with 50 components assuming that this will include the important features.</p>
         <div class="code-area">
             <div class="code-container code-fixed">
-                <pre><code class="language-python" id="code-12"># Load all data
+                <pre><code class="language-python" id="code-11"># Load all data
 nGenes = 1000 # keep only these genes for now
 
 filectr=0
@@ -315,7 +315,7 @@ geneData = DataFrame( data=a[:,range(nGenes)]- mean(a[:,range(nGenes)], axis=0),
         
         <div class="code-area">
             <div class="code-container code-fixed">
-                <pre><code class="language-python" id="code-13">nComp = 50 # Number of PCs to be returned
+                <pre><code class="language-python" id="code-12">nComp = 50 # Number of PCs to be returned
 #trainIndx = binomial(1,0.9,size=filectr)
 
 GenePCA = PCA(n_components=nComp, whiten=True)
@@ -326,7 +326,7 @@ GenePCA = GenePCA.fit(geneData) #.values[trainIndx==1,:]</code></pre>
         <p>How many features should we retain? To investigate this question, we plot the total (cumulative) variance for retaining the top <em>k</em> modes. The more we use, the higher the cumulative variance.<br></p>
         <div class="code-area">
             <div class="code-container code-fixed">
-                <pre><code class="language-python" id="code-14">cumExpVar = cumsum(GenePCA.explained_variance_ratio_)
+                <pre><code class="language-python" id="code-13">cumExpVar = cumsum(GenePCA.explained_variance_ratio_)
 fig = figure(figsize=(5, 5))
 im  = plot( range(nComp), cumExpVar )
 xticks(arange(0,nComp,5));
@@ -340,7 +340,7 @@ show()</code></pre>
         <p>A common heuristic for choosing the number of components is by defining a set threshold for the total explained variance.<br><br>Thresholds commonly vary between 0.8-0.9, depending on the structure of the PCs, e.g. depending on whether there are a few top PCs or many small PCs, but also depending on the expected noise in data, and on the desirable accuracy of the reduced dataset. While a dimensionality reduction is convenient, it always loses some information.<br><br>As an example, we can check how many PCs we need to retain 99 % of the variance.</p>
         <div class="code-area">
             <div class="code-container code-fixed">
-                <pre><code class="language-python" id="code-15">threshold = 0.99
+                <pre><code class="language-python" id="code-14">threshold = 0.99
 
 # index of first PC whose cumulative variance reaches threshold
 index = [i for i, v in enumerate(cumExpVar) if v &gt;= threshold][0]
@@ -366,7 +366,7 @@ print(
                         <p>Now that we have selected the number of features to be used, we can see what the data along those features looks like, and visualise the reduced dataset.</p>
         <div class="code-area">
             <div class="code-container code-fixed">
-                <pre><code class="language-python" id="code-16">newGeneData = GenePCA.transform(geneData)[:, :keepPC]
+                <pre><code class="language-python" id="code-15">newGeneData = GenePCA.transform(geneData)[:, :keepPC]
 
 fig, ax = subplots(ncols=3, nrows=2, figsize=(18, 8))
 suptitle(&#x27;Data in new Feature space&#x27;, fontsize=20)
