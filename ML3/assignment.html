@@ -118,7 +118,7 @@
                 <div class="module-body">
                     <div class="module-section">
                         <h3>Assignment Background:</h3>
-                        <p>Repeat the training and prediction workflow as described in the Classification lesson for two other features in the <code>patients_data.csv</code> dataset, namely:<br><ul class="nested-list"><li>Systolic</li><br><li>Diastolic</li></ul></p>
+                        <p>Repeat the training and prediction workflow as described in the Classification lesson for two other features in the <code>patients_data.csv</code> dataset, namely:<br><ul class="nested-list"><li>Systolic</li><br><li>Diastolic</li></ul><strong>Note:</strong> Much of the code required for these questions can be lifted and adapted from the lesson material.</p>
                     </div>
                 </div>
             </div>
@@ -172,7 +172,7 @@
                 <div class="module-body">
                     <div class="module-section">
                         <h3>Question 5</h3>
-                        <p>Analyse the relationship between image features and cluster assignments:<br><br><strong>Using your optimal K-means model</strong> (with the best number of clusters identified in Question 1)<br><ul class="nested-list"><li>Extract and use the cluster labels generated from your combined-sequence analysis</li><br><li>Create a pairwise plot as demonstrated in the work-through example</li><br><li>Observe how the clustering performs between different image pairs</li></ul></p>
+                        <p>Analyse the relationship between image features and cluster assignments:<br><br><strong>Using your optimal K-means model</strong> (with the best number of clusters identified in Question 4)<br><ul class="nested-list"><li>Extract and use the cluster labels generated from your combined-sequence analysis</li><br><li>Create a pairwise plot as demonstrated in the work-through example</li><br><li>Observe how the clustering performs between different image pairs</li></ul></p>
                     </div>
                 </div>
             </div>
@@ -181,7 +181,7 @@
                 <div class="module-body">
                     <div class="module-section">
                         <h3>Question 6</h3>
-                        <p>Improve clustering quality through feature standardisation:<br><br><strong>Transform the data:</strong><ul class="nested-list"><li>Use the sklearn standard scaler to standardise the image data</li></ul><strong>Re-implement analysis with standardised data:</strong><ul class="nested-list"><li>Repeat the procedures from Questions 1-2 using your standardised data</li><br><li>Focus on the optimal number of clusters you identified previously</li><br><li>Generate the same visualisations (segmentation maps and pairwise plots) for comparison</li></ul><strong>Compare results and analyse differences:</strong><ul class="nested-list"><li>Do the results change? Look at the border clarity and consitency</li><br><li>If they do, think back on our lessons in <strong>ML3</strong> about scaling and how it might have helped here</li></ul></p>
+                        <p>Improve clustering quality through feature standardisation:<br><br><strong>Transform the data:</strong><ul class="nested-list"><li>Use the sklearn standard scaler to standardise the image data</li></ul><strong>Re-implement analysis with standardised data:</strong><ul class="nested-list"><li>Repeat the procedures from Questions 4-5 using your standardised data</li><br><li>Focus on the optimal number of clusters you identified previously</li><br><li>Generate the same visualisations (segmentation maps and pairwise plots) for comparison</li></ul><strong>Compare results and analyse differences:</strong><ul class="nested-list"><li>Do the results change? Look at the border clarity and consitency</li><br><li>If they do, think back on our lessons in <strong>ML3</strong> about scaling and how it might have helped here</li></ul></p>
                     </div>
                 </div>
             </div>
@@ -190,7 +190,7 @@
                 <div class="module-body">
                     <div class="module-section">
                         <h3>Question 7</h3>
-                        <p>Compare the clustering performance of <code>K-means</code> versus <code>Gaussian Mixture</code>:<br><br><strong>Implement the GMM algorithm using the same workflow you established above:</strong><ul class="nested-list"><li>Use the scaled data you prepared in Question 3</li><br><li>Set n_components in GMM equal to the optimal n_clusters value you identified for K-means</li><br><li>Fit the model and generate cluster labels for all images</li></ul><strong>Create two types of visualisations for the GMM results:</strong><ul class="nested-list"><li>The segmentation mask plots (as in Question 1) showing how GMM divides the brain regions</li><br><li>The pairwise feature plots (as in Question 2) showing how GMM clusters relate to image intensities</li></ul><strong>Compare the clustering results between K-means and GMM by considering:</strong><ul class="nested-list"><li>Are the tissue boundaries more clearly defined with one method versus the other?</li><br><li>Does one method handle noise or outliers better?</li><br><li>Does one method produce more consistent or interpretable tissue segmentations?</li><br><li>How do these scaled-data results compare to the non-scaled GMM results from the worked example?</li></ul></p>
+                        <p>Compare the clustering performance of <code>K-means</code> versus <code>Gaussian Mixture</code>:<br><br><strong>Implement the GMM algorithm using the same workflow you established above:</strong><ul class="nested-list"><li>Use the scaled data you prepared in Question 6</li><br><li>Set n_components in GMM equal to the optimal n_clusters value you identified for K-means</li><br><li>Fit the model and generate cluster labels for all images</li></ul><strong>Create two types of visualisations for the GMM results:</strong><ul class="nested-list"><li>The segmentation mask plots (as in Question 4) showing how GMM divides the brain regions</li><br><li>The pairwise feature plots (as in Question 5) showing how GMM clusters relate to image intensities</li></ul><strong>Compare the clustering results between K-means and GMM by considering:</strong><ul class="nested-list"><li>Are the tissue boundaries more clearly defined with one method versus the other?</li><br><li>Does one method handle noise or outliers better?</li><br><li>Does one method produce more consistent or interpretable tissue segmentations?</li><br><li>How do these scaled-data results compare to the non-scaled GMM results from the worked example?</li></ul></p>
                     </div>
                 </div>
             </div>
