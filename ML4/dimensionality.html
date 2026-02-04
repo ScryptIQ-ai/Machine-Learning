@@ -49,7 +49,7 @@
     <!-- File URLs for this lesson -->
     <script>
         window.LESSON_FILES = [
-            
+            {url: "https://raw.githubusercontent.com/ScryptIQ-ai/lesson-data/refs/heads/main/ml/childhood_data/GSM279742_sample_table.txt", filename: "GSM279742_sample_table.txt", is_binary: false}
         ];
         window.LESSON_PACKAGES = ['numpy', 'plotly', 'matplotlib', 'pandas', 'pathlib', 'scikit-learn'];
     </script>
@@ -184,18 +184,18 @@ from matplotlib.pyplot import figure, plot, xticks, xlabel, ylabel, suptitle, sh
 
 import glob
 from pathlib import Path
-from pandas import read_csv, DataFrame
+from pandas import read_csv, DataFrame, read_t
 import csv</textarea>
             </div>
         </div>
         
         <div class="code-area">
             <div class="code-container code-fixed">
-                <textarea id="code-cell-2">datapath = Path(&quot;./data/childhood_data&quot;)    #/relative/path/to/folder/with/data
+                <textarea id="code-cell-2"># TESTING CELL
 
-print(list(datapath.glob(&quot;*.txt&quot;)))
+df = read_csv(&quot;./data/GSM279742_sample_table.txt&quot;, sep=&quot;\t&quot;)
 
-# TEST BLOCK</textarea>
+print(df)</textarea>
             </div>
             <div id="code-cell-2-output" class="output"></div>
         </div>
@@ -207,7 +207,7 @@ nGenes = 1000 # keep only these genes for now
 
 filectr=0
 
-datapath = Path(&quot;./data/childhood_data&quot;)    #/relative/path/to/folder/with/data
+datapath = Path(&quot;./data/&quot;)    #/relative/path/to/folder/with/data
 
 for txt in datapath.glob(&quot;*.txt&quot;):
     b=read_csv(txt, sep=&#x27;\t&#x27;, usecols=[1])
