@@ -10,62 +10,63 @@
         <link rel="icon" type="image/png" sizes="512x512" href="../assets/android-chrome-512x512.png">
         
         <!-- Core Stylesheets -->
-        <link rel="stylesheet" href=../assets/colours.css>
+        <link rel="stylesheet" href=../assets/colours-l2d.css>
         <link rel="stylesheet" href="../assets/shared-styles.css">
         <link rel="stylesheet" href="../assets/module_card.css">
         
         <!-- Meta Tags -->
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>L2D - ML3 - Report an Issue</title>
+        <title>scryptIQ - ML3 - Report an Issue</title>
         
         <style>
-            /* Override sidebar styling since we're not using it */
-            body {
-                background-color: var(--background) !important;
-                color: var(--text-primary);
-                margin: 0 !important;
-                padding: 0 !important;
-                min-height: 100vh;
-                display: flex !important;
-                justify-content: center !important;
-                align-items: flex-start !important;
-                flex-direction: column !important;
-            }
+        /* Override sidebar styling since we're not using it */
+        body {
+            background-color: var(--background) !important;
+            color: var(--text-primary);
+            margin: 0 !important;
+            padding: 0 !important;
+            min-height: 100vh;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: flex-start !important;
+            flex-direction: column !important;
+        }
 
-            .main-content {
-                width: 100% !important;
-                max-width: 1200px !important;
-                padding: 0 20px !important;
-                box-sizing: border-box !important;
-                margin: 0 auto !important;
-                position: relative !important;
-                left: auto !important;
-                right: auto !important;
-                transform: none !important;
-            }
+        .main-content {
+            width: 100% !important;
+            max-width: 1200px !important;
+            padding: 0 20px !important;
+            box-sizing: border-box !important;
+            margin: 0 auto !important;
+            position: relative !important;
+            left: auto !important;
+            right: auto !important;
+            transform: none !important;
+        }
 
-            #main-content {
-                margin-left: auto !important;
-                margin-right: auto !important;
-                text-align: left !important;
-            }
+        /* Additional centering overrides */
+        #main-content {
+            margin-left: auto !important;
+            margin-right: auto !important;
+            text-align: left !important;
+        }
 
-            .logo-container {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                padding: 20px 0;
-            }
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 0;
+        }
 
-            .logo-container img {
-                width: clamp(60px, 10vw, 120px);
-                height: clamp(60px, 10vw, 120px);
-                margin-right: 10px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
+        .logo-container img {
+            width: clamp(60px, 10vw, 120px);
+            height: clamp(60px, 10vw, 120px);
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
             .form-group {
                 margin-bottom: 20px;
@@ -208,8 +209,8 @@
             </div>
 
             <div class="footer">
-                <div>© All materials are copyright scryptIQ 2025</div>
-                <div>Learn to Discover</div>
+                <div></div>
+                <div></div>
             </div>
         </div>
 
@@ -218,8 +219,7 @@
             const submitButton = document.getElementById('submitButton');
             const formMessage = document.getElementById('formMessage');
             
-            // REPLACE THIS URL WITH YOUR GOOGLE APPS SCRIPT WEB APP URL 
-            const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxSdqC2-VryyYK1FwNYXl2OpFLXXcX75pYEQDXtaFLxNdq6jzuIUai21sjuBvkHcPelHw/exec';
+            const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzBbI6tb6kavmCNT0LLW7Y_Qe4ucIehRVBSvrPhby2Xix2D_zKTmI8kQCVn7NidtSk_/exec';
             
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
@@ -303,7 +303,7 @@
                     
                 } catch (error) {
                     console.error('All methods failed:', error);
-                    showMessage('There was an error submitting your issue. Please try again or email us directly at laurence.blackhurst@learntodiscover.ai', 'error');
+                    showMessage('There was an error submitting your issue. Please try again or email us directly at hello@scryptiq.ai', 'error');
                 } finally {
                     submitButton.disabled = false;
                     submitButton.innerHTML = `

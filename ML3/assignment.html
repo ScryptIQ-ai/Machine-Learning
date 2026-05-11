@@ -17,12 +17,12 @@
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
     
     <!-- Pyodide and CodeMirror -->
-    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/pastel-on-dark.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
-    
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.29.3/full/pyodide.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.20/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.20/theme/pastel-on-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.20/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.20/mode/python/python.min.js"></script>
+
     <!-- Favicons -->
     <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32x32.png">
@@ -30,9 +30,9 @@
     <link rel="apple-touch-icon" sizes="192x192" href="../assets/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="192x192" href="../assets/android-chrome-192x192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="../assets/android-chrome-512x512.png">
-    
+
     <!-- Core Stylesheets -->
-    <link rel="stylesheet" href=../assets/colours.css>
+    <link rel="stylesheet" href=../assets/colours-l2d.css>
     <link rel="stylesheet" href="../assets/shared-styles.css">
     <link rel="stylesheet" href="../assets/nav-bar.css">
     <link rel="stylesheet" href="../assets/module_card.css">
@@ -40,15 +40,12 @@
     <link rel="stylesheet" href="../assets/learning_lists.css">
     <link rel="stylesheet" href="../assets/box_styles.css">
     <link rel="stylesheet" href="../assets/code_styles.css">
-
+    
     <!-- Meta Tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>L2D - ML3 - Assignment</title>
-    
-    <!-- File URLs for this lesson -->
+    <title>scryptIQ - ML3 - Assignment</title>
     <script>window.LESSON_FILES = []; window.LESSON_PACKAGES = [];</script>
-        
 </head>
 <body>
     
@@ -90,10 +87,10 @@
             <li><a href="./report-issue.html">Report an Issue</a></li>
         </h3>
     </div>
-    
+
     <!-- Sidebar Toggle Button -->
     <button id="sidebar-toggle" class="sidebar-toggle">❮</button>
-    
+
     <!-- Main Content Area -->
     <div id="main-content" class="main-content">
         <!-- Top Navigation Bar -->
@@ -103,8 +100,8 @@
                 <a href="../homepage.html" class="text-button" title="Materials homepage">
                     Homepage
                 </a>
-                <a href="https://learntodiscover.ai/my-cohorts/" class="text-button" title="Find out more about us">
-                    Learn to Discover
+                <a href="https://scryptiq.ai/my-cohorts/" class="text-button scryptiq-button" title="Find out more about us">
+                    scryptIQ
                 </a>
             </div>
         </div>
@@ -163,7 +160,7 @@
                 <div class="module-body">
                     <div class="module-section">
                         <h3>Question 4</h3>
-                        <p>Investigate how different cluster counts affect image segmentation using K-means:<br><br><strong>Note: Use the raw data without scaling for this question</strong><br><ul class="nested-list"><li><strong>Data preparation:</strong></li><br><li>Load the following MRI sequences into NumPy arrays:</li><ul class="nested-list"><li>&#x27;t1.nii&#x27;</li><br><li>&#x27;t1_contrast.nii&#x27;</li><br><li>&#x27;flair.nii&#x27;</li><br><li>&#x27;adc.nii&#x27;</li></ul></li><br><li>Create a mask to remove background pixels (where intensity = 0)</li><br><li>Extract the non-zero voxels from each image</li><br><li>Stack all four images into a single array for multi-sequence analysis</li><br><li><strong>K-means clustering:</strong></li><br><li>Apply K-means with different numbers of clusters (try 2, 3, and 4)</li><br><li>For each cluster count, perform clustering on:</li><ul class="nested-list"><li>Each individual MRI sequence separately</li><br><li>All sequences combined (using your stacked array)</li></ul></li><br><li><strong>Visualisation and analysis:</strong></li><br><li>Create a grid of segmentation maps showing:</li><ul class="nested-list"><li>Rows: Different cluster counts (2, 3, 4)</li><br><li>Columns: Each individual sequence plus the combined result</li></ul></li><br><li>Based on your visualisations, determine which number of clusters produces the most meaningful tissue segmentation</li></ul>Repeat above which differing n_clusters</p>
+                        <p>Investigate how different cluster counts affect image segmentation using K-means:<br><br><strong>Note: Use the raw data without scaling for this question</strong><br><br><strong>Data preparation:</strong><ul class="nested-list"><li>Load the following MRI sequences into NumPy arrays:</li><ul class="nested-list"><li>&#x27;t1.nii&#x27;</li><br><li>&#x27;t1_contrast.nii&#x27;</li><br><li>&#x27;flair.nii&#x27;</li><br><li>&#x27;adc.nii&#x27;</li></ul></li><br><li>Create a mask to remove background pixels (where intensity = 0)</li><br><li>Extract the non-zero voxels from each image</li><br><li>Stack all four images into a single array for multi-sequence analysis</li></ul><strong>K-means clustering:</strong><ul class="nested-list"><li>Apply K-means with different numbers of clusters (try 2, 3, and 4)</li><br><li>For each cluster count, perform clustering on:</li><ul class="nested-list"><li>Each individual MRI sequence separately</li><br><li>All sequences combined (using your stacked array)</li></ul></ul><strong>Visualisation and analysis:</strong><ul class="nested-list"><li>Create a grid of segmentation maps showing:</li><ul class="nested-list"><li>Rows: Different cluster counts (2, 3, 4)</li><br><li>Columns: Each individual sequence plus the combined result</li></ul></li><br><li>Based on your visualisations, determine which number of clusters produces the most meaningful tissue segmentation</li></ul>Repeat above which differing n_clusters</p>
                     </div>
                 </div>
             </div>
@@ -195,7 +192,7 @@
                 </div>
             </div>
             
-        
+
         <div class="page-navigation">
             <a href="./segmentation.html" class="nav-button prev">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -210,7 +207,7 @@
                 </svg>
             </a>
         </div>
-        
+
         <!-- Footer -->
         <div class="footer">
             <div>© All materials are copyright scryptIQ 2025</div>
@@ -673,6 +670,6 @@ if (document.readyState === 'loading') {
     main();
 }
     </script>
+    
 </body>
 </html>
-    
