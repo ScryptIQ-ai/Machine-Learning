@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Meta Tags -->
+    <!-- charset must stay within the first 1024 bytes of the
+         document or browsers stop looking and fall back to a
+         default encoding. Keep these two first in <head>. -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- MathJax for mathematical notation -->
+    <!-- v4 moved the loadable components out of the old es5 subdirectory and
+         up to the package root, so the path is part of the version, not just
+         the number. Getting it wrong is a 404 that fails silently, leaving
+         equations as raw dollar-delimited LaTeX on the page.
+         output.font pins the TeX font from v3; v4 would otherwise default to
+         New Computer Modern and change how every equation looks. fontPath is
+         set explicitly because MathJax's default resolves font data from an
+         *unversioned* jsDelivr URL, which is exactly what cdn_versions.yaml
+         exists to prevent. -->
+    <script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$']],
+            displayMath: [['$$', '$$']],
+            processEscapes: true
+        },
+        svg: {
+            fontCache: 'global'
+        },
+        output: {
+            font: 'mathjax-tex',
+            fontPath: 'https://cdn.jsdelivr.net/npm/@mathjax/%%FONT%%-font@4.1.3'
+        },
+        startup: {
+            pageReady() {
+                // PDF export prints as soon as the page reports itself ready.
+                // Announce typesetting separately so it can be waited on.
+                return MathJax.startup.defaultPageReady().then(function () {
+                    window.mathJaxReady = true;
+                });
+            }
+        }
+    };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@4.1.3/tex-svg.js"></script>
+    
+    <!-- Pyodide and CodeMirror -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v314.0.7/full/pyodide.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.21/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.21/theme/pastel-on-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.21/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.21/mode/python/python.min.js"></script>
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="../assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../assets/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="../assets/android-chrome-512x512.png">
+
+    <!-- Core Stylesheets -->
+    <link rel="stylesheet" href=../assets/colours-l2d.css>
+    <link rel="stylesheet" href="../assets/shared-styles.css">
+    <link rel="stylesheet" href="../assets/nav-bar.css">
+    <link rel="stylesheet" href="../assets/module_card.css">
+    <link rel="stylesheet" href="../assets/learning_outcomes.css">
+    <link rel="stylesheet" href="../assets/learning_lists.css">
+    <link rel="stylesheet" href="../assets/box_styles.css">
+    <link rel="stylesheet" href="../assets/code_styles.css">
+    
+    <title>scryptIQ - ML1 - Classifier Models</title>
+    <script>
+        window.LESSON_FILES = [
+            
+        ];
+        window.LESSON_PACKAGES = ["numpy", "scikit-learn", "matplotlib", "plotly"];
+        window.LESSON_PACKAGE_NAMES = ["numpy", "scikit-learn", "matplotlib", "plotly"];
+    </script>
+</head>
+<body>
+    
+    <!-- Sidebar Navigation -->
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <a href="../homepage.html" style="text-decoration: none; display: inline-block;">
+                <img src="../assets/l2d-brain-logo.png" alt="scryptIQ Logo" class="sidebar-logo">
+            </a>
+        </div>
+
+        <h3>Content</h3>
+        <ul>
+            <li><a href="./introduction.html" class="">Introduction</a></li><li><a href="./state-space.html">State Space</a></li><li><a href="./scikit-learn.html">Scikit-Learn</a></li><li><a href="./categorical-data.html">Categorical Data</a></li>
+            <li>
+                <div class="nav-toggle active" data-target="expandable-section-4">
+                    Classifier Models
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <ul class="nested-nav expanded" id="expandable-section-4"><li><a href="#introduction">Introduction</a></li><li><a href="#logistic-regression">Logistic Regression</a></li><li><a href="#k-nn">K-NN</a></li><li><a href="#decision-tree">Decision Tree</a></li><li><a href="#tree-ensembles">Tree Ensembles</a></li><li><a href="#svm">SVM</a></li><li><a href="#others">Others</a></li><li><a href="#in-practice">In Practice</a></li><li><a href="#summary---quiz">Summary & Quiz</a></li>
+                </ul>
+            </li><li><a href="./assignment.html">Assignment</a></li><li><a href="./feedback.html">Feedback</a></li>
+        </ul>
+
+        <h3 class="collapsible-header collapsed">
+            Resources
+            <span class="collapse-icon">►</span>
+        </h3>
+        <div class="collapsible-content collapsed">
+            <ul>
+                <li><a href="./glossary.html">Glossary</a></li><li><a href="./downloads.html">Downloads</a></li><li><a href="../HB/introduction.html">Handbook</a></li>
+            </ul>
+        </div>
+
+        <h3>
+            <li><a href="./report-issue.html">Report an Issue</a></li>
+        </h3>
+    </div>
+
+    <!-- Sidebar Toggle Button -->
+    <button id="sidebar-toggle" class="sidebar-toggle">❮</button>
+
+    <!-- Main Content Area -->
+    <div id="main-content" class="main-content">
+        <!-- Top Navigation Bar -->
+        <div class="top-navbar">
+            <h1 class="page-title">Machine Learning 1</h1>
+            <div class="nav-actions">
+                <a href="../homepage.html" class="text-button" title="Materials homepage">
+                    Homepage
+                </a>
+                <a href="https://scryptiq.ai/my-cohorts/" class="text-button scryptiq-button" title="Find out more about us">
+                    scryptIQ
+                </a>
+            </div>
+        </div>
+
+        
+            <div class="module-card" id="introduction">
+                <div class="module-header">
+                    Classifier Models <span class="module-tag">ML1</span>
+                </div>
+                <div class="module-body">
+                    <p>Classical machine learning consists of multiple models with differing architecture that can divide the state space up in differing ways, all based on their <em>assumptions</em> about how the data is distributed or the statistics of the decision boundary itself. For example, linear-equation-based models have an assumption that the target labels are linearly associated to one or more of the features; distance-based models assume that local, known data points inform the class of a new sample, and so on.<br><br>In this section we will run through some of the main models, their assumptions, quirks, and limitations. There is a mixture of the intuition behind the models and also their maths: understanding the intuition behind the model is sufficient for beginning to use and critique the models.</p>
+                </div>
+            </div>
+            
+            <div class="module-card" id="logistic-regression">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Logistic Regression</h3>
+                        <p>Despite its name, <strong>logistic regression</strong> is a classifier and not a regression model. It is so named because it is an adaptation of a <em>linear regression</em> model, the simplest model where the assumption is that all $y$ values are the result of a linear equation:<br><br>$$y = wx + b$$<br><br>, where $w$ is the slope that multiplies $x$, and $b$ is the intercept, changing how high or low on $y$ the line starts when $x$ is 0.<br><br>This can be seen plotted below. Try changing $w$ and $b$ to see how they affect the plot (pay attention to the scale of $y$).</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-85"># data tools
+import numpy as np
+
+# plotters
+import matplotlib.pyplot as plt
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots</textarea>
+            </div>
+            <div id="code-cell-85-output" class="output" style="display: none;"></div>
+        </div>
+        
+        <div class="code-area">
+            <div class="code-container code-editor">
+                <textarea id="code-cell-86"># Change the values below
+w = 2.5
+b = 4
+
+# Synthetic data
+rng = np.random.default_rng(42)
+x = np.linspace(0, 10, 50)
+y = w * x + b + rng.normal(0, 3, size=x.size)
+
+# find line: y = a*x + b
+m, c = np.polyfit(x, y, deg=1)
+
+plt.scatter(x, y, color=&#x27;blue&#x27;)
+plt.plot(x, m * x + c, color=&quot;crimson&quot;)
+plt.xlabel(&quot;one feature (x1)&quot;)
+plt.ylabel(&quot;target variable (y)&quot;)
+plt.show()</textarea>
+            </div>
+            <button id="run-code-cell-86" class="run-button">Run Code</button>
+            <div id="code-cell-86-output" class="output"></div>
+        </div>
+        <p>This can be extended to include multiple features by just adding the feature and its slope to the equation:<br><br>$$y = w_1x_1 + w_2x_2 + b$$<br><br>As it is no longer in 2-dimensions, the line is now called a <strong>plane</strong>. As before, we&#x27;re limited to 3-dimensions for viewing the data, but the machine is not, allowing it to scale to create a plane in infinitely high dimensions. The beauty of <em>linear regression</em> and by extension <em>logistic regression</em> is that their <em>understanding</em> of the data is very transparent. If you were to train a linear-based model on a high-dimensional dataset, to find the most influential variable (<strong>feature importance</strong>) you would simply identify the <em>slope</em> values that are the largest, in absolute terms, that is, with no discrimination between large negative and large positive values. Those closest to <code>0</code> have little to no effect on the prediction. This trait makes these models a useful tool to help explain some of the more opaque models, such as deep neural networks — something we will cover in the <strong>Advanced AI</strong> module.</p>
+        <div class="info-box warning-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                WARNING
+            </div>
+            <div class="box-content">
+                <p>The intercepts are only comparable if the features are all on the same scale, as small ranges will need multiplying more than larger ranges. Another reason for why it is important to scale your data.</p>
+            </div>
+        </div>
+        
+        <div class="code-area">
+            <div class="code-container code-editor">
+                <textarea id="code-cell-87">w1 = 2.5    # slope for x1
+w2 = -1.5   # slope for x2
+b = 4      # intercept
+
+# Synthetic data
+rng = np.random.default_rng(42)
+n = 100
+x1 = rng.uniform(0, 10, n)
+x2 = rng.uniform(0, 10, n)
+y2 = w1 * x1 + w2 * x2 + b + rng.normal(0, 3, size=n)
+
+# find plane: y = A*x1 + B*x2 + C
+X = np.column_stack([x1, x2, np.ones(n)])
+(A, B, C), *_ = np.linalg.lstsq(X, y2, rcond=None)
+
+# grid to draw the fitted plane
+g1, g2 = np.meshgrid(np.linspace(0, 10, 20), np.linspace(0, 10, 20))
+plane = A * g1 + B * g2 + C
+
+fig = go.Figure()
+fig.add_trace(go.Scatter3d(x=x1, y=x2, z=y2, mode=&quot;markers&quot;,
+                           marker=dict(size=4, color=&quot;blue&quot;)))
+fig.add_trace(go.Surface(x=g1, y=g2, z=plane, opacity=0.5,
+                         showscale=False, colorscale=[[0, &quot;crimson&quot;], [1, &quot;crimson&quot;]]))
+fig.update_layout(scene=dict(xaxis_title=&quot;first feature (x1)&quot;,
+                             yaxis_title=&quot;second feature (x2)&quot;,
+                             zaxis_title=&quot;target variable (y)&quot;))
+fig.show()</textarea>
+            </div>
+            <button id="run-code-cell-87" class="run-button">Run Code</button>
+            <div id="code-cell-87-output" class="output"></div>
+        </div>
+        
+        <div class="info-box key-terms-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                KEY TERMS
+            </div>
+            <div class="box-content">
+                <p><strong>line</strong>: A straight, one-dimensional path described by a linear equation with one feature, $y = wx + b$.<br><br><strong>plane</strong>: A flat, two-dimensional surface in 3D space, described by a linear equation with two features.<br><br><strong>hyperplane</strong>: The generalisation of a line or plane to any number of dimensions: a flat surface with one dimension fewer than the space it sits in, which divides that space in two.</p>
+            </div>
+        </div>
+        <h4>Adapting to a classifier</h4><p>With <em>logistic regression</em> you still want to model the output $y$ as a linear function, however, with the output changed from a continuous value (between minus infinity and positive infinity) to a probability of a label (between 0 and 1). To achieve this, it was proposed to transform the linear function by passing it to the <strong>standard logistic function</strong>, otherwise known as the <strong>sigmoid function</strong>.<br><br>Below we have passed the output of the linear regression function to the sigmoid:</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-88">w = 2.5
+b = 4
+x = np.linspace(-10, 10, 500)
+y = w * x + b 
+
+# Sigmoid applied to the linear output (y)
+p = 1 / (1 + np.exp(-y))</textarea>
+            </div>
+            <div id="code-cell-88-output" class="output" style="display: none;"></div>
+        </div>
+        <p>When plotted, you can see the output has been squished between <code>0</code> and <code>1</code>, forming an <strong>S</strong>-shaped line. With this shape we can now view the output as probability of either <strong>class 0</strong> or <strong>class 1</strong>, with the more vertical section representing the more unsure decision boundary and the plateaus the more sure decisions. Typically, any value above 0.5 (the grey line) will be considered <strong>class 1</strong> and anything below it <strong>class 0</strong>.<br><br>For both linear (<strong>gradient descent</strong>) and logistic regression (<strong>maximum likelihood</strong>) the optimisation routine seeks to find the best values for $w$ and $b$ that best predict $y$.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-89">fig, ax = plt.subplots(figsize=(10, 4))
+
+ax.plot(x, p, color=&quot;blue&quot;)
+ax.axhline(0.5, color=&quot;grey&quot;, linestyle=&quot;--&quot;)
+ax.set_xlabel(&quot;feature (x)&quot;)
+ax.set_ylabel(&quot;sigmoid of y&quot;)
+ax.set_title(&quot;Sigmoid of the linear function&quot;)
+
+plt.show()</textarea>
+            </div>
+            <div id="code-cell-89-output" class="output"></div>
+        </div>
+        <h4>Limitations</h4><p>As with <em>linear regression</em>, the logistic regression model is limited by its assumption of a linear relationship between the features and the target variable. However, it is an extremely lightweight and simple to understand model, so it is always worth checking.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="k-nn">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>K-NN</h3>
+                        <p><strong>k-Nearest Neighbours</strong> (kNN) is a non-parametric model or a <em>lazy</em> learner. This is because it doesn&#x27;t learn from the training data, so there is no loss function or optimisation routine. Instead, the model infers a new sample&#x27;s class directly from the training data. Here the kNN algorithm infers the class from the $k$ closest (nearest) examples, totalling the labels and choosing the majority as the label for the new sample. To always have a deciding vote, $k$ is normally an <em>odd</em> value.<br><br>The closeness of two points is given by a distance, which is most frequently the Euclidean distance - the length of a straight line between two points, as calculated by the Pythagorean theorem (the diagonal of a right-angled triangle).</p><p>Running the cell below, you can see the $k$ shortest Euclidean distances mapped to the plot; the predicted class is simply the one with the most dashed lines.<br><br>Try moving the sample&#x27;s coordinates closer to either group or to the corner, and changing the number of $k$.</p>
+        <div class="code-area">
+            <div class="code-container code-editor">
+                <textarea id="code-cell-90">k = 5 # change the number
+sample = np.array([5, 5]) # the new point to classify
+
+# Synthetic data: two classes
+rng = np.random.default_rng(42)
+class_0 = rng.normal([3, 3], 1.2, size=(15, 2))
+class_1 = rng.normal([7, 7], 1.2, size=(15, 2))
+X = np.vstack([class_0, class_1])
+labels = np.array([0] * 15 + [1] * 15)
+
+# Euclidean distance from the query to every point
+distances = np.sqrt(np.sum((X - sample) ** 2, axis=1))
+
+nearest = np.argsort(distances)[:k] # get k smallest distances
+# count the labels and return the class of the highest count
+prediction = np.bincount(labels[nearest]).argmax()
+
+fig, ax = plt.subplots(figsize=(7, 7))
+ax.scatter(class_0[:, 0], class_0[:, 1], color=&quot;blue&quot;, label=&quot;Class 0&quot;)
+ax.scatter(class_1[:, 0], class_1[:, 1], color=&quot;crimson&quot;, label=&quot;Class 1&quot;)
+
+# Lines to the k nearest, labelled with their distance
+for i in nearest:
+    ax.plot([sample[0], X[i, 0]], [sample[1], X[i, 1]], color=&quot;grey&quot;, linestyle=&quot;--&quot;)
+    mid = (sample + X[i]) / 2
+    ax.text(mid[0], mid[1], f&quot;{distances[i]:.2f}&quot;, fontsize=9)
+
+ax.scatter(sample[0], sample[1], color=&quot;black&quot;, marker=&quot;*&quot;, s=250,
+           label=f&quot;New sample is: class ?&quot;)
+
+ax.set_xlabel(&quot;feature 1 (x1)&quot;)
+ax.set_ylabel(&quot;feature 2 (x2)&quot;)
+ax.set_title(f&quot;k-nearest neighbours (k = {k})&quot;)
+ax.legend()
+ax.set_aspect(&quot;equal&quot;)
+plt.show()</textarea>
+            </div>
+            <button id="run-code-cell-90" class="run-button">Run Code</button>
+            <div id="code-cell-90-output" class="output"></div>
+        </div>
+        <h4>Benefits &amp; Limitations</h4><p>Like <em>logistic regression</em>, <strong>kNN</strong> is a simple model to understand and implement. It maps well to many types of data, as true groups of data tend to cluster well, meaning being close to a cluster is highly indicative of a sample belonging to that cluster. Additionally, unlike <em>logistic regression</em>, it makes no assumption about the underlying data distribution, with the exception of the choice of the distance metric for differing data types. As the model requires all the training data for prediction, it does not scale well, with very large datasets potentially causing the computer to run out of memory. Counter to this, it will work well for very small datasets, as long as $k$ is small.<br><br>Due to the reliance on counting neighbours, a kNN will struggle with heavily <strong>imbalanced</strong> datasets as there are simply fewer of one class to count in the vote. Where there is a low number of data points, the model can be sensitive to noise and outliers; however, these are typically ignored when the data is increased. kNNs can struggle with high-dimensional datasets, especially sparse ones, as the distance between points becomes more uniform. For example, if you had a heavily category-encoded dataset, a kNN may perform poorly.</p>
+        <div class="info-box warning-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                WARNING
+            </div>
+            <div class="box-content">
+                <p>As kNN relies on distances, it is <strong>VERY</strong> sensitive to the scale of the features. They must always be standardised.</p>
+            </div>
+        </div>
+        <h4>Choosing K</h4><p>Picking the right value of $k$ is a balancing act of preventing <em>under-</em> and <em>over-fitting</em>. Choosing $k$ (a hyperparameter) is done during the fine-tuning phase, which we will cover in the next lesson. In essence, it is an empirical endeavour, where you change $k$ in a given range to observe how the performance changes on the <strong>validation</strong> dataset.</p>
+        <div class="info-box tip-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                TIP
+            </div>
+            <div class="box-content">
+                <p>There are many distance metrics, ones to fit all types of relationships between data. If you are interested in further reading, this <a href="https://medium.com/data-science/17-types-of-similarity-and-dissimilarity-measures-used-in-data-science-3eb914d2681">article</a> describes many of them thoroughly.</p>
+            </div>
+        </div>
+        
+        <div class="info-box key-terms-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                KEY TERMS
+            </div>
+            <div class="box-content">
+                <p><strong>parametric model</strong>: A model with a fixed number of parameters, which assumes a particular form for the data, such as the straight line of linear and logistic regression. Once trained, the parameters alone are used to predict.<br><br><strong>non-parametric model</strong>: A model that makes no fixed assumption about the form of the data, and whose complexity can grow with the amount of data, such as kNN, which uses the stored training data directly to predict.</p>
+            </div>
+        </div>
+        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="decision-tree">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Decision Tree</h3>
+                        <p>At the foundation of the <strong>tree ensembles</strong> (which will be covered next) is the <strong>decision tree</strong>. A tree will learn a set of rules on how to split the data, where each split should sort the data into a new group (node) that is more separated than before (more pure). When given new data, it simply follows the splitting thresholds, sending the data to the <em>left</em> or <em>right</em> branch, down the tree. When the data finally reaches a terminal leaf node, the decision is made about which class the sample belongs to.</p><p><br><div class="image-placeholder">
+            <div class="placeholder-content">
+                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21,15 16,10 5,21"/>
+                </svg>
+                <p><strong>Image not found:</strong> Decision Tree</p>
+                <p><small>Expected: ./images/decision-tree.png</small></p>
+            </div><br>&lt;/div&gt;</p><h4>How the split is calculated</h4><p>In the diagram above we have all of the data at the beginning — $X$ — where the algorithm&#x27;s job is to find the first <strong>best</strong> feature that splits the data. It does this by testing every feature with varying thresholds, that is values at which to separate the data into two halves. A split is said to be good when it best splits that feature in such a way that most (or all) of one class falls on one side and the same for the other side.<br><br>This is demonstrated in the code below, where we have feature $x_1$. In this dataset there are equal amounts of class 0 and class 1, therefore as a <strong>whole</strong> it has an impurity score of <code>0.5</code> as it is 50/50 for each. By adding a threshold — which you can move with the slider — we have now created two halves. Notice, if you move the threshold so that only the red or blue class is in one half, the impurity value of it is <strong>0</strong>, which is a perfect score. In doing so, this places more of a mix in the other half, increasing its score. A score can then be calculated by finding the average of the two halves scored, weighted by the number of values in each (otherwise a pure half of just 1 data point would count the same as one with a mix of 100s). To further normalise the score, we take the <strong>gain</strong>, which is the difference between the score when there is no split (in this case 0.5) and the weighted score. The largest gain across all features is then locked in as the chosen rule.</p>
+        <div class="info-box note-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                NOTE
+            </div>
+            <div class="box-content">
+                <p>Described above is the <strong>gini impurity criterion</strong>, the most commonly used score. For example, inside scikit-learn&#x27;s implementation of a <a href="https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html#sklearn.tree.DecisionTreeClassifier">decision tree</a> you can pick from <em>gini</em>, <em>entropy</em>, and <em>log loss</em>; with gini as the default.</p>
+            </div>
+        </div>
+        
+        <div class="code-area">
+            <div class="code-collapse-header" onclick="toggleCodeCollapse('code-cell-91')">
+                <span class="code-collapse-icon">▶</span>
+                <span class="code-collapse-label">Show code</span>
+            </div>
+            <div class="code-container code-fixed code-collapsed" id="code-cell-91-container">
+                <textarea id="code-cell-91"># Synthetic data
+rng = np.random.default_rng(42)
+class_0 = np.column_stack([rng.normal(4, 1.5, 40), rng.uniform(0, 10, 40)])
+class_1 = np.column_stack([rng.normal(7, 1.5, 40), rng.uniform(0, 10, 40)])
+X = np.vstack([class_0, class_1])
+y = np.array([0] * 40 + [1] * 40)
+
+
+def gini(labels):
+    if len(labels) == 0:
+        return 0
+    p = np.bincount(labels) / len(labels)
+    return 1 - np.sum(p ** 2)
+
+
+parent_gini = gini(y)
+x = X[:, 0]
+thresholds = np.linspace(x.min(), x.max(), 100)
+
+fig = go.Figure([
+    go.Scatter(x=class_0[:, 0], y=class_0[:, 1], mode=&quot;markers&quot;, name=&quot;Class 0&quot;,
+               marker=dict(color=&quot;crimson&quot;, opacity=0.6)),
+    go.Scatter(x=class_1[:, 0], y=class_1[:, 1], mode=&quot;markers&quot;, name=&quot;Class 1&quot;,
+               marker=dict(color=&quot;blue&quot;, opacity=0.6)),
+])
+
+# One frame per threshold: only the split line and text change
+frames = []
+for i, t in enumerate(thresholds):
+    left, right = y[x &lt;= t], y[x &gt; t]
+    weighted = (len(left) * gini(left) + len(right) * gini(right)) / len(y)
+
+    text = (f&quot;Before split: {parent_gini:.3f}&lt;br&gt;&quot;
+            f&quot;Left (n={len(left)}): {gini(left):.3f}&lt;br&gt;&quot;
+            f&quot;Right (n={len(right)}): {gini(right):.3f}&lt;br&gt;&quot;
+            f&quot;&lt;b&gt;Weighted: {weighted:.3f}&lt;/b&gt;&lt;br&gt;&quot;
+            f&quot;&lt;b&gt;Gain: {parent_gini - weighted:.3f}&lt;/b&gt;&quot;)
+
+    frames.append(go.Frame(name=str(i), layout=dict(
+        shapes=[dict(type=&quot;line&quot;, x0=t, x1=t, y0=0, y1=10,
+                     line=dict(color=&quot;green&quot;, dash=&quot;dash&quot;))],
+        annotations=[dict(x=0.02, y=0.98, xref=&quot;paper&quot;, yref=&quot;paper&quot;, text=text,
+                          showarrow=False, align=&quot;left&quot;, bgcolor=&quot;white&quot;)],
+    )))
+
+fig.frames = frames
+
+fig.update_layout(
+    title=&quot;Gini impurity&quot;,
+    xaxis_title=&quot;feature 1 (x1)&quot;,
+    yaxis_title=&quot;&quot;,
+    sliders=[dict(
+        currentvalue=dict(prefix=&quot;Threshold: &quot;),
+        steps=[dict(method=&quot;animate&quot;, label=f&quot;{t:.2f}&quot;,
+                    args=[[str(i)], dict(mode=&quot;immediate&quot;, frame=dict(duration=0))])
+               for i, t in enumerate(thresholds)],
+    )],
+)
+# fig.show()
+print(fig.to_html(auto_play=False))</textarea>
+            </div>
+            <div id="code-cell-91-output" class="output"></div>
+        </div>
+        <h4>Optimisation Routine</h4><p>This process is replicated until the terminal node is just one class (pure) or when the limits set on the model are reached, such as maximum depth or minimum samples per split, which are model <em>hyperparameters</em>. Each split is <em>greedy</em>, which means it maximises for the current split with no reference (thought) to subsequent splits. This means a mediocre split that could enable a future, better split will never be chosen, a limitation of the system, but a trade-off for a computationally efficient system.</p><h4>Limitations</h4><p>As the rules are learned from the data, there are no assumptions made about how the data is modelled, meaning it can learn highly complex decision boundaries that take into consideration non-linear shapes to the data. However, despite this, decision trees are almost never used, as this benefit also means they have an extreme tendency to <strong>overfit</strong> to the data, learning the fingerprint (noise) of the training data as well as any true statistics.<br><br>For this reason decision trees are mostly used as part of an ensemble, that is multiple trees, working in tandem or on subsets of the data.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="tree-ensembles">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Tree Ensembles</h3>
+                        <p>To overcome the weakness of <em>decision trees</em> it was found that creating a collection of trees, each that can only see a subset of the whole dataset, was much more accurate and crucially <em>generalisable</em> than a single tree on its own. This method, of collecting multiple versions of a model is called <strong>ensemble learning</strong> and is most frequently used with tree-based models, although it can be applied to any model.<br><br>The learning paradigm is that if you have multiple <em>weak learners</em>, which are all at least better than random chance, then you can obtain a high accuracy by combining all their votes together and taking the majority rule. In fact, this is where the probability for <em>random forests</em> comes from, they are simply a totalling of the votes, normalised to a percentage. If 72 of 100 trees vote for <em>class-1</em> then the probability is <code>0.72</code> or <strong>72%</strong>. As each tree only sees a small set of data and is shallow in depth, the models can be trained extremely quickly in parallel and do not require lots of data, in stark contrast to deep learning methods.<br><br>The two principal methods of ensemble learning are:</p>
+        <div class="info-box key-terms-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                KEY TERMS
+            </div>
+            <div class="box-content">
+                <p><strong>bagging</strong>: Short for bootstrap aggregating. Many models are trained independently, each on a random sample of the training data, and their predictions are combined by majority vote or averaging, as in a random forest.<br><br><strong>boosting</strong>: Models are trained one after another, with each new model focusing on correcting the errors of the previous ones, and their predictions are combined as a weighted vote, as in AdaBoost and gradient boosting.</p>
+            </div>
+        </div>
+        <h4>Random Forest</h4><p>The most common <em>bagging</em> ensemble model is the <strong>random forest</strong> (RF), which we have used extensively throughout this lesson. RFs work by generating $T$ decision trees, where each tree sees a random sample of the training dataset with all the features. The sampling is done with replacement, so a sample can appear more than once per tree and in multiple trees, increasing the $N$ per tree for small datasets. Each tree is then trained as explained above, with the exception that instead of picking the best feature per split from all features, it can only select from a random subset of features. This is to prevent the trees all replicating each other, as in cases where one feature is strong they will all replicate each other.<br><br>Once trained, a new sample is given to each tree and it flows down the tree&#x27;s decision gates until each gives its own prediction, which is used to pick the most likely class by the majority. See the visualisation below:</p><p><br><div class="image-placeholder">
+            <div class="placeholder-content">
+                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21,15 16,10 5,21"/>
+                </svg>
+                <p><strong>Image not found:</strong> Decision Tree</p>
+                <p><small>Expected: ./images/decision-tree.png</small></p>
+            </div><br>&lt;/div&gt;</p><h4>Limitations</h4><p>Due to having multiple weak learners, RFs tend to be fairly robust to <em>overfitting</em> as each tree is only exposed to some or little of the noise and outliers. For this reason they tend to be the classical machine learning model that performs best straight away. The model&#x27;s limitations are often the general limitations of ML: the data is overly noisy or not representative of the problem.<br><br>When working with <a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html">RFs</a> the most important <em>hyperparameters</em> for tuning tend to be the <strong>number of trees</strong> and the number of features to consider at each split — <strong>max features</strong> in scikit-learn.</p><h4>How feature importances are calculated</h4><p>In the final part of the <a href="./scikit-learn.html#feature-importance">second section</a> we obtained the feature importances to select the top 3 features. Now that we know a bit more about RFs, we can explain how they are calculated. In the decision tree subsection we saw that each split aims to reduce the impurity. A feature&#x27;s importance is the total of the impurity reduction it creates, over all splits it is involved in, weighted by how many samples there are at each split. Therefore, features that bring about the greatest increase in purity in the greatest number of samples will have the highest score. These values are then normalised to sum to <strong>1</strong>.</p><h4>AdaBoost</h4><p></p><h4>Gradient Boosting</h4><p></p>
+        <div class="info-box fact-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                FACT
+            </div>
+            <div class="box-content">
+                <p>Gradient boosting has for a long time been the premier ML model for predicting from tabular data, even outperforming deep learning (neural networks). The most used tool in Python for these ensemble methods is <a href="https://xgboost.readthedocs.io/en/stable/">XGBoost</a>, a package optimised to scale the model for large datasets. Only in recent years has a deep learning tool begun to outperform XGBoost models: Tabular-AI, a neural network built with an architecture similar to large language models. This is covered in the final lesson of the <strong>Advanced Artificial Intelligence</strong> module.</p>
+            </div>
+        </div>
+        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="svm">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>SVM</h3>
+                        <p><strong>Support vector machines</strong> (SVMs) work by separating the feature space using a line/plane/hyperplane (see earlier) such that the separator <strong>maximises</strong> the distance between itself and the nearest points of each class. As before, we have a linear equation, except in this circumstance the output ($y$) is not the result of the linear equation; rather, it is which side of the line the data point falls on, or:<br><br>$$y = \text{sign}(wx + b),$$<br><br>where <strong>sign</strong> is a mathematical operator that returns <code>+1</code> if the input is positive or <code>-1</code> if it is negative, giving us two numbers that represent our classes, as they fall on either side of the hyperplane.</p><p>In the plot below, an <em>SVM</em> has been trained on the data, producing the hyperplane (black), its margins (grey), and support vectors (encircled). The hyperplane is where $wx + b = 0$, i.e. no decision, and lies midway between the two margins. The support vectors are the points that lie on the edge of the margins and are what define where the margins sit. Only the support vectors influence the hyperplane (hence the name), meaning points that sit well within their own class&#x27;s cluster have no effect on the prediction function.<br><br>The aim of the optimisation algorithm is to <strong>maximise</strong> the size of the margin, so that the hyperplane is equidistant from the closest examples of each class. Thereby, the model focuses on learning how to best separate the most difficult points.</p>
+        <div class="code-area">
+            <div class="code-collapse-header" onclick="toggleCodeCollapse('code-cell-92')">
+                <span class="code-collapse-icon">▶</span>
+                <span class="code-collapse-label">Show code</span>
+            </div>
+            <div class="code-container code-fixed code-collapsed" id="code-cell-92-container">
+                <textarea id="code-cell-92">from sklearn.svm import SVC
+
+# Synthetic data: two well-separated classes
+rng = np.random.default_rng(42)
+class_0 = rng.normal([4, 2], 0.8, size=(30, 2))
+class_1 = rng.normal([6, 6], 0.8, size=(30, 2))
+X = np.vstack([class_0, class_1])
+y = np.array([0] * 30 + [1] * 30)
+
+# Very large C to approximate a hard-margin SVM
+model = SVC(kernel=&quot;linear&quot;, C=1e6).fit(X, y)
+(w1, w2), b = model.coef_[0], model.intercept_[0]
+sv = model.support_vectors_
+
+# Solve w1*x1 + w2*x2 + b = level for x2
+xs = np.linspace(X[:, 0].min() - 0.5, X[:, 0].max() + 0.5, 100)
+
+def line(level):
+    return (level - b - w1 * xs) / w2
+
+fig = go.Figure([
+    go.Scatter(x=class_0[:, 0], y=class_0[:, 1], mode=&quot;markers&quot;, name=&quot;Class 0&quot;,
+               marker=dict(color=&quot;blue&quot;, size=8)),
+    go.Scatter(x=class_1[:, 0], y=class_1[:, 1], mode=&quot;markers&quot;, name=&quot;Class 1&quot;,
+               marker=dict(color=&quot;crimson&quot;, size=8)),
+    go.Scatter(x=xs, y=line(0), mode=&quot;lines&quot;, name=&quot;Hyperplane&quot;,
+               line=dict(color=&quot;black&quot;, width=2)),
+    go.Scatter(x=xs, y=line(1), mode=&quot;lines&quot;, name=&quot;Margin&quot;,
+               line=dict(color=&quot;grey&quot;, dash=&quot;dash&quot;)),
+    go.Scatter(x=xs, y=line(-1), mode=&quot;lines&quot;, showlegend=False,
+               line=dict(color=&quot;grey&quot;, dash=&quot;dash&quot;)),
+    go.Scatter(x=sv[:, 0], y=sv[:, 1], mode=&quot;markers&quot;, name=&quot;Support vectors&quot;,
+               marker=dict(size=14, color=&quot;rgba(0,0,0,0)&quot;,
+                           line=dict(color=&quot;black&quot;, width=2))),
+])
+
+fig.update_layout(
+    title=&quot;Linear SVM&quot;,
+    xaxis=dict(title=&quot;feature 1 (x1)&quot;, range=[xs.min(), xs.max()],
+               constrain=&quot;domain&quot;),
+    yaxis=dict(title=&quot;feature 2 (x2)&quot;,
+               range=[X[:, 1].min() - 0.5, X[:, 1].max() + 0.5],
+               scaleanchor=&quot;x&quot;, constrain=&quot;domain&quot;),
+    width=650, height=600,
+)
+# fig.show()
+print(fig.to_html())</textarea>
+            </div>
+            <div id="code-cell-92-output" class="output"></div>
+        </div>
+        <h4>Dealing with Noise</h4><p>In the example above, the parameters for the hyperplane are simple: it lies midway between the support vectors of each class. However, in practice (and as seen below) classes often overlap and are not perfectly separable. This means that the model needs to allow for some misclassification to be of any practical use. This is achieved through the <a href="https://en.wikipedia.org/wiki/Hinge_loss"><strong>hinge loss function</strong></a>, which returns a score of <strong>0</strong> when a data point is on the correct side of the decision boundary and outside the margin; otherwise, it returns a value that is <strong>proportional</strong> to how far the point sits past its margin. This means that points just inside the margin receive only a small penalty, whilst egregious predictions are penalised heavily. Points that fall within the margins are also support vectors.<br><br>To control how many misclassifications are allowed (and thereby the width of the margin), the hinge loss is weighted by the hyperparameter <code>C</code> and combined with the margin term to form the <strong>cost function</strong>. <code>C</code> is a constant that multiplies the value from the hinge loss, such that a small <code>C</code> permits many violations, as it reduces the penalty for each one, giving a wide margin and many support vectors; whereas a large <code>C</code> penalises them heavily, giving a narrow margin defined by only a few points.<br><br>$$\text{Cost} = \underbrace{\frac{1}{2}\lVert w \rVert^2}_{\text{margin term}} + \; C \times \underbrace{\sum \text{hinge loss}}_{\text{misclassification}}$$</p><p>As with $k$ in kNNs, finding the right <code>C</code> is empirical. Whilst it may seem like restricting misclassifications will give better accuracy, it means the model is likely to <strong>overfit</strong> to the training data.</p><p>Use the slider below to see how C changes the decision boundary:</p>
+        <div class="code-area">
+            <div class="code-collapse-header" onclick="toggleCodeCollapse('code-cell-93')">
+                <span class="code-collapse-icon">▶</span>
+                <span class="code-collapse-label">Show code</span>
+            </div>
+            <div class="code-container code-fixed code-collapsed" id="code-cell-93-container">
+                <textarea id="code-cell-93">C_values = [0.01, 0.1, 1, 10, 100]   # values of C (inverse regularisation strength)
+
+# Synthetic data: two overlapping classes
+rng = np.random.default_rng(42)
+class_0 = rng.normal([3.5, 3], 1.0, size=(30, 2))
+class_1 = rng.normal([6, 5], 1.0, size=(30, 2))
+X = np.vstack([class_0, class_1])
+y = np.array([0] * 30 + [1] * 30)
+
+xs = np.linspace(X[:, 0].min() - 1, X[:, 0].max() + 1, 100)
+
+
+def svm_traces(C):
+    &quot;&quot;&quot;Fit a linear SVM and return the hyperplane, margins and support vectors.&quot;&quot;&quot;
+    model = SVC(kernel=&quot;linear&quot;, C=C).fit(X, y)
+    (w1, w2), b = model.coef_[0], model.intercept_[0]
+
+    # Solve w1*x1 + w2*x2 + b = level for x2
+    def line(level):
+        return (level - b - w1 * xs) / w2
+
+    sv = model.support_vectors_
+    margin_width = 2 / np.linalg.norm(model.coef_)
+
+    traces = [
+        go.Scatter(x=xs, y=line(0), mode=&quot;lines&quot;, name=&quot;Hyperplane&quot;,
+                   line=dict(color=&quot;black&quot;, width=2)),
+        go.Scatter(x=xs, y=line(1), mode=&quot;lines&quot;, name=&quot;Margin&quot;,
+                   line=dict(color=&quot;grey&quot;, dash=&quot;dash&quot;)),
+        go.Scatter(x=xs, y=line(-1), mode=&quot;lines&quot;, showlegend=False,
+                   line=dict(color=&quot;grey&quot;, dash=&quot;dash&quot;)),
+        go.Scatter(x=sv[:, 0], y=sv[:, 1], mode=&quot;markers&quot;,
+                   name=f&quot;Support vectors ({len(sv)})&quot;,
+                   marker=dict(size=14, color=&quot;rgba(0,0,0,0)&quot;,
+                               line=dict(color=&quot;black&quot;, width=2))),
+    ]
+    title = f&quot;Linear SVM, C = {C}&quot;
+    return traces, title
+
+
+# Fixed data traces (indices 0 and 1)
+fig = go.Figure([
+    go.Scatter(x=class_0[:, 0], y=class_0[:, 1], mode=&quot;markers&quot;, name=&quot;Class 0&quot;,
+               marker=dict(color=&quot;blue&quot;, size=8)),
+    go.Scatter(x=class_1[:, 0], y=class_1[:, 1], mode=&quot;markers&quot;, name=&quot;Class 1&quot;,
+               marker=dict(color=&quot;crimson&quot;, size=8)),
+])
+
+# Start on the middle C value
+start = len(C_values) // 2
+initial_traces, initial_title = svm_traces(C_values[start])
+fig.add_traces(initial_traces)
+
+# One frame per C: only traces 2 to 5 change
+frames = []
+for C in C_values:
+    traces, title = svm_traces(C)
+    frames.append(go.Frame(name=str(C), data=traces, traces=[2, 3, 4, 5],
+                           layout=dict(title=title)))
+fig.frames = frames
+
+fig.update_layout(
+    width=650,
+    height=600,
+    title=initial_title,
+    xaxis=dict(title=&quot;feature 1 (x1)&quot;,
+            range=[xs.min(), xs.max()],
+            constrain=&quot;domain&quot;),
+    yaxis=dict(title=&quot;feature 2 (x2)&quot;,
+            range=[X[:, 1].min() - 0.3, X[:, 1].max() + 0.3],
+            scaleanchor=&quot;x&quot;,
+            constrain=&quot;domain&quot;),
+    sliders=[dict(
+        active=start,
+        currentvalue=dict(prefix=&quot;C = &quot;),
+        steps=[dict(method=&quot;animate&quot;, label=str(C),
+                    args=[[str(C)], dict(mode=&quot;immediate&quot;,
+                                         frame=dict(duration=0, redraw=True))])
+               for C in C_values],
+    )],
+)
+# fig.show()
+print(fig.to_html(auto_play=False))</textarea>
+            </div>
+            <div id="code-cell-93-output" class="output"></div>
+        </div>
+        <h4>Kernels</h4><p>The above examples utilised <strong>linear SVMs</strong>, which, as with <em>logistic</em> and <em>linear</em> regression, are limited to modelling linearly separable data.</p>
+        <div class="code-area">
+            <div class="code-collapse-header" onclick="toggleCodeCollapse('code-cell-94')">
+                <span class="code-collapse-icon">▶</span>
+                <span class="code-collapse-label">Show code</span>
+            </div>
+            <div class="code-container code-fixed code-collapsed" id="code-cell-94-container">
+                <textarea id="code-cell-94">from sklearn.datasets import make_circles
+
+# Data that no straight line can separate: one class ringed by the other
+X, y = make_circles(n_samples=200, factor=0.4, noise=0.05, random_state=42)
+x1, x2 = X[:, 0], X[:, 1]
+
+# The kernel trick: add a third feature, z = x1² + x2²
+z = x1 ** 2 + x2 ** 2
+X_3d = np.column_stack([x1, x2, z])
+
+# A linear SVM in 3D: hyperplane w1*x1 + w2*x2 + w3*z + b = 0
+model = SVC(kernel=&quot;linear&quot;, C=1e6).fit(X_3d, y)
+(w1, w2, w3), b = model.coef_[0], model.intercept_[0]
+
+# Grid over the original feature space
+g1, g2 = np.meshgrid(np.linspace(-1.3, 1.3, 50), np.linspace(-1.3, 1.3, 50))
+plane = -(w1 * g1 + w2 * g2 + b) / w3                       # hyperplane in 3D
+boundary = w1 * g1 + w2 * g2 + w3 * (g1**2 + g2**2) + b     # same hyperplane in 2D
+
+# A linear SVM in the original 2D space, for comparison
+linear_2d = SVC(kernel=&quot;linear&quot;, C=1).fit(X, y)
+linear_boundary = linear_2d.decision_function(
+    np.column_stack([g1.ravel(), g2.ravel()])
+).reshape(g1.shape)
+
+fig = make_subplots(rows=1, cols=2,
+                    specs=[[{&quot;type&quot;: &quot;xy&quot;}, {&quot;type&quot;: &quot;scene&quot;}]],
+                    subplot_titles=[&quot;Original 2D space&quot;, &quot;Mapped to 3D&quot;])
+
+colours = {0: &quot;blue&quot;, 1: &quot;crimson&quot;}
+
+for cls in (0, 1):
+    mask = y == cls
+    # 2D points
+    fig.add_trace(go.Scatter(x=x1[mask], y=x2[mask], mode=&quot;markers&quot;,
+                             name=f&quot;Class {cls}&quot;, legendgroup=f&quot;c{cls}&quot;,
+                             marker=dict(color=colours[cls], size=6)),
+                  row=1, col=1)
+    # 3D points
+    fig.add_trace(go.Scatter3d(x=x1[mask], y=x2[mask], z=z[mask], mode=&quot;markers&quot;,
+                               name=f&quot;Class {cls}&quot;, legendgroup=f&quot;c{cls}&quot;,
+                               showlegend=False,
+                               marker=dict(color=colours[cls], size=3)),
+                  row=1, col=2)
+
+# Best straight line in 2D
+fig.add_trace(go.Contour(x=g1[0], y=g2[:, 0], z=linear_boundary,
+                         name=&quot;Linear SVM&quot;,
+                         showlegend=True, showscale=False,
+                         contours=dict(start=0, end=0, size=1, coloring=&quot;lines&quot;),
+                         line=dict(color=&quot;green&quot;, width=2, dash=&quot;dash&quot;)),
+              row=1, col=1)
+
+# Hyperplane from 3D projected back into 2D: a circle
+fig.add_trace(go.Contour(x=g1[0], y=g2[:, 0], z=boundary,
+                         name=&quot;Hyperplane from 3D&quot;,
+                         showlegend=True, showscale=False,
+                         contours=dict(start=0, end=0, size=1, coloring=&quot;lines&quot;),
+                         line=dict(color=&quot;black&quot;, width=2)),
+              row=1, col=1)
+
+# Hyperplane in 3D: a flat plane
+fig.add_trace(go.Surface(x=g1, y=g2, z=plane, opacity=0.4, showscale=False,
+                         colorscale=[[0, &quot;grey&quot;], [1, &quot;grey&quot;]], name=&quot;Hyperplane&quot;),
+              row=1, col=2)
+
+fig.update_xaxes(title_text=&quot;x₁&quot;, row=1, col=1)
+fig.update_yaxes(title_text=&quot;x₂&quot;, scaleanchor=&quot;x&quot;, row=1, col=1)
+fig.update_layout(
+    scene=dict(xaxis_title=&quot;x₁&quot;, yaxis_title=&quot;x₂&quot;, zaxis_title=&quot;z&quot;,
+               zaxis=dict(range=[0, z.max() + 0.2])),
+    width=1100, height=550,
+)
+fig.show()
+# print(fig.to_html())</textarea>
+            </div>
+            <div id="code-cell-94-output" class="output"></div>
+        </div>
+        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="others">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Others</h3>
+                        <p></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="summary---quiz">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Summary & Quiz</h3>
+                        <p>summary</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="summary---quiz">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Summary & Quiz</h3>
+                        
+        <div class="quiz-box" id="quiz-4">
+            <div class="quiz-body">
+                <p class="quiz-intro">Attempt the questions below once you have finished. If you get any wrong, head back to that section to remind yourself of the reasoning/syntax behind the correct answer:</p>
+                
+                
+            </div>
+        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+        <div class="page-navigation">
+            <a href="./categorical-data.html" class="nav-button prev">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                </svg>
+                Previous
+            </a>
+            <a href="./assignment.html" class="nav-button next">
+                Next
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                </svg>
+            </a></div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div>© All materials are copyright scryptIQ 2025</div>
+            <div>Powered by Pyodide</div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="../assets/main.js"></script>
+    
+    <!-- Pyodide Initialisation Script -->
+    <script>
+
+// Generalisable Pyodide Initialisation Script
+// Variables and state build up naturally as code blocks execute in order
+
+async function main() {
+    // Show loading message for all output elements
+    document.querySelectorAll(".output").forEach(el => {
+        el.textContent = "Loading Pyodide...";
+        el.classList.add("loading-message");
+    });
+    
+    try {
+        // Load Pyodide
+        console.log("Loading Pyodide...");
+        const pyodideStartTime = performance.now();
+        let pyodide = await loadPyodide();
+        const pyodideLoadTime = performance.now() - pyodideStartTime;
+        console.log(`Pyodide loaded in ${pyodideLoadTime.toFixed(2)}ms`);
+        
+        // Load required packages only if specified
+        const lessonPackages = window.LESSON_PACKAGES || [];
+        
+        if (lessonPackages.length > 0) {
+            console.log("Loading required Python packages...");
+            const packagesStartTime = performance.now();
+
+            // micropip resolves each requirement against the Pyodide lockfile
+            // *first* and only falls through to PyPI for packages Pyodide does
+            // not bundle (it sets search_pyodide_lock_first whenever the index
+            // URLs are left at their default).  So one call handles both cases
+            // and, unlike a hardcoded list of bundled package names, there is
+            // nothing to fall out of date when Pyodide is upgraded.  It also
+            // means version specifiers such as `pandas==2.2` work.
+            await pyodide.loadPackage(['micropip']);
+            const micropip = pyodide.pyimport('micropip');
+            await micropip.install(lessonPackages);
+            console.log(`Installed packages: ${lessonPackages.join(', ')}`);
+
+            const packagesLoadTime = performance.now() - packagesStartTime;
+            console.log(`Packages loaded in ${packagesLoadTime.toFixed(2)}ms`);
+            console.log(`Total initialisation time: ${(pyodideLoadTime + packagesLoadTime).toFixed(2)}ms`);
+        } else {
+            console.log("No packages to load for this lesson");
+            console.log(`Total initialisation time: ${pyodideLoadTime.toFixed(2)}ms`);
+        }
+
+        // Only set up basic Python environment - no pre-loaded variables
+        await pyodide.runPythonAsync(`
+            import sys
+            from io import StringIO
+        `);
+
+        // Only set up matplotlib if it's in the loaded packages.  Checked
+        // against the canonical (lower-cased, un-versioned) names so that a
+        // PACKAGES cell saying `Matplotlib` or `matplotlib>=3.9` still works.
+        const lessonPackageNames = window.LESSON_PACKAGE_NAMES || [];
+        if (lessonPackageNames.includes('matplotlib')) {
+            await pyodide.runPythonAsync(`
+                # Set up matplotlib for web rendering
+                import matplotlib
+                matplotlib.use('AGG')
+                import matplotlib.pyplot as plt
+                import io
+                import base64
+                
+                def capture_matplotlib():
+                    """Capture current matplotlib figure as HTML img tag"""
+                    buf = io.BytesIO()
+                    plt.savefig(buf, format='png', bbox_inches='tight', dpi=100)
+                    buf.seek(0)
+                    img_base64 = base64.b64encode(buf.read()).decode('utf-8')
+                    plt.close()
+                    return f'<img src="data:image/png;base64,{img_base64}" style="max-width: 100%; height: auto;" />'
+
+                # Silence the "FigureCanvasAgg is non-interactive" warning that
+                # occurs when notebook code calls plt.show().  In this environment
+                # figures are captured automatically via capture_matplotlib(), so
+                # plt.show() should simply be a no-op.
+                plt.show = lambda *args, **kwargs: None
+            `);
+            console.log('Matplotlib capture function set up');
+        }
+        
+        console.log("Pyodide loaded successfully");
+        
+        // Load remote files if URLs are specified
+        const lessonFiles = window.LESSON_FILES || [];
+        
+        if (lessonFiles.length > 0) {
+            try {
+                console.log(`Checking for ${lessonFiles.length} remote file(s) to load...`);
+                
+                // Build Python code to load all files dynamically
+                let pythonCode = `
+from pyodide.http import pyfetch
+import os
+
+# Create data directory if it doesn't exist
+os.makedirs('./data', exist_ok=True)
+`;
+                
+                // Add loading code for each file
+                for (const file of lessonFiles) {
+                    if (file.is_binary) {
+                        // Binary files (images, etc.) - use bytes
+                        pythonCode += `
+# Load ${file.filename} (binary)
+try:
+    response = await pyfetch("${file.url}")
+    content = await response.bytes()
+    with open('./data/${file.filename}', 'wb') as f:
+        f.write(bytes(content))
+    print("Loaded: ${file.filename}")
+except Exception as e:
+    print(f"Could not load ${file.filename}: {e}")
+`;
+                    } else {
+                        // Text files (CSV, etc.) - use string
+                        pythonCode += `
+# Load ${file.filename} (text)
+try:
+    response = await pyfetch("${file.url}")
+    content = await response.string()
+    with open('./data/${file.filename}', 'w') as f:
+        f.write(content)
+    print("Loaded: ${file.filename}")
+except Exception as e:
+    print(f"Could not load ${file.filename}: {e}")
+`;
+                    }
+                }
+                
+                await pyodide.runPythonAsync(pythonCode);
+                console.log("Remote files loaded successfully");
+            } catch (error) {
+                console.warn("Error loading remote files (continuing anyway):", error);
+            }
+        } else {
+            console.log("No remote files to load for this lesson");
+        }
+        
+        // Function to execute Python code and capture output
+        async function executePythonCode(code) {
+            try {
+                // Redirect Python stdout and stderr to capture print statements and warnings
+                await pyodide.runPythonAsync(`
+                    old_stdout = sys.stdout
+                    old_stderr = sys.stderr
+                    sys.stdout = mystdout = StringIO()
+                    sys.stderr = mystderr = StringIO()
+                `);
+
+                // Run the user code.
+                // We pass the code string via pyodide.globals to avoid JS-string escaping
+                // issues, then use Python's ast module to execute it.  The last expression
+                // (if any) is eval-ed inside Python so that repr() is called there —
+                // this means display settings such as np.set_printoptions() are always
+                // respected before the value crosses the Python→JS boundary.
+                // (Pyodide auto-converts numpy arrays to TypedArray, so String(result)
+                // would bypass numpy's formatting entirely.)
+                pyodide.globals.set('__cell_code__', code);
+                await pyodide.runPythonAsync(`
+import ast as _ast
+__cell_result__ = None
+try:
+    _tree = _ast.parse(__cell_code__)
+    if _tree.body and isinstance(_tree.body[-1], _ast.Expr):
+        _last = _tree.body.pop()
+        exec(compile(_ast.Module(body=_tree.body, type_ignores=[]), '<cell>', 'exec'), globals())
+        _val = eval(compile(_ast.Expression(body=_last.value), '<cell>', 'eval'), globals())
+        if _val is not None:
+            __cell_result__ = repr(_val)
+    else:
+        exec(compile(_tree, '<cell>', 'exec'), globals())
+finally:
+    for _k in ['_tree', '_last', '_val', '_ast']:
+        globals().pop(_k, None)
+    globals().pop('__cell_code__', None)
+`);
+
+                // Get the captured stdout and stderr
+                let stdout = await pyodide.runPythonAsync(`
+                    sys.stdout = old_stdout
+                    sys.stderr = old_stderr
+                    mystdout.getvalue()
+                `);
+
+                const stderr = await pyodide.runPythonAsync(`mystderr.getvalue()`);
+                if (stderr) {
+                    if (stdout) stdout += "\n";
+                    stdout += stderr;
+                }
+
+                // Retrieve the Python-side repr string (already formatted correctly)
+                const resultRepr = await pyodide.runPythonAsync(`
+_r = __cell_result__
+del __cell_result__
+_r
+`);
+
+                // Check for matplotlib figures only if matplotlib was loaded
+                const lessonPackageNames = window.LESSON_PACKAGE_NAMES || [];
+                if (lessonPackageNames.includes('matplotlib')) {
+                    const hasFigures = await pyodide.runPythonAsync(`
+                        import matplotlib.pyplot as plt
+                        len(plt.get_fignums()) > 0
+                    `);
+
+                    if (hasFigures) {
+                        const figureHtml = await pyodide.runPythonAsync(`capture_matplotlib()`);
+                        if (stdout) stdout += "\n";
+                        stdout += figureHtml;
+                    }
+                }
+
+                // Combine stdout and result repr
+                let output = stdout;
+                if (resultRepr !== undefined && resultRepr !== null && String(resultRepr).trim() !== '') {
+                    if (output) output += "\n";
+                    output += String(resultRepr);
+                }
+                
+                return { success: true, output: output || "Code executed successfully (no output)" };
+                
+            } catch (error) {
+                // Attempt to restore stdout/stderr even on failure
+                try {
+                    await pyodide.runPythonAsync(`
+                        if 'old_stdout' in dir(): sys.stdout = old_stdout
+                        if 'old_stderr' in dir(): sys.stderr = old_stderr
+                    `);
+                } catch (_) {}
+                // Re-run through Python's traceback machinery to get a clean error message
+                let tracebackStr = '';
+                try {
+                    pyodide.globals.set('_traceback_code', code);
+                    await pyodide.runPythonAsync(`
+                        import traceback as _tb
+                        from io import StringIO as _SIO
+                        _trace_result = None
+                        _saved_io = (sys.stdout, sys.stderr)
+                        sys.stdout = sys.stderr = _SIO()
+                        try:
+                            exec(compile(_traceback_code, '<exec>', 'exec'), globals())
+                        except Exception:
+                            _trace_result = _tb.format_exc()
+                        finally:
+                            sys.stdout, sys.stderr = _saved_io
+                    `);
+                    const tbVal = await pyodide.runPythonAsync('_trace_result');
+                    if (tbVal) tracebackStr = tbVal;
+                } catch (_) {}
+                let displayMsg;
+                if (tracebackStr && tracebackStr.includes('File "<exec>"')) {
+                    const lines = tracebackStr.split('\n');
+                    let execIdx = -1;
+                    for (let i = lines.length - 1; i >= 0; i--) {
+                        if (lines[i].includes('File "<exec>"')) { execIdx = i; break; }
+                    }
+                    displayMsg = execIdx !== -1
+                        ? lines.slice(execIdx).join('\n').trim()
+                        : tracebackStr.trim();
+                } else {
+                    displayMsg = (error.message || '').trim() || error.type || String(error);
+                }
+                return { success: false, output: 'Error:\n' + displayMsg };
+            }
+        }
+        
+        // Execute all hidden code blocks first (for setup code like imports)
+        const hiddenCodeBlocks = Array.from(document.querySelectorAll('.hidden-code textarea'));
+        console.log(`Found ${hiddenCodeBlocks.length} hidden code blocks`);
+
+        for (const textarea of hiddenCodeBlocks) {
+            const code = textarea.value.trim();
+            if (!code) continue;
+            
+            console.log(`Executing hidden code block: ${textarea.id}`);
+            console.log(`Hidden code content: ${code.substring(0, 100)}...`);
+            const result = await executePythonCode(code);
+            
+            if (!result.success) {
+                console.error(`Error in hidden code block ${textarea.id}:`, result.output);
+            } else {
+                console.log(`Hidden code block ${textarea.id} executed successfully`);
+                console.log(`Result: ${result.output}`);
+            }
+        }
+
+        console.log("All hidden code blocks executed");
+        
+        // Get all fixed code blocks in document order
+        const fixedCodeBlocks = Array.from(document.querySelectorAll('.code-fixed textarea'));
+        
+        // Setup and execute fixed code blocks sequentially
+        for (const textarea of fixedCodeBlocks) {
+            const code = textarea.value.trim();
+            if (!code) continue;
+            
+            // Set up CodeMirror editor (read-only)
+            const editor = CodeMirror.fromTextArea(textarea, {
+                mode: "python",
+                theme: "pastel-on-dark",
+                lineNumbers: true,
+                readOnly: true,
+                viewportMargin: Infinity
+            });
+            
+            // Find corresponding output element
+            const outputId = textarea.id + '-output';
+            const outputElement = document.getElementById(outputId);
+            
+            if (outputElement) {
+                outputElement.textContent = "Running code...";
+                outputElement.classList.add("loading-message");
+                
+                // Execute the code (this maintains state for subsequent blocks)
+                const result = await executePythonCode(code);
+                
+                // Display the output - check if it's HTML
+                const trimmedOutput = result.output.trim();
+                console.log('Output length:', trimmedOutput.length);
+                console.log('Output starts with:', trimmedOutput.substring(0, 100));
+                
+                if (trimmedOutput.includes('<script') && trimmedOutput.includes('Plotly')) {
+                    // It's Plotly HTML output - extract just the body content
+                    console.log('Rendering as Plotly HTML');
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(result.output, 'text/html');
+                    // Clear the output element and append the body content
+                    outputElement.innerHTML = '';
+                    
+                    // Find and load external scripts first (like Plotly CDN)
+                    const externalScripts = Array.from(doc.querySelectorAll('script[src]'));
+                    const inlineScripts = Array.from(doc.querySelectorAll('script:not([src])'));
+                    
+                    // Append non-script content first
+                    Array.from(doc.body.children).forEach(child => {
+                        if (child.tagName !== 'SCRIPT') {
+                            outputElement.appendChild(child.cloneNode(true));
+                        }
+                    });
+                    
+                    // Load external scripts sequentially
+                    const loadScript = (src) => {
+                        return new Promise((resolve, reject) => {
+                            const script = document.createElement('script');
+                            script.src = src;
+                            script.onload = resolve;
+                            script.onerror = reject;
+                            document.head.appendChild(script);
+                        });
+                    };
+                    
+                    // Load all external scripts first
+                    Promise.all(externalScripts.map(s => loadScript(s.src)))
+                        .then(() => {
+                            console.log('External scripts loaded, executing inline scripts');
+                            // Now execute inline scripts
+                            inlineScripts.forEach(oldScript => {
+                                const newScript = document.createElement('script');
+                                newScript.textContent = oldScript.textContent;
+                                outputElement.appendChild(newScript);
+                            });
+                            console.log('Output element after processing:', outputElement.children.length, 'children');
+                        })
+                        .catch(err => {
+                            console.error('Failed to load external scripts:', err);
+                            outputElement.textContent = 'Error loading Plotly: ' + err.message;
+                        });
+                } else if (trimmedOutput.startsWith('<!DOCTYPE') || 
+                           trimmedOutput.startsWith('<html') ||
+                            trimmedOutput.startsWith('<div') ||
+                            trimmedOutput.startsWith('<img')) {
+                    console.log('Rendering as generic HTML');
+                    outputElement.innerHTML = result.output;
+                    console.log('Output element after innerHTML:', outputElement.children.length, 'children');
+                } else {
+                    console.log('Rendering as plain text');
+                    outputElement.textContent = result.output;
+                }
+                outputElement.classList.remove("loading-message");
+                if (result.success) {
+                    outputElement.classList.add("success-message");
+                    outputElement.classList.remove("error-message");
+                } else {
+                    outputElement.classList.add("error-message");
+                    outputElement.classList.remove("success-message");
+                }
+            }
+            
+            // Small delay to show progression
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        
+        // Set flag to indicate all FIXED cells have been executed
+        // This is used by PDF generation to ensure all outputs are ready
+        window.allCellsExecuted = true;
+        console.log("All FIXED cells executed successfully");
+        
+        // Setup all editable code blocks (but don't execute them)
+        document.querySelectorAll('.code-editor textarea').forEach((textarea) => {
+            // Set up CodeMirror editor (editable)
+            const editor = CodeMirror.fromTextArea(textarea, {
+                mode: "python",
+                theme: "pastel-on-dark",
+                lineNumbers: true,
+                viewportMargin: Infinity
+            });
+            
+            // Find corresponding run button and output element
+            const baseId = textarea.id;
+            const runButtonId = 'run-' + baseId;
+            const outputId = baseId + '-output';
+            
+            const runButton = document.getElementById(runButtonId);
+            const outputElement = document.getElementById(outputId);
+            
+            if (runButton && outputElement) {
+                // Set initial state
+                outputElement.textContent = "Ready to run code!";
+                outputElement.classList.remove("loading-message");
+                
+                runButton.addEventListener("click", async () => {
+                    const code = editor.getValue().trim();
+                    if (!code) {
+                        outputElement.textContent = "No code to run";
+                        return;
+                    }
+                    
+                    outputElement.textContent = "Running...";
+                    outputElement.classList.remove("error-message", "success-message");
+                    outputElement.classList.add("loading-message");
+                    
+                    // Execute the code (this also maintains state for future blocks)
+                    const result = await executePythonCode(code);
+                    
+                    // Display the output - check if it's HTML
+                    const trimmedOutput = result.output.trim();
+                    console.log('Output length:', trimmedOutput.length);
+                    console.log('Output starts with:', trimmedOutput.substring(0, 100));
+                    
+                    if (trimmedOutput.includes('<script') && trimmedOutput.includes('Plotly')) {
+                        // It's Plotly HTML output - extract just the body content
+                        console.log('Rendering as Plotly HTML');
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(result.output, 'text/html');
+                        // Clear the output element and append the body content
+                        outputElement.innerHTML = '';
+                        
+                        // Find and load external scripts first (like Plotly CDN)
+                        const externalScripts = Array.from(doc.querySelectorAll('script[src]'));
+                        const inlineScripts = Array.from(doc.querySelectorAll('script:not([src])'));
+                        
+                        // Append non-script content first
+                        Array.from(doc.body.children).forEach(child => {
+                            if (child.tagName !== 'SCRIPT') {
+                                outputElement.appendChild(child.cloneNode(true));
+                            }
+                        });
+                        
+                        // Load external scripts sequentially
+                        const loadScript = (src) => {
+                            return new Promise((resolve, reject) => {
+                                const script = document.createElement('script');
+                                script.src = src;
+                                script.onload = resolve;
+                                script.onerror = reject;
+                                document.head.appendChild(script);
+                            });
+                        };
+                        
+                        // Load all external scripts first
+                        Promise.all(externalScripts.map(s => loadScript(s.src)))
+                            .then(() => {
+                                console.log('External scripts loaded, executing inline scripts');
+                                // Now execute inline scripts
+                                inlineScripts.forEach(oldScript => {
+                                    const newScript = document.createElement('script');
+                                    newScript.textContent = oldScript.textContent;
+                                    outputElement.appendChild(newScript);
+                                });
+                                console.log('Output element after processing:', outputElement.children.length, 'children');
+                            })
+                            .catch(err => {
+                                console.error('Failed to load external scripts:', err);
+                                outputElement.textContent = 'Error loading Plotly: ' + err.message;
+                            });
+                    } else if (trimmedOutput.startsWith('<!DOCTYPE') || 
+                               trimmedOutput.startsWith('<html') ||
+                               trimmedOutput.startsWith('<div') ||
+                               trimmedOutput.startsWith('<img')) {
+                        outputElement.innerHTML = result.output;
+                    } else {
+                        outputElement.textContent = result.output;
+                    }
+                    outputElement.classList.remove("loading-message");
+                    if (result.success) {
+                        outputElement.classList.add("success-message");
+                        outputElement.classList.remove("error-message");
+                    } else {
+                        outputElement.classList.add("error-message");
+                        outputElement.classList.remove("success-message");
+                    }
+                });
+            }
+        });
+        
+        console.log("All code blocks initialised successfully");
+
+        // Set flag to indicate Pyodide is fully ready
+        window.pyodideReady = true;
+        console.log("Pyodide fully ready");
+        
+    } catch (error) {
+        console.error("Failed to initialise Pyodide:", error);
+        document.querySelectorAll(".output").forEach(el => {
+            el.textContent = "Error loading Pyodide: " + error.message;
+            el.classList.remove("loading-message");
+            el.classList.add("error-message");
+        });
+    }
+}
+
+// Start the application when DOM is loaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', main);
+} else {
+    main();
+}
+    </script>
+    
+</body>
+</html>

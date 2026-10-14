@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Meta Tags -->
+    <!-- charset must stay within the first 1024 bytes of the
+         document or browsers stop looking and fall back to a
+         default encoding. Keep these two first in <head>. -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- MathJax for mathematical notation -->
+    <!-- v4 moved the loadable components out of the old es5 subdirectory and
+         up to the package root, so the path is part of the version, not just
+         the number. Getting it wrong is a 404 that fails silently, leaving
+         equations as raw dollar-delimited LaTeX on the page.
+         output.font pins the TeX font from v3; v4 would otherwise default to
+         New Computer Modern and change how every equation looks. fontPath is
+         set explicitly because MathJax's default resolves font data from an
+         *unversioned* jsDelivr URL, which is exactly what cdn_versions.yaml
+         exists to prevent. -->
+    <script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$']],
+            displayMath: [['$$', '$$']],
+            processEscapes: true
+        },
+        svg: {
+            fontCache: 'global'
+        },
+        output: {
+            font: 'mathjax-tex',
+            fontPath: 'https://cdn.jsdelivr.net/npm/@mathjax/%%FONT%%-font@4.1.3'
+        },
+        startup: {
+            pageReady() {
+                // PDF export prints as soon as the page reports itself ready.
+                // Announce typesetting separately so it can be waited on.
+                return MathJax.startup.defaultPageReady().then(function () {
+                    window.mathJaxReady = true;
+                });
+            }
+        }
+    };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@4.1.3/tex-svg.js"></script>
+    
+    <!-- Pyodide and CodeMirror -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v314.0.7/full/pyodide.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.21/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.21/theme/pastel-on-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.21/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.21/mode/python/python.min.js"></script>
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="../assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../assets/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="../assets/android-chrome-512x512.png">
+
+    <!-- Core Stylesheets -->
+    <link rel="stylesheet" href=../assets/colours-l2d.css>
+    <link rel="stylesheet" href="../assets/shared-styles.css">
+    <link rel="stylesheet" href="../assets/nav-bar.css">
+    <link rel="stylesheet" href="../assets/module_card.css">
+    <link rel="stylesheet" href="../assets/learning_outcomes.css">
+    <link rel="stylesheet" href="../assets/learning_lists.css">
+    <link rel="stylesheet" href="../assets/box_styles.css">
+    <link rel="stylesheet" href="../assets/code_styles.css">
+    
+    <title>scryptIQ - ML1 - State Space</title>
+    <script>
+        window.LESSON_FILES = [
+            
+        ];
+        window.LESSON_PACKAGES = ["numpy", "scikit-learn", "plotly"];
+        window.LESSON_PACKAGE_NAMES = ["numpy", "scikit-learn", "plotly"];
+    </script>
+</head>
+<body>
+    
+    <!-- Sidebar Navigation -->
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <a href="../homepage.html" style="text-decoration: none; display: inline-block;">
+                <img src="../assets/l2d-brain-logo.png" alt="scryptIQ Logo" class="sidebar-logo">
+            </a>
+        </div>
+
+        <h3>Content</h3>
+        <ul>
+            <li><a href="./introduction.html" class="">Introduction</a></li>
+            <li>
+                <div class="nav-toggle active" data-target="expandable-section-1">
+                    State Space
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <ul class="nested-nav expanded" id="expandable-section-1"><li><a href="#introduction">Introduction</a></li><li><a href="#the-state-space">The State Space</a></li><li><a href="#the-problem">The Problem</a></li><li><a href="#the-decision-boundary">The Decision Boundary</a></li><li><a href="#testing-the-model">Testing the Model</a></li><li><a href="#with-probabilities">With Probabilities</a></li><li><a href="#true-shape">True Shape</a></li><li><a href="#moving-to-higher-dimensions">Moving to Higher Dimensions</a></li><li><a href="#summary---quiz">Summary & Quiz</a></li>
+                </ul>
+            </li><li><a href="./scikit-learn.html">Scikit-Learn</a></li><li><a href="./categorical-data.html">Categorical Data</a></li><li><a href="./classifier-types.html">Classifier Models</a></li><li><a href="./assignment.html">Assignment</a></li><li><a href="./feedback.html">Feedback</a></li>
+        </ul>
+
+        <h3 class="collapsible-header collapsed">
+            Resources
+            <span class="collapse-icon">►</span>
+        </h3>
+        <div class="collapsible-content collapsed">
+            <ul>
+                <li><a href="./glossary.html">Glossary</a></li><li><a href="./downloads.html">Downloads</a></li><li><a href="../HB/introduction.html">Handbook</a></li>
+            </ul>
+        </div>
+
+        <h3>
+            <li><a href="./report-issue.html">Report an Issue</a></li>
+        </h3>
+    </div>
+
+    <!-- Sidebar Toggle Button -->
+    <button id="sidebar-toggle" class="sidebar-toggle">❮</button>
+
+    <!-- Main Content Area -->
+    <div id="main-content" class="main-content">
+        <!-- Top Navigation Bar -->
+        <div class="top-navbar">
+            <h1 class="page-title">Machine Learning 1</h1>
+            <div class="nav-actions">
+                <a href="../homepage.html" class="text-button" title="Materials homepage">
+                    Homepage
+                </a>
+                <a href="https://scryptiq.ai/my-cohorts/" class="text-button scryptiq-button" title="Find out more about us">
+                    scryptIQ
+                </a>
+            </div>
+        </div>
+
+        
+            <div class="module-card" id="introduction">
+                <div class="module-header">
+                    State Space <span class="module-tag">ML1</span>
+                </div>
+                <div class="module-body">
+                    <h3>Learning Objectives</h3>
+                    <div class="learning-outcomes">
+                        <div class="outcome-item">
+                    <span class="outcome-number">1</span>
+                    <span class="outcome-text">Understand key machine learning terminology</span>
+                </div>
+<div class="outcome-item">
+                    <span class="outcome-number">2</span>
+                    <span class="outcome-text">Understand what the state space is and how it is used</span>
+                </div>
+<div class="outcome-item">
+                    <span class="outcome-number">3</span>
+                    <span class="outcome-text">Build a decision boundary</span>
+                </div>
+<div class="outcome-item">
+                    <span class="outcome-number">4</span>
+                    <span class="outcome-text">Understand models as probabilistic beliefs</span>
+                </div>
+                    </div>
+                    <h3>Introduction</h3>
+                    <p>All machine learning (ML) models are designed to learn from the unique patterns of a dataset, in the hope that the representation they learn approximates the <em>true</em> statistical distribution/model of the population data.<br><br>With classical ML, which we will be working with in <strong>ML1-3</strong>, the approximate function is typically built using the original data features, or features engineered by hand from the original measurements. This is called <strong>shallow</strong> learning, which stands in opposition to <strong>deep</strong> learning, which we will explore with <em>neural networks</em> in <strong>ML4</strong>. With <em>deep learning</em>, the data goes through several transformation stages — learned in training — that reshape the data into a new form, one that the model can solve more easily. This is very useful with large, messy datasets where you are not sure which information is important. However, remember that it is not a silver bullet for bad data, as bad data mixed in can still affect the quality of the prediction.<br><br>Deep learning is not automatically better than shallow or classical ML tools; for starters, it requires a lot more data and compute to train. It is always worth attempting your problem with the classical tools first: firstly, to gain a quick insight into whether it looks feasible, and secondly, because they are better tools for understanding which features contributed to the prediction, giving you insight into the system rather than being stuck with a black box.</p>
+        <div class="info-box key-terms-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                KEY TERMS
+            </div>
+            <div class="box-content">
+                <p><strong>function</strong>: A mathematical rule that transforms an input into an output. In ML, the trained model is the function, mapping the measurements you give it to a prediction.<br><br><strong>feature</strong>: A single measured variable in a dataset, such as a gene&#x27;s expression level, a cell&#x27;s area, or the minutes a fly is asleep. Each feature forms one axis (dimension) of the state space.<br><br><strong>shallow learning</strong>: Classical ML, where the model learns directly from the original features, or from features engineered by hand, rather than learning its own transformations of the data.<br><br><strong>deep learning</strong>: ML using neural networks with many layers, each learning a transformation of the data, so that the model builds its own representation of the features during training.<br><br><strong>compute</strong>: The processing power, and time, needed to train or run a model, typically provided by CPUs or GPUs.</p>
+            </div>
+        </div>
+        <h4>Machine Learning Workflow</h4><p>The machine learning process can be broken down into three steps:<br><ol class="nested-list"><li>Gather the dataset — one that properly represents the nuances of the population (often the hardest part).</li><br><li>Algorithmically build a statistical model or function based on that dataset, iteratively improving the model&#x27;s parameters to match the data.</li><br><li>Apply the trained model to new data from the population; if it is correct, it is assumed the model has solved the practical problem. This is the key test of any model: can it work with new data or, in other words, does it &quot;generalise&quot; well?</li></ol></p><p>In mathematics, the model or function ($f$) is something that transforms the data you gathered ($x$) into the output you want ($y$), be it a classification, a regression or a next-in-sequence prediction. Therefore, the algorithm&#x27;s aim is to iteratively build a function that best produces $y$ when given $x$, or:</p><p>$$y = f(x)$$</p>
+        <div class="info-box key-terms-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                KEY TERMS
+            </div>
+            <div class="box-content">
+                <p><strong>$x$</strong>: The input to the model: the measured features of each sample.<br><br><strong>$y$</strong>: The output the model is trying to predict: a class label, a continuous value or the next item in a sequence.<br><br><strong>algorithm</strong>: A step-by-step procedure for solving a problem. In ML, the training algorithm is the procedure that iteratively adjusts a model&#x27;s parameters to fit the data.<br><br><strong>parameter</strong>: A value inside the model that is learned from the data during training, such as a weight in a regression or a split threshold in a decision tree. Not to be confused with <em>hyperparameters</em>, which are chosen by you before training.</p>
+            </div>
+        </div>
+        <h4>For Differing Problems</h4><p>Each model comes with its own assumptions about how the data is organised: linear and logistic regression models, for example, assume a linear relationship in the data, while nearest-neighbour models assume that the distance to neighbouring points is the only factor that matters. Even <em>neural networks</em> — which in theory can learn any complex function — have a bias towards <a href="https://arxiv.org/abs/2006.07710">simple models</a> of the data. What helps is knowing the use cases and limitations of each model, which then informs how you interpret its output.<br><br><pre class="markdown-code-block"><code>&quot;All models are wrong, but some are useful.&quot;</code></pre><br><strong>George Box</strong></p><p>Many of the models can be turned towards differing tasks, the most common being <strong>classification</strong>, where the model must distinguish between two or more groups within the same measurement space (state space). This may be most familiar to us all through image classification, which has seen large improvements with deep learning. Alongside classification, <strong>regression</strong> is the other classical task. Instead of predicting a group, the model tries to predict a continuous value, such as expression level, rainfall or growth rate. Regression modelling can be very useful for <em>in silico</em> perturbation models, changing the system state to estimate its effects. This module will largely use <strong>classification</strong> as the example; however, all the skills are easily transferable.<br><br>Lastly, there is the <strong>generative</strong> task, which has grown substantially in the last decade. Here the model is trained to predict the next item in a sequence, as with large language models (ChatGPT, Claude, Gemini, etc.), or to generate an image or dataset from an input. These will not be covered in this module, although they are touched upon in the <strong>advanced AI</strong> module.</p>
+        <div class="info-box key-terms-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                KEY TERMS
+            </div>
+            <div class="box-content">
+                <p><strong>classification</strong>: Predicting which of a set of discrete groups (classes) a sample belongs to, such as healthy <em>vs</em> diseased tissue.<br><br><strong>regression</strong>: Predicting a continuous numerical value, such as an expression level or a growth rate.<br><br><strong>generative</strong>: Producing new data — the next item in a sequence, an image or a synthetic dataset — that resembles the data the model was trained on.</p>
+            </div>
+        </div>
+        
+                </div>
+            </div>
+            
+            <div class="module-card" id="the-state-space">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>The State Space</h3>
+                        <p>To help visualise the intuition behind machine learning, we can explore the <em>three</em> steps of the machine learning process — outlined above — through a series of 3-dimensional (3D) plots.<br><br>For many, the purpose of machine learning is to make intractable data understandable, be it proving there <strong>is</strong> a difference between two groups, finding the <strong>important features</strong> in a multi-feature (high-dimensional) dataset, or building an <strong>in silico</strong> tool for testing perturbations of a complex system. To that end, understanding conceptually how the models work, and how they can be right or wrong, is more important than knowing the exact maths behind them, as those without a background in mathematical notation can find the equations as intractable as their data.<br><br>Machine learning models are learners rather than solved equations — even though they are underpinned by mathematics, particularly linear algebra — so they can be approached heuristically, using ideas and understanding from low-dimensional space to inform our decisions when working with higher-dimensional data.</p><h4>A Hypothetical Space</h4><p>When measuring something, we are gathering data from a range of values, ones that hopefully represent the object or group that we are interested in. This measurement space can range from $-\infty$ to $\infty$, although it is usually bounded by the physical limits of the system. If something was measured repeatedly and all values in the range were present uniformly, i.e. one of every value, that would likely be random noise, meaningless to us. Normally, however, the data we gather contains only a subset of values from the space: values that describe that particular thing. These values can be large or minutely small; the numbers themselves do not matter at all. Instead, what matters is where the values sit in that range in relation to each other: their difference.<br><br>It is this mindset that is useful for machine learning, as it is what the ML tools are interested in: the differences between values within a feature, and in combination with other features. In a <em>classification</em> task, the model uses those differences to separate the state space into areas belonging to one group or another. In the next section, we will look at scaling the data as one of the best methods for improving the model, transforming it into values that represent change rather than raw measurements, as discussed briefly in the <em>data processing</em> module.<br><br>Below is the state space we will be working with in this section, currently highlighting a uniform selection of feature combinations (coordinates). Our job is to give the machine learning tool enough good-quality information in that space for it to divide the space into the proposed categories.</p>
+        <div class="code-area">
+            <div class="code-collapse-header" onclick="toggleCodeCollapse('code-cell-1')">
+                <span class="code-collapse-icon">▶</span>
+                <span class="code-collapse-label">Show code</span>
+            </div>
+            <div class="code-container code-fixed code-collapsed" id="code-cell-1-container">
+                <textarea id="code-cell-1">import numpy as np
+import plotly.graph_objects as go
+
+# Define the boundaries of our state space
+dim1_min = dim2_min = dim3_min = -20
+dim1_max = dim2_max = dim3_max = 20
+# Create a grid to sample the state space
+resolution1 = resolution2 = resolution3 = 20
+dim1 = dim2 = dim3 = np.linspace(dim1_min, dim1_max, resolution1)
+
+# make linear arrays into a grid
+grid_1, grid_2, grid_3 = np.meshgrid(dim1, dim2, dim3)
+# turn into coordinates for plotting
+coords = np.c_[grid_1.ravel(), grid_2.ravel(), grid_3.ravel()]
+
+# plotly figure using scatter 3D
+fig = go.Figure()
+
+fig.add_trace(go.Scatter3d(
+    x=coords[:, 0], y=coords[:, 1], z=coords[:, 2],
+    mode=&#x27;markers&#x27;,
+    marker=dict(color=&#x27;red&#x27;, size=2, opacity=0.4),
+    name=&#x27;State space&#x27;
+))
+
+fig.update_layout(
+    title=&#x27;The State Space&#x27;,
+    scene=dict(
+        xaxis_title=&#x27;Feature 1&#x27;,
+        yaxis_title=&#x27;Feature 2&#x27;,
+        zaxis_title=&#x27;Feature 3&#x27;
+    ),
+    width=750,
+    height=650,
+    template=&#x27;plotly_white&#x27;
+)
+
+# fig.show()
+print(fig.to_html())</textarea>
+            </div>
+            <div id="code-cell-1-output" class="output"></div>
+        </div>
+        
+        <div class="info-box note-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                NOTE
+            </div>
+            <div class="box-content">
+                <p>All of the interactive plots in this section are created with the code in the collapsed box. Subsequent sections will explain and explore the code needed to train and test models properly using <em>scikit-learn</em>; for now we will just be exploring them visually, so do not worry about understanding the code itself.<br><br>To see the code, click on the box to expand it, or download the lesson as a Jupyter notebook to run locally or in a Codespace. When running it yourself, simply uncomment <code>fig.show()</code> and remove <code>print(fig.to_html())</code> to ensure the plot renders properly.</p>
+            </div>
+        </div>
+        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="the-problem">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>The Problem</h3>
+                        <p>As discussed, machine learning needs data for the models to learn from, so we must create some. Below are two functions that each produce a random set of samples from a specific distribution: one that we don&#x27;t know (unless you are adept at reading mathematical equations in Python), and one that the ML tool doesn&#x27;t know either.<br><br>What we will show is that as the number of data points increases, the model can build a complex boundary separating the classes, a boundary that ends up approximating a highly complex shape.<br><br>Each sample from the distribution will be given its own label, either a <code>0</code> or a <code>1</code>, which the machine learning tool will predict. The label is called the <strong>class</strong> of a data point, and it is the value the model uses to judge how well its predictions match. Class labels that are known are called the <strong>ground truth</strong>.</p>
+        <div class="info-box key-terms-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                KEY TERMS
+            </div>
+            <div class="box-content">
+                <p><strong>class</strong>: The group or category a data point belongs to, recorded as its label.<br><br><strong>ground truth</strong>: The known, correct labels for a dataset, against which the model&#x27;s predictions are compared.</p>
+            </div>
+        </div>
+        
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-2"># Data-generating function for the first class
+def class1(n, rng, noise_std=0.3, co=11, ao=4, w=61.1):
+    # randomly sample n points along the class-1 manifold
+    t = rng.uniform(0, 2 * np.pi, n)
+    coords = np.c_[(co + ao * np.cos(t)) * np.cos(w * t),
+                   (co + ao * np.cos(t)) * np.sin(w * t),
+                   ao * np.sin(t)]
+    # spread the points off the manifold with gaussian noise
+    return coords + rng.normal(0.4, noise_std, coords.shape)
+
+# Data-generating function for the second class
+def class2(n, rng, noise_std=0.35, ci=13, ai=1.2, w=61.1):
+    # randomly sample n points along the class-2 manifold
+    t = rng.uniform(0, 2 * np.pi, n)
+    coords = 0.85 * np.c_[(ci + ai * np.cos(t)) * np.cos(w * t),
+                          (ci + ai * np.cos(t)) * np.sin(w * t),
+                          ai * np.sin(t)]
+    # spread the points off the manifold with gaussian noise
+    return coords + rng.normal(0, noise_std, coords.shape)</textarea>
+            </div>
+            <div id="code-cell-2-output" class="output" style="display: none;"></div>
+        </div>
+        <p>For now, have a look at the two samples as the number of samples ($N$) increases. Just like the ML model, we can better guess the underlying shapes of the true population as $N$ increases.</p>
+        <div class="code-area">
+            <div class="code-collapse-header" onclick="toggleCodeCollapse('code-cell-3')">
+                <span class="code-collapse-icon">▶</span>
+                <span class="code-collapse-label">Show code</span>
+            </div>
+            <div class="code-container code-fixed code-collapsed" id="code-cell-3-container">
+                <textarea id="code-cell-3"># Sample sizes to reveal, one per animation frame
+sample_sizes = [10, 25, 50, 75, 125, 175, 250]
+max_n = max(sample_sizes)
+
+# Generate the full sample once, then show more of it per frame
+rng = np.random.default_rng(42)
+class1_full = class1(max_n, rng)
+class2_full = class2(max_n, rng)
+
+# Build one frame per sample size
+frames = []
+for n in sample_sizes:
+    class1_pts = class1_full[:n]
+    class2_pts = class2_full[:n]
+    frames.append(go.Frame(
+        data=[
+            go.Scatter3d(x=class1_pts[:, 0], y=class1_pts[:, 1], z=class1_pts[:, 2],
+                         mode=&#x27;markers&#x27;, marker=dict(color=&#x27;blue&#x27;, size=3), name=&#x27;class-1&#x27;),
+            go.Scatter3d(x=class2_pts[:, 0], y=class2_pts[:, 1], z=class2_pts[:, 2],
+                         mode=&#x27;markers&#x27;, marker=dict(color=&#x27;orange&#x27;, size=3), name=&#x27;class-2&#x27;)
+        ],
+        name=str(n)
+    ))
+
+# Base figure shows the smallest sample size before the slider moves
+n0 = sample_sizes[0]
+fig = go.Figure(
+    data=[
+        go.Scatter3d(x=class1_full[:n0, 0], y=class1_full[:n0, 1], z=class1_full[:n0, 2],
+                     mode=&#x27;markers&#x27;, marker=dict(color=&#x27;blue&#x27;, size=3), name=&#x27;class-1&#x27;),
+        go.Scatter3d(x=class2_full[:n0, 0], y=class2_full[:n0, 1], z=class2_full[:n0, 2],
+                     mode=&#x27;markers&#x27;, marker=dict(color=&#x27;orange&#x27;, size=3), name=&#x27;class-2&#x27;)
+    ],
+    frames=frames
+)
+fig.update_layout(
+    title=&#x27;Sample data in the State Space&#x27;,
+    scene=dict(
+        xaxis=dict(title=&#x27;Feature 1&#x27;, range=[dim1_min, dim1_max]),
+        yaxis=dict(title=&#x27;Feature 2&#x27;, range=[dim2_min, dim2_max]),
+        zaxis=dict(title=&#x27;Feature 3&#x27;, range=[dim3_min, dim3_max]),
+        aspectmode=&#x27;cube&#x27;,  # keep axes visually equal; use &#x27;auto&#x27; if you don&#x27;t want that
+    ),    
+    width=750, height=650, template=&#x27;plotly_white&#x27;,
+    sliders=[dict(steps=[dict(method=&#x27;animate&#x27;, args=[[str(n)], dict(mode=&#x27;immediate&#x27;,
+              frame=dict(duration=0, redraw=True))], label=str(n)) for n in sample_sizes],
+              currentvalue=dict(prefix=&#x27;N per class: &#x27;))]
+)
+# fig.show()
+print(fig.to_html(auto_play=False))</textarea>
+            </div>
+            <div id="code-cell-3-output" class="output"></div>
+        </div>
+        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="the-decision-boundary">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>The Decision Boundary</h3>
+                        <p>Now that we have our samples (at differing $N$), a model can be built from the data. For this example we will use a <em>Random Forest</em> (RF) Classifier, which will be explained properly in the <a href="./classifier-types.html">final section</a>. RFs are very good at finding non-linear boundaries between classes, as they separate the data using splitting rules built from the sample data, e.g. if <em>feature 1</em> is greater than 0 and <em>feature 2</em> is less than 2.5, it is class-2.<br><br>The divide in the state space is called the <strong>decision boundary</strong>, and it can be thought of as the high-dimensional equivalent of a line, marking where the model becomes more sure of one class than the other. In a two-class problem, this divides the space in two.</p>
+        <div class="code-area">
+            <div class="code-collapse-header" onclick="toggleCodeCollapse('code-cell-4')">
+                <span class="code-collapse-icon">▶</span>
+                <span class="code-collapse-label">Show code</span>
+            </div>
+            <div class="code-container code-fixed code-collapsed" id="code-cell-4-container">
+                <textarea id="code-cell-4">from sklearn.ensemble import RandomForestClassifier
+
+# Fit a classifier at each sample size and map its decision boundary
+frames = []
+for n in sample_sizes:
+    class1_pts = class1_full[:n]
+    class2_pts = class2_full[:n]
+
+    # stack both classes into one labelled training set
+    samples = np.vstack([class1_pts, class2_pts])
+    labels = np.concatenate([np.zeros(n), np.ones(n)])
+
+    # train the model and predict across the state-space grid
+    clf = RandomForestClassifier(n_estimators=200, random_state=42)
+    clf.fit(samples, labels)
+    probs = clf.predict_proba(coords)[:, 1]
+
+    frames.append(go.Frame(
+        data=[
+            go.Scatter3d(x=class1_pts[:, 0], y=class1_pts[:, 1], z=class1_pts[:, 2],
+                         mode=&#x27;markers&#x27;, marker=dict(color=&#x27;blue&#x27;, size=3), name=&#x27;class-1&#x27;),
+            go.Scatter3d(x=class2_pts[:, 0], y=class2_pts[:, 1], z=class2_pts[:, 2],
+                         mode=&#x27;markers&#x27;, marker=dict(color=&#x27;orange&#x27;, size=3), name=&#x27;class-2&#x27;),
+            go.Isosurface(
+                x=coords[:, 0], y=coords[:, 1], z=coords[:, 2],
+                value=probs,
+                isomin=0.5, isomax=0.5,
+                surface_count=1,
+                caps=dict(x_show=False, y_show=False, z_show=False),
+                colorscale=[[0, &#x27;green&#x27;], [1, &#x27;green&#x27;]],
+                showscale=False,
+                opacity=0.6
+            )
+        ],
+        name=str(n)
+    ))
+
+# Base figure: fit on the smallest sample size before the slider moves
+samples0 = np.vstack([class1_full[:n0], class2_full[:n0]])
+labels0 = np.concatenate([np.zeros(n0), np.ones(n0)])
+clf0 = RandomForestClassifier(n_estimators=200, random_state=42)
+clf0.fit(samples0, labels0)
+probs0 = clf0.predict_proba(coords)[:, 1]
+
+fig = go.Figure(
+    data=[
+        go.Scatter3d(x=class1_full[:n0, 0], y=class1_full[:n0, 1], z=class1_full[:n0, 2],
+                     mode=&#x27;markers&#x27;, marker=dict(color=&#x27;blue&#x27;, size=3), name=&#x27;class-1&#x27;),
+        go.Scatter3d(x=class2_full[:n0, 0], y=class2_full[:n0, 1], z=class2_full[:n0, 2],
+                     mode=&#x27;markers&#x27;, marker=dict(color=&#x27;orange&#x27;, size=3), name=&#x27;class-2&#x27;),
+        go.Isosurface(
+            x=coords[:, 0], y=coords[:, 1], z=coords[:, 2],
+            value=probs0,
+            isomin=0.5, isomax=0.5,
+            surface_count=1,
+            caps=dict(x_show=False, y_show=False, z_show=False),
+            colorscale=[[0, &#x27;green&#x27;], [1, &#x27;green&#x27;]],
+            showscale=False,
+            opacity=0.6
+        )
+    ],
+    frames=frames
+)
+fig.update_layout(
+    title=&#x27;Decision Boundary&#x27;,
+    scene=dict(
+        xaxis=dict(title=&#x27;Feature 1&#x27;, range=[dim1_min, dim1_max]),
+        yaxis=dict(title=&#x27;Feature 2&#x27;, range=[dim2_min, dim2_max]),
+        zaxis=dict(title=&#x27;Feature 3&#x27;, range=[dim3_min, dim3_max]),
+        aspectmode=&#x27;cube&#x27;,
+    ),
+    width=750, height=650, template=&#x27;plotly_white&#x27;,
+    sliders=[dict(steps=[dict(method=&#x27;animate&#x27;, args=[[str(n)], dict(mode=&#x27;immediate&#x27;,
+              frame=dict(duration=0, redraw=True))], label=str(n)) for n in sample_sizes],
+              currentvalue=dict(prefix=&#x27;N per class: &#x27;))]
+)
+
+# fig.show()
+print(fig.to_html(auto_play=False))</textarea>
+            </div>
+            <div id="code-cell-4-output" class="output"></div>
+        </div>
+        <p>As can be seen, increasing the number of samples helps the model refine the decision boundary until it is closed entirely around <em>class-2</em> — although there are areas with fewer data points where the boundary is not as sharp.<br><br>Despite these rough patches, the boundary nicely encapsulates the second class. If new data were given to the model, every data point inside the boundary would be predicted as <em>class-2</em>, and every point outside it as <em>class-1</em>. However, using our eyes we can see that <em>class-1</em> is confined to a much smaller shape than the whole state space. Yet if we gave the model some data points from a corner of the state space — well away from the true distribution — it would still predict them as <em>class-1</em>. This is because, in a classification task, the model&#x27;s job is to model the statistics of the boundary between the two classes, not the classes themselves.</p><p>The code below confirms the prediction for a data point in the corner of the state space:</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-5"># coordinates of a corner of the state space
+corner = [[20, 20, 20]]
+# get prediction from the model trained on the largest sample (N = 250)
+pred = clf.predict(corner)
+
+# convert the prediction to text label
+class_dict = {
+    0 : &quot;class-1&quot;,
+    1 : &quot;class-2&quot;
+}
+
+print(f&quot;Corner is: {class_dict[pred[0]]}&quot;)</textarea>
+            </div>
+            <div id="code-cell-5-output" class="output"></div>
+        </div>
+        <p>To have a decision boundary closed neatly around <em>class-1</em>, you would have to define the problem as the class <em>vs</em> random values from the space. This is the classic binary classification problem of something being present/having happened (the <strong>positive</strong>) <em>vs</em> the absence of it (the <strong>negative</strong>); such as having or not having a disease.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="testing-the-model">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Testing the Model</h3>
+                        <p>The decision boundary above was generated from the sample; the data we give a model to learn from is called the <strong>training data</strong>. An ML model is very good at fitting its decision boundary to the training data, but this can come at the cost of being correct on new, unseen data, as it can learn the noise and data fingerprint of a specific collection of data rather than the true population statistics. In fact, much of the fine-tuning is there to prevent it from learning this data fingerprint or, in ML lingo, to stop it <strong>overfitting</strong>.<br><br>To this end, a model&#x27;s worth can only be understood if it performs equally well on new data, preferably data from the same population but sampled at another time — hopefully losing the previous experimental fingerprint. If a model does well, then it can be said to <strong>generalise</strong> well to the problem.</p>
+        <div class="info-box key-terms-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                KEY TERMS
+            </div>
+            <div class="box-content">
+                <p><strong>training dataset</strong>: The data the model learns from, used to fit the model&#x27;s parameters.<br><br><strong>testing dataset</strong>: Data held back from training and used only to evaluate how well the model performs on data it has never seen.<br><br><strong>overfit</strong>: When a model learns the noise and quirks of its training data rather than the underlying pattern, performing well on the training data but poorly on new data.<br><br><strong>generalisable</strong>: Describes a model that performs well on new, unseen data from the same population, not just on the data it was trained on.</p>
+            </div>
+        </div>
+        <p>The test data should <strong>never</strong> be seen by the model during training, as it is your main tool for validation; if the model ever has access to it, or a proxy for it, this is called <strong>data leakage</strong>. Ideally, the test data should be a fresh sample collected using the same techniques and equipment, to ensure repeatability. Beyond that, the hope is that the data and the chosen measurements truly reflect the population statistics, to the extent that variations in equipment and timing windows do not distort the data too much.<br><br>In practice, most datasets come as a single collection and are split into <em>training</em> and <em>testing</em> groups after sampling. Many people simply shuffle the data randomly and split it; however, if you are able to hold out a single experimental group, it can strengthen the test. For example, financial trading models are often trained on all previous data except the last month, which is kept back for testing. This is especially important when the data has time as a feature.<br><br>Below, the test data is a fresh sample from the class-generating functions, so we know for certain that both datasets come from the same population.</p>
+        <div class="code-area">
+            <div class="code-collapse-header" onclick="toggleCodeCollapse('code-cell-6')">
+                <span class="code-collapse-icon">▶</span>
+                <span class="code-collapse-label">Show code</span>
+            </div>
+            <div class="code-container code-fixed code-collapsed" id="code-cell-6-container">
+                <textarea id="code-cell-6"># Generate fresh, unseen data from the same distribution to test the model
+n_test_per_class = 35
+rng_test = np.random.default_rng(123)  # different seed
+
+# Get test sample with lower noise
+c1_test = class1(n_test_per_class, rng_test, noise_std=0.1)
+# Get test sample with higher noise
+c2_test = class2(n_test_per_class, rng_test, noise_std=0.5)
+
+# stack into one labelled test set
+X = np.vstack([c1_test, c2_test])
+y = np.r_[np.zeros(n_test_per_class), np.ones(n_test_per_class)]
+
+# predict with the trained model and score accuracy
+y_pred = clf.predict(X)
+correct = y_pred == y
+accuracy = correct.mean()
+
+fig = go.Figure()
+
+# For each class, plot correct predictions as dots and incorrect ones as crosses in a darker shade
+for label, name, ok_colour, bad_colour in [(0, &#x27;class-1&#x27;, &#x27;green&#x27;, &#x27;red&#x27;),
+                                           (1, &#x27;class-2&#x27;, &#x27;blue&#x27;, &#x27;orange&#x27;)]:
+    ok = correct &amp; (y == label)
+    bad = ~correct &amp; (y == label)
+    fig.add_trace(go.Scatter3d(
+        x=X[ok, 0], y=X[ok, 1], z=X[ok, 2], mode=&#x27;markers&#x27;,
+        marker=dict(color=ok_colour, size=2.5), name=f&#x27;Correct {name} (n={ok.sum()})&#x27;))
+    fig.add_trace(go.Scatter3d(
+        x=X[bad, 0], y=X[bad, 1], z=X[bad, 2], mode=&#x27;markers&#x27;,
+        marker=dict(color=bad_colour, size=4, symbol=&#x27;x&#x27;), name=f&#x27;Incorrect {name} (n={bad.sum()})&#x27;))
+
+fig.update_layout(
+    title=f&#x27;Model Accuracy: {accuracy:.1%}&#x27;,
+    scene=dict(
+        xaxis=dict(title=&#x27;Feature 1&#x27;, range=[dim1_min, dim1_max]),
+        yaxis=dict(title=&#x27;Feature 2&#x27;, range=[dim2_min, dim2_max]),
+        zaxis=dict(title=&#x27;Feature 3&#x27;, range=[dim3_min, dim3_max]),
+        aspectmode=&#x27;cube&#x27;,
+    ),
+    width=750, height=650, template=&#x27;plotly_white&#x27;
+)
+
+# fig.show()
+print(fig.to_html())</textarea>
+            </div>
+            <div id="code-cell-6-output" class="output"></div>
+        </div>
+        <p>Out of the 70 new samples, 64 were predicted correctly, giving an accuracy of <strong>91.4%</strong>, which is not bad for an ML model. Yet the problem is fairly clean, as we have two sets of data that clearly come from different distributions, so why are some of the predictions incorrect?<br><br>There can be a myriad of reasons. Moving the plot around, you can see that many of the incorrect predictions lie close to the edge between the two classes, or in spots where there were few training data points — if you look back at the decision boundary, there are bulges in it where there are fewer points from class-1. This can be rectified by gathering more training samples, to reinforce the decision boundary everywhere. Yet some points simply overlap the two distributions, due to noise and their proximity.<br><br>In this situation, no amount of additional data or fine-tuning can improve the model, as the class points occupy the same space. This leaves you with transforming the data, in the hope that the transformed points are more cleanly separated. This is one of the benefits of <em>deep learning</em>, as its many layers transform the data to be more separable by the final layer, making otherwise intractable data solvable by design.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="with-probabilities">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>With Probabilities</h3>
+                        <p>The issues stated above can be mitigated, or better understood, by approaching the output of a model as probabilities rather than a binary classification (it is or it isn&#x27;t). Most models do not just give a class; instead, they provide a probability, which indicates their <strong>confidence</strong> that it is one class or the other. In a binary (two-class) problem, the class with a probability over 50% (0.5) is the winner, with the two values summing to 100% (1). The closer the two values are to 0.5, the more unsure the model is, with the prediction becoming a coin flip at 0.5.</p>
+        <div class="info-box key-terms-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                KEY TERMS
+            </div>
+            <div class="box-content">
+                <p><strong>confidence</strong>: Most machine learning models express their output as a degree of belief, in the Bayesian sense. The value given is not the chance that something will happen, but rather the belief, or confidence, the model has in its prediction.</p>
+            </div>
+        </div>
+        <p>Below we have singled out one of the incorrect predictions from above:</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-7"># get the first incorrect prediction
+prediction = y_pred[np.argmin(correct)]
+# get its probabilities
+proba = clf.predict_proba(X)[np.argmin(correct)]
+
+print(&quot;Prediction probability:&quot;, proba)
+print(&quot;&quot;)
+print(f&quot;The model predicted {class_dict[prediction]} with confidence of: {proba[int(prediction)]*100}%&quot;)</textarea>
+            </div>
+            <div id="code-cell-7-output" class="output"></div>
+        </div>
+        <p>The probabilities can be read as class-1 at index 0 and class-2 at index 1 in the array. The model chose <em>class-2</em> as it had a probability of <strong>0.68</strong> (68%); this is quite low, indicating it is likely a data point near the boundary.<br><br>When possible, it is best to work with probabilities, as they give you more information about the decision. A classic example is disease prediction, where you may only want to act on the model&#x27;s prediction when it is more than 95% sure.</p><h4>Probabilistic Space</h4><p>Just as we created the decision boundary in the state space, we can create a probabilistic map: one that shows the model&#x27;s confidence in predicting one of the classes across the state space. Below we have chosen the probabilistic map for <em>class-2</em>, as it nicely defines the ring-like shape of the class. The plot has been overlaid with the training data points, helping to highlight that the model&#x27;s confidence is heavily skewed towards <strong>1</strong> where there is a denser cluster of <em>class-2</em> data.</p>
+        <div class="code-area">
+            <div class="code-collapse-header" onclick="toggleCodeCollapse('code-cell-8')">
+                <span class="code-collapse-icon">▶</span>
+                <span class="code-collapse-label">Show code</span>
+            </div>
+            <div class="code-container code-fixed code-collapsed" id="code-cell-8-container">
+                <textarea id="code-cell-8"># Sample the state space on a finer grid for smooth probability shells
+g = np.linspace(dim1_min, dim1_max, 50)
+G1, G2, G3 = np.meshgrid(g, g, g, indexing=&#x27;ij&#x27;)
+fine_coords = np.column_stack([G1.ravel(), G2.ravel(), G3.ravel()])
+
+# Probability of class 2 (label 1) at every grid point
+p_class2 = clf.predict_proba(fine_coords)[:, 1]
+
+fig = go.Figure([
+    # Probability shells at 0.1, 0.3, 0.5, 0.7, 0.9
+    go.Isosurface(
+        x=fine_coords[:, 0], y=fine_coords[:, 1], z=fine_coords[:, 2], value=p_class2,
+        isomin=0.1, isomax=0.9, surface_count=5, opacity=0.25,
+        colorscale=&#x27;RdBu_r&#x27;, cmid=0.5, colorbar=dict(title=&#x27;Probability&#x27;),
+        caps=dict(x_show=False, y_show=False, z_show=False),
+    ),
+    # training data overlay
+    go.Scatter3d(x=class1_full[:, 0], y=class1_full[:, 1], z=class1_full[:, 2],
+                mode=&#x27;markers&#x27;, marker=dict(color=&#x27;blue&#x27;, size=3), name=&#x27;class-1&#x27;),
+    go.Scatter3d(x=class2_full[:, 0], y=class2_full[:, 1], z=class2_full[:, 2],
+                mode=&#x27;markers&#x27;, marker=dict(color=&#x27;orange&#x27;, size=3), name=&#x27;class-2&#x27;)
+])
+
+fig.update_layout(
+    title=&#x27;Model confidence that the data point belongs to class 2&#x27;,
+    scene=dict(
+        xaxis=dict(title=&#x27;Feature 1&#x27;, range=[dim1_min, dim1_max]),
+        yaxis=dict(title=&#x27;Feature 2&#x27;, range=[dim2_min, dim2_max]),
+        zaxis=dict(title=&#x27;Feature 3&#x27;, range=[dim3_min, dim3_max]),
+        aspectmode=&#x27;cube&#x27;,
+    ),
+    width=800, height=700, template=&#x27;plotly_white&#x27;,
+)
+
+# fig.show()
+print(fig.to_html())</textarea>
+            </div>
+            <div id="code-cell-8-output" class="output"></div>
+        </div>
+        
+        <div class="info-box remember-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                REMEMBER
+            </div>
+            <div class="box-content">
+                <p>As it is a binary problem, the <em>class-1</em> probabilistic map is simply the complement of the one above:<br><br>$$P(C1) = 1 - P(C2)$$<br><br>The red, high-confidence regions around the ring would therefore become the lowest values.</p>
+            </div>
+        </div>
+        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="true-shape">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>True Shape</h3>
+                        <p>Now that we have explored the machine learning process in full, we can reveal the true distributions the classes were drawn from.<br><br><strong>Class-1</strong> is a <strong>torus</strong>, a 3D surface shaped much like a doughnut. The samples lie on the surface of the torus, meaning they exist exclusively on a 2-dimensional surface that has been embedded in 3D space. This will be explored further below.<br><br><strong>Class-2</strong> is a much thinner torus that sits inside class-1.<br><br>Move the plot around below and look at the shapes from different angles. Separating the two may look easy to the human eye, but it is a complex problem that can only be solved in 3D space: the classes heavily overlap on each individual feature, and even when viewed face-on from any side, the two still overlap. Only by combining all the dimensions can the model make an accurate prediction. This is one of the arguments for high-dimensional datasets: provided the extra features carry useful information, they give the problem more space in which to be solved.</p>
+        <div class="code-area">
+            <div class="code-collapse-header" onclick="toggleCodeCollapse('code-cell-9')">
+                <span class="code-collapse-icon">▶</span>
+                <span class="code-collapse-label">Show code</span>
+            </div>
+            <div class="code-container code-fixed code-collapsed" id="code-cell-9-container">
+                <textarea id="code-cell-9"># Create a grid to sample the state space
+mesh_res = 40
+m1 = m2 = m3 = np.linspace(dim1_min, dim1_max, mesh_res)
+mg1, mg2, mg3 = np.meshgrid(m1, m2, m3)
+mesh_grid = np.c_[mg1.ravel(), mg2.ravel(), mg3.ravel()]
+
+# True generative parameters (match class1 / class2 above)
+R1, r1 = 11, 4                     # class-1 torus: ring radius, tube radius
+R2, r2 = 0.85 * 13, 0.85 * 1.2     # class-2 ring: scaled ring radius, tube radius
+
+# Signed distance from each grid point to each surface (0 = on the surface)
+radial = np.sqrt(mesh_grid[:, 0]**2 + mesh_grid[:, 1]**2)
+class1_dist = np.sqrt((radial - R1)**2 + mesh_grid[:, 2]**2) - r1
+class2_dist = np.sqrt((radial - R2)**2 + mesh_grid[:, 2]**2) - r2
+
+fig = go.Figure()
+
+# Draw the true class-1 surface (torus)
+fig.add_trace(go.Isosurface(
+    x=mesh_grid[:, 0], y=mesh_grid[:, 1], z=mesh_grid[:, 2],
+    value=class1_dist,
+    isomin=0, isomax=0, surface_count=1,
+    colorscale=[[0, &#x27;blue&#x27;], [1, &#x27;blue&#x27;]], showscale=False,
+    opacity=0.35, caps=dict(x_show=False, y_show=False, z_show=False),
+    name=&#x27;class-1 shape: torus&#x27;,
+    showlegend=True
+))
+
+# Draw the true class-2 surface (torus)
+fig.add_trace(go.Isosurface(
+    x=mesh_grid[:, 0], y=mesh_grid[:, 1], z=mesh_grid[:, 2],
+    value=class2_dist,
+    isomin=0, isomax=0, surface_count=1,
+    colorscale=[[0, &#x27;orange&#x27;], [1, &#x27;orange&#x27;]], showscale=False,
+    opacity=0.35, caps=dict(x_show=False, y_show=False, z_show=False),
+    name=&#x27;class-2 shape: torus&#x27;,
+    showlegend=True
+))
+
+# Overlay the samples on their true surfaces
+fig.add_trace(go.Scatter3d(
+    x=class1_full[:, 0], y=class1_full[:, 1], z=class1_full[:, 2],
+    mode=&#x27;markers&#x27;, marker=dict(color=&#x27;darkblue&#x27;, size=2), name=&#x27;class-1 sample&#x27;
+))
+fig.add_trace(go.Scatter3d(
+    x=class2_full[:, 0], y=class2_full[:, 1], z=class2_full[:, 2],
+    mode=&#x27;markers&#x27;, marker=dict(color=&#x27;darkorange&#x27;, size=2), name=&#x27;class-2 sample&#x27;
+))
+
+fig.update_layout(
+    title=&#x27;The True Class Shapes&#x27;,
+    scene=dict(
+        xaxis=dict(title=&#x27;Feature 1&#x27;, range=[dim1_min, dim1_max]),
+        yaxis=dict(title=&#x27;Feature 2&#x27;, range=[dim2_min, dim2_max]),
+        zaxis=dict(title=&#x27;Feature 3&#x27;, range=[dim3_min, dim3_max]),
+        aspectmode=&#x27;cube&#x27;,
+    ),
+    width=750, height=650, template=&#x27;plotly_white&#x27;
+)
+
+# fig.show()
+print(fig.to_html())</textarea>
+            </div>
+            <div id="code-cell-9-output" class="output"></div>
+        </div>
+        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="moving-to-higher-dimensions">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Moving to Higher Dimensions</h3>
+                        <p>So far we have worked in three dimensions, as that is as far as our puny minds can visually comprehend. Most datasets that researchers want to apply to machine learning rarely stop there, as they would likely be solvable with traditional statistics.<br><br>RNAseq, microscopy images, and neural recordings can all produce data that has dimensions of 1000+. These cannot be plotted, but the ideas from the torus carry over directly.</p><h4>The Manifold</h4><p>Look back at the class-1 sample and the true distribution. As stated, all the points lie on the surface of the torus, a 2D surface in 3D space. You need three numbers (feature 1, 2 and 3) to record where a point is, but only two numbers to describe where it sits <em>on the surface</em>: how far around the ring it is, and how far around the tube. The number of features we measure is called the <strong>ambient dimension</strong>, whereas the number of values needed to describe the data itself is the <strong>intrinsic dimension</strong>. For the torus, the ambient dimension is 3 and the intrinsic dimension is 2.<br><br>The surface the data lies on is called a <strong>manifold</strong>: a shape that has a lower dimension than the ambient dimension when you zoom in close enough. Much like the Earth looks flat from where we stand, despite being a sphere.</p><h4>The Manifold Hypothesis</h4><p>The <strong>manifold hypothesis</strong> proposes that the same is true of most real, high-dimensional data: although it is measured with many features, it lies on or near a manifold of far fewer dimensions.<br><br>Take gene expression as an example. A cell&#x27;s expression profile has 20,000 values, but those values are not free to vary independently. Genes are co-regulated by shared transcription factors, pathways switch on and off together, and a cell&#x27;s state is largely set by a handful of underlying processes: its type, where it is in the cell cycle, how stressed it is. Of all the possible combinations of 20,000 expression levels, only a vanishingly small fraction are biologically viable cells. The data occupies a thin, curved surface in an enormous space, just as the torus occupies a thin surface in our cube.</p><h4>The Manifold Takeaway</h4><p>Hopefully this demystifies the term manifold that is so often thrown around by ML scientists; it is just a shape in high dimensional space where most of the data lies. The ML model&#x27;s job is not to split the entire state space, which, given its near-infinite size, is very large. Instead, the model can tackle the much more tractable problem of finding the decision boundary that separates the two manifolds in the space.<br><br>Understanding it in this context further demonstrates why the model performs so poorly when predicting a corner of the state space. The model confidently called it <em>class-1</em>, yet no data lives anywhere near there, as the model&#x27;s predictions are only meaningful close to the manifold it was trained on.</p>
+        <div class="info-box key-terms-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                KEY TERMS
+            </div>
+            <div class="box-content">
+                <p><strong>ambient dimension</strong>: The number of features used to measure the data, i.e. the number of axes in the state space.<br><br><strong>intrinsic dimension</strong>: The number of values needed to describe where a point sits within the data itself; for the torus surface this is 2, despite it living in 3D.<br><br><strong>manifold</strong>: A shape that looks flat when you zoom in close enough, which the data lies on or near within the larger state space.<br><br><strong>manifold hypothesis</strong>: The proposal that real high-dimensional data lies on or near a manifold of far fewer dimensions than the number of features measured.</p>
+            </div>
+        </div>
+        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="summary---quiz">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Summary & Quiz</h3>
+                        <p>In this section, we introduced the state space as the set of all possible feature combinations, and showed how a classifier divides it into regions with a decision boundary. Using a random forest, we saw the boundary refine as the number of samples grew, then tested it on unseen data to check how well the model generalises. We then viewed the model&#x27;s output as probabilities, a measure of confidence that is lowest near the boundary. Finally, we revealed the true shapes behind the classes, and used them to introduce manifolds and the manifold hypothesis: real, high-dimensional data tends to sit on a much lower-dimensional surface, and a model is only reliable close to the data it was trained on.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="summary---quiz">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Summary & Quiz</h3>
+                        
+        <div class="quiz-box" id="quiz-1">
+            <div class="quiz-body">
+                <p class="quiz-intro">Attempt the questions below once you have finished. If you get any wrong, head back to that section to remind yourself of the reasoning/syntax behind the correct answer:</p>
+                
+            <div class="quiz-question" id="quiz-1-q0" data-quiz="quiz-1" data-topic-id="state-space">
+                <span class="quiz-topic-tag">State Space</span>
+                <p class="quiz-question-text">What does the state space represent?</p>
+                <div class="quiz-options" role="radiogroup">
+                    <label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-1-q0" value="0">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">The set of training samples only</span>
+                </label><label class="quiz-option" data-correct="true">
+                    <input type="radio" name="quiz-1-q0" value="1">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">Every possible combination of feature values</span>
+                </label><label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-1-q0" value="2">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">The labels the model predicts</span>
+                </label><label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-1-q0" value="3">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">The model&#x27;s learned parameters</span>
+                </label>
+                </div>
+                <div class="quiz-feedback" aria-live="polite"></div>
+            </div><hr class="quiz-divider">
+            <div class="quiz-question" id="quiz-1-q1" data-quiz="quiz-1" data-topic-id="decision-boundary">
+                <span class="quiz-topic-tag">Decision Boundary</span>
+                <p class="quiz-question-text">What is a decision boundary?</p>
+                <div class="quiz-options" role="radiogroup">
+                    <label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-1-q1" value="0">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">The edge of the training data</span>
+                </label><label class="quiz-option" data-correct="true">
+                    <input type="radio" name="quiz-1-q1" value="1">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">The surface where the model switches between predicting one class and another</span>
+                </label><label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-1-q1" value="2">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">The maximum value of a feature</span>
+                </label><label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-1-q1" value="3">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">The line separating training and testing data</span>
+                </label>
+                </div>
+                <div class="quiz-feedback" aria-live="polite"></div>
+            </div><hr class="quiz-divider">
+            <div class="quiz-question" id="quiz-1-q2" data-quiz="quiz-1" data-topic-id="generalisation">
+                <span class="quiz-topic-tag">Generalisation</span>
+                <p class="quiz-question-text">Why must a model be evaluated on data it was not trained on?</p>
+                <div class="quiz-options" role="radiogroup">
+                    <label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-1-q2" value="0">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">To increase the amount of training data</span>
+                </label><label class="quiz-option" data-correct="true">
+                    <input type="radio" name="quiz-1-q2" value="1">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">To check it has not simply overfit the noise of the training data</span>
+                </label><label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-1-q2" value="2">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">To lower the model&#x27;s confidence</span>
+                </label><label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-1-q2" value="3">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">To remove outliers from the dataset</span>
+                </label>
+                </div>
+                <div class="quiz-feedback" aria-live="polite"></div>
+            </div><hr class="quiz-divider">
+            <div class="quiz-question" id="quiz-1-q3" data-quiz="quiz-1" data-topic-id="confidence">
+                <span class="quiz-topic-tag">Confidence</span>
+                <p class="quiz-question-text">A binary classifier returns probabilities of 0.51 and 0.49. How should this prediction be read?</p>
+                <div class="quiz-options" role="radiogroup">
+                    <label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-1-q3" value="0">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">The model is highly confident in the first class</span>
+                </label><label class="quiz-option" data-correct="true">
+                    <input type="radio" name="quiz-1-q3" value="1">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">The model is close to a coin flip, so is likely near the decision boundary</span>
+                </label><label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-1-q3" value="2">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">The model has overfit</span>
+                </label><label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-1-q3" value="3">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">The prediction is guaranteed to be wrong</span>
+                </label>
+                </div>
+                <div class="quiz-feedback" aria-live="polite"></div>
+            </div><hr class="quiz-divider">
+            <div class="quiz-question" id="quiz-1-q4" data-quiz="quiz-1" data-topic-id="manifold-hypothesis">
+                <span class="quiz-topic-tag">Manifold Hypothesis</span>
+                <p class="quiz-question-text">What does the manifold hypothesis propose about high-dimensional data?</p>
+                <div class="quiz-options" role="radiogroup">
+                    <label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-1-q4" value="0">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">It is spread evenly across the whole state space</span>
+                </label><label class="quiz-option" data-correct="true">
+                    <input type="radio" name="quiz-1-q4" value="1">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">It lies on or near a surface of far fewer dimensions than the number of features</span>
+                </label><label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-1-q4" value="2">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">It can only be separated with deep learning</span>
+                </label><label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-1-q4" value="3">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">It is always linearly separable</span>
+                </label>
+                </div>
+                <div class="quiz-feedback" aria-live="polite"></div>
+            </div>
+                
+            <div class="quiz-topics-footer">
+                <span class="quiz-topics-label">Topics covered</span>
+                <div class="quiz-topics-list">
+                    <span class="quiz-topic-pill" id="quiz-1-topic-state-space">State Space</span><span class="quiz-topic-pill" id="quiz-1-topic-decision-boundary">Decision Boundary</span><span class="quiz-topic-pill" id="quiz-1-topic-generalisation">Generalisation</span><span class="quiz-topic-pill" id="quiz-1-topic-confidence">Confidence</span><span class="quiz-topic-pill" id="quiz-1-topic-manifold-hypothesis">Manifold Hypothesis</span>
+                </div>
+            </div>
+            </div>
+        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+        <div class="page-navigation">
+            <a href="./introduction.html" class="nav-button prev">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                </svg>
+                Previous
+            </a>
+            <a href="./scikit-learn.html" class="nav-button next">
+                Next
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                </svg>
+            </a></div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div>© All materials are copyright scryptIQ 2025</div>
+            <div>Powered by Pyodide</div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="../assets/main.js"></script>
+    
+    <!-- Pyodide Initialisation Script -->
+    <script>
+
+// Generalisable Pyodide Initialisation Script
+// Variables and state build up naturally as code blocks execute in order
+
+async function main() {
+    // Show loading message for all output elements
+    document.querySelectorAll(".output").forEach(el => {
+        el.textContent = "Loading Pyodide...";
+        el.classList.add("loading-message");
+    });
+    
+    try {
+        // Load Pyodide
+        console.log("Loading Pyodide...");
+        const pyodideStartTime = performance.now();
+        let pyodide = await loadPyodide();
+        const pyodideLoadTime = performance.now() - pyodideStartTime;
+        console.log(`Pyodide loaded in ${pyodideLoadTime.toFixed(2)}ms`);
+        
+        // Load required packages only if specified
+        const lessonPackages = window.LESSON_PACKAGES || [];
+        
+        if (lessonPackages.length > 0) {
+            console.log("Loading required Python packages...");
+            const packagesStartTime = performance.now();
+
+            // micropip resolves each requirement against the Pyodide lockfile
+            // *first* and only falls through to PyPI for packages Pyodide does
+            // not bundle (it sets search_pyodide_lock_first whenever the index
+            // URLs are left at their default).  So one call handles both cases
+            // and, unlike a hardcoded list of bundled package names, there is
+            // nothing to fall out of date when Pyodide is upgraded.  It also
+            // means version specifiers such as `pandas==2.2` work.
+            await pyodide.loadPackage(['micropip']);
+            const micropip = pyodide.pyimport('micropip');
+            await micropip.install(lessonPackages);
+            console.log(`Installed packages: ${lessonPackages.join(', ')}`);
+
+            const packagesLoadTime = performance.now() - packagesStartTime;
+            console.log(`Packages loaded in ${packagesLoadTime.toFixed(2)}ms`);
+            console.log(`Total initialisation time: ${(pyodideLoadTime + packagesLoadTime).toFixed(2)}ms`);
+        } else {
+            console.log("No packages to load for this lesson");
+            console.log(`Total initialisation time: ${pyodideLoadTime.toFixed(2)}ms`);
+        }
+
+        // Only set up basic Python environment - no pre-loaded variables
+        await pyodide.runPythonAsync(`
+            import sys
+            from io import StringIO
+        `);
+
+        // Only set up matplotlib if it's in the loaded packages.  Checked
+        // against the canonical (lower-cased, un-versioned) names so that a
+        // PACKAGES cell saying `Matplotlib` or `matplotlib>=3.9` still works.
+        const lessonPackageNames = window.LESSON_PACKAGE_NAMES || [];
+        if (lessonPackageNames.includes('matplotlib')) {
+            await pyodide.runPythonAsync(`
+                # Set up matplotlib for web rendering
+                import matplotlib
+                matplotlib.use('AGG')
+                import matplotlib.pyplot as plt
+                import io
+                import base64
+                
+                def capture_matplotlib():
+                    """Capture current matplotlib figure as HTML img tag"""
+                    buf = io.BytesIO()
+                    plt.savefig(buf, format='png', bbox_inches='tight', dpi=100)
+                    buf.seek(0)
+                    img_base64 = base64.b64encode(buf.read()).decode('utf-8')
+                    plt.close()
+                    return f'<img src="data:image/png;base64,{img_base64}" style="max-width: 100%; height: auto;" />'
+
+                # Silence the "FigureCanvasAgg is non-interactive" warning that
+                # occurs when notebook code calls plt.show().  In this environment
+                # figures are captured automatically via capture_matplotlib(), so
+                # plt.show() should simply be a no-op.
+                plt.show = lambda *args, **kwargs: None
+            `);
+            console.log('Matplotlib capture function set up');
+        }
+        
+        console.log("Pyodide loaded successfully");
+        
+        // Load remote files if URLs are specified
+        const lessonFiles = window.LESSON_FILES || [];
+        
+        if (lessonFiles.length > 0) {
+            try {
+                console.log(`Checking for ${lessonFiles.length} remote file(s) to load...`);
+                
+                // Build Python code to load all files dynamically
+                let pythonCode = `
+from pyodide.http import pyfetch
+import os
+
+# Create data directory if it doesn't exist
+os.makedirs('./data', exist_ok=True)
+`;
+                
+                // Add loading code for each file
+                for (const file of lessonFiles) {
+                    if (file.is_binary) {
+                        // Binary files (images, etc.) - use bytes
+                        pythonCode += `
+# Load ${file.filename} (binary)
+try:
+    response = await pyfetch("${file.url}")
+    content = await response.bytes()
+    with open('./data/${file.filename}', 'wb') as f:
+        f.write(bytes(content))
+    print("Loaded: ${file.filename}")
+except Exception as e:
+    print(f"Could not load ${file.filename}: {e}")
+`;
+                    } else {
+                        // Text files (CSV, etc.) - use string
+                        pythonCode += `
+# Load ${file.filename} (text)
+try:
+    response = await pyfetch("${file.url}")
+    content = await response.string()
+    with open('./data/${file.filename}', 'w') as f:
+        f.write(content)
+    print("Loaded: ${file.filename}")
+except Exception as e:
+    print(f"Could not load ${file.filename}: {e}")
+`;
+                    }
+                }
+                
+                await pyodide.runPythonAsync(pythonCode);
+                console.log("Remote files loaded successfully");
+            } catch (error) {
+                console.warn("Error loading remote files (continuing anyway):", error);
+            }
+        } else {
+            console.log("No remote files to load for this lesson");
+        }
+        
+        // Function to execute Python code and capture output
+        async function executePythonCode(code) {
+            try {
+                // Redirect Python stdout and stderr to capture print statements and warnings
+                await pyodide.runPythonAsync(`
+                    old_stdout = sys.stdout
+                    old_stderr = sys.stderr
+                    sys.stdout = mystdout = StringIO()
+                    sys.stderr = mystderr = StringIO()
+                `);
+
+                // Run the user code.
+                // We pass the code string via pyodide.globals to avoid JS-string escaping
+                // issues, then use Python's ast module to execute it.  The last expression
+                // (if any) is eval-ed inside Python so that repr() is called there —
+                // this means display settings such as np.set_printoptions() are always
+                // respected before the value crosses the Python→JS boundary.
+                // (Pyodide auto-converts numpy arrays to TypedArray, so String(result)
+                // would bypass numpy's formatting entirely.)
+                pyodide.globals.set('__cell_code__', code);
+                await pyodide.runPythonAsync(`
+import ast as _ast
+__cell_result__ = None
+try:
+    _tree = _ast.parse(__cell_code__)
+    if _tree.body and isinstance(_tree.body[-1], _ast.Expr):
+        _last = _tree.body.pop()
+        exec(compile(_ast.Module(body=_tree.body, type_ignores=[]), '<cell>', 'exec'), globals())
+        _val = eval(compile(_ast.Expression(body=_last.value), '<cell>', 'eval'), globals())
+        if _val is not None:
+            __cell_result__ = repr(_val)
+    else:
+        exec(compile(_tree, '<cell>', 'exec'), globals())
+finally:
+    for _k in ['_tree', '_last', '_val', '_ast']:
+        globals().pop(_k, None)
+    globals().pop('__cell_code__', None)
+`);
+
+                // Get the captured stdout and stderr
+                let stdout = await pyodide.runPythonAsync(`
+                    sys.stdout = old_stdout
+                    sys.stderr = old_stderr
+                    mystdout.getvalue()
+                `);
+
+                const stderr = await pyodide.runPythonAsync(`mystderr.getvalue()`);
+                if (stderr) {
+                    if (stdout) stdout += "\n";
+                    stdout += stderr;
+                }
+
+                // Retrieve the Python-side repr string (already formatted correctly)
+                const resultRepr = await pyodide.runPythonAsync(`
+_r = __cell_result__
+del __cell_result__
+_r
+`);
+
+                // Check for matplotlib figures only if matplotlib was loaded
+                const lessonPackageNames = window.LESSON_PACKAGE_NAMES || [];
+                if (lessonPackageNames.includes('matplotlib')) {
+                    const hasFigures = await pyodide.runPythonAsync(`
+                        import matplotlib.pyplot as plt
+                        len(plt.get_fignums()) > 0
+                    `);
+
+                    if (hasFigures) {
+                        const figureHtml = await pyodide.runPythonAsync(`capture_matplotlib()`);
+                        if (stdout) stdout += "\n";
+                        stdout += figureHtml;
+                    }
+                }
+
+                // Combine stdout and result repr
+                let output = stdout;
+                if (resultRepr !== undefined && resultRepr !== null && String(resultRepr).trim() !== '') {
+                    if (output) output += "\n";
+                    output += String(resultRepr);
+                }
+                
+                return { success: true, output: output || "Code executed successfully (no output)" };
+                
+            } catch (error) {
+                // Attempt to restore stdout/stderr even on failure
+                try {
+                    await pyodide.runPythonAsync(`
+                        if 'old_stdout' in dir(): sys.stdout = old_stdout
+                        if 'old_stderr' in dir(): sys.stderr = old_stderr
+                    `);
+                } catch (_) {}
+                // Re-run through Python's traceback machinery to get a clean error message
+                let tracebackStr = '';
+                try {
+                    pyodide.globals.set('_traceback_code', code);
+                    await pyodide.runPythonAsync(`
+                        import traceback as _tb
+                        from io import StringIO as _SIO
+                        _trace_result = None
+                        _saved_io = (sys.stdout, sys.stderr)
+                        sys.stdout = sys.stderr = _SIO()
+                        try:
+                            exec(compile(_traceback_code, '<exec>', 'exec'), globals())
+                        except Exception:
+                            _trace_result = _tb.format_exc()
+                        finally:
+                            sys.stdout, sys.stderr = _saved_io
+                    `);
+                    const tbVal = await pyodide.runPythonAsync('_trace_result');
+                    if (tbVal) tracebackStr = tbVal;
+                } catch (_) {}
+                let displayMsg;
+                if (tracebackStr && tracebackStr.includes('File "<exec>"')) {
+                    const lines = tracebackStr.split('\n');
+                    let execIdx = -1;
+                    for (let i = lines.length - 1; i >= 0; i--) {
+                        if (lines[i].includes('File "<exec>"')) { execIdx = i; break; }
+                    }
+                    displayMsg = execIdx !== -1
+                        ? lines.slice(execIdx).join('\n').trim()
+                        : tracebackStr.trim();
+                } else {
+                    displayMsg = (error.message || '').trim() || error.type || String(error);
+                }
+                return { success: false, output: 'Error:\n' + displayMsg };
+            }
+        }
+        
+        // Execute all hidden code blocks first (for setup code like imports)
+        const hiddenCodeBlocks = Array.from(document.querySelectorAll('.hidden-code textarea'));
+        console.log(`Found ${hiddenCodeBlocks.length} hidden code blocks`);
+
+        for (const textarea of hiddenCodeBlocks) {
+            const code = textarea.value.trim();
+            if (!code) continue;
+            
+            console.log(`Executing hidden code block: ${textarea.id}`);
+            console.log(`Hidden code content: ${code.substring(0, 100)}...`);
+            const result = await executePythonCode(code);
+            
+            if (!result.success) {
+                console.error(`Error in hidden code block ${textarea.id}:`, result.output);
+            } else {
+                console.log(`Hidden code block ${textarea.id} executed successfully`);
+                console.log(`Result: ${result.output}`);
+            }
+        }
+
+        console.log("All hidden code blocks executed");
+        
+        // Get all fixed code blocks in document order
+        const fixedCodeBlocks = Array.from(document.querySelectorAll('.code-fixed textarea'));
+        
+        // Setup and execute fixed code blocks sequentially
+        for (const textarea of fixedCodeBlocks) {
+            const code = textarea.value.trim();
+            if (!code) continue;
+            
+            // Set up CodeMirror editor (read-only)
+            const editor = CodeMirror.fromTextArea(textarea, {
+                mode: "python",
+                theme: "pastel-on-dark",
+                lineNumbers: true,
+                readOnly: true,
+                viewportMargin: Infinity
+            });
+            
+            // Find corresponding output element
+            const outputId = textarea.id + '-output';
+            const outputElement = document.getElementById(outputId);
+            
+            if (outputElement) {
+                outputElement.textContent = "Running code...";
+                outputElement.classList.add("loading-message");
+                
+                // Execute the code (this maintains state for subsequent blocks)
+                const result = await executePythonCode(code);
+                
+                // Display the output - check if it's HTML
+                const trimmedOutput = result.output.trim();
+                console.log('Output length:', trimmedOutput.length);
+                console.log('Output starts with:', trimmedOutput.substring(0, 100));
+                
+                if (trimmedOutput.includes('<script') && trimmedOutput.includes('Plotly')) {
+                    // It's Plotly HTML output - extract just the body content
+                    console.log('Rendering as Plotly HTML');
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(result.output, 'text/html');
+                    // Clear the output element and append the body content
+                    outputElement.innerHTML = '';
+                    
+                    // Find and load external scripts first (like Plotly CDN)
+                    const externalScripts = Array.from(doc.querySelectorAll('script[src]'));
+                    const inlineScripts = Array.from(doc.querySelectorAll('script:not([src])'));
+                    
+                    // Append non-script content first
+                    Array.from(doc.body.children).forEach(child => {
+                        if (child.tagName !== 'SCRIPT') {
+                            outputElement.appendChild(child.cloneNode(true));
+                        }
+                    });
+                    
+                    // Load external scripts sequentially
+                    const loadScript = (src) => {
+                        return new Promise((resolve, reject) => {
+                            const script = document.createElement('script');
+                            script.src = src;
+                            script.onload = resolve;
+                            script.onerror = reject;
+                            document.head.appendChild(script);
+                        });
+                    };
+                    
+                    // Load all external scripts first
+                    Promise.all(externalScripts.map(s => loadScript(s.src)))
+                        .then(() => {
+                            console.log('External scripts loaded, executing inline scripts');
+                            // Now execute inline scripts
+                            inlineScripts.forEach(oldScript => {
+                                const newScript = document.createElement('script');
+                                newScript.textContent = oldScript.textContent;
+                                outputElement.appendChild(newScript);
+                            });
+                            console.log('Output element after processing:', outputElement.children.length, 'children');
+                        })
+                        .catch(err => {
+                            console.error('Failed to load external scripts:', err);
+                            outputElement.textContent = 'Error loading Plotly: ' + err.message;
+                        });
+                } else if (trimmedOutput.startsWith('<!DOCTYPE') || 
+                           trimmedOutput.startsWith('<html') ||
+                            trimmedOutput.startsWith('<div') ||
+                            trimmedOutput.startsWith('<img')) {
+                    console.log('Rendering as generic HTML');
+                    outputElement.innerHTML = result.output;
+                    console.log('Output element after innerHTML:', outputElement.children.length, 'children');
+                } else {
+                    console.log('Rendering as plain text');
+                    outputElement.textContent = result.output;
+                }
+                outputElement.classList.remove("loading-message");
+                if (result.success) {
+                    outputElement.classList.add("success-message");
+                    outputElement.classList.remove("error-message");
+                } else {
+                    outputElement.classList.add("error-message");
+                    outputElement.classList.remove("success-message");
+                }
+            }
+            
+            // Small delay to show progression
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        
+        // Set flag to indicate all FIXED cells have been executed
+        // This is used by PDF generation to ensure all outputs are ready
+        window.allCellsExecuted = true;
+        console.log("All FIXED cells executed successfully");
+        
+        // Setup all editable code blocks (but don't execute them)
+        document.querySelectorAll('.code-editor textarea').forEach((textarea) => {
+            // Set up CodeMirror editor (editable)
+            const editor = CodeMirror.fromTextArea(textarea, {
+                mode: "python",
+                theme: "pastel-on-dark",
+                lineNumbers: true,
+                viewportMargin: Infinity
+            });
+            
+            // Find corresponding run button and output element
+            const baseId = textarea.id;
+            const runButtonId = 'run-' + baseId;
+            const outputId = baseId + '-output';
+            
+            const runButton = document.getElementById(runButtonId);
+            const outputElement = document.getElementById(outputId);
+            
+            if (runButton && outputElement) {
+                // Set initial state
+                outputElement.textContent = "Ready to run code!";
+                outputElement.classList.remove("loading-message");
+                
+                runButton.addEventListener("click", async () => {
+                    const code = editor.getValue().trim();
+                    if (!code) {
+                        outputElement.textContent = "No code to run";
+                        return;
+                    }
+                    
+                    outputElement.textContent = "Running...";
+                    outputElement.classList.remove("error-message", "success-message");
+                    outputElement.classList.add("loading-message");
+                    
+                    // Execute the code (this also maintains state for future blocks)
+                    const result = await executePythonCode(code);
+                    
+                    // Display the output - check if it's HTML
+                    const trimmedOutput = result.output.trim();
+                    console.log('Output length:', trimmedOutput.length);
+                    console.log('Output starts with:', trimmedOutput.substring(0, 100));
+                    
+                    if (trimmedOutput.includes('<script') && trimmedOutput.includes('Plotly')) {
+                        // It's Plotly HTML output - extract just the body content
+                        console.log('Rendering as Plotly HTML');
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(result.output, 'text/html');
+                        // Clear the output element and append the body content
+                        outputElement.innerHTML = '';
+                        
+                        // Find and load external scripts first (like Plotly CDN)
+                        const externalScripts = Array.from(doc.querySelectorAll('script[src]'));
+                        const inlineScripts = Array.from(doc.querySelectorAll('script:not([src])'));
+                        
+                        // Append non-script content first
+                        Array.from(doc.body.children).forEach(child => {
+                            if (child.tagName !== 'SCRIPT') {
+                                outputElement.appendChild(child.cloneNode(true));
+                            }
+                        });
+                        
+                        // Load external scripts sequentially
+                        const loadScript = (src) => {
+                            return new Promise((resolve, reject) => {
+                                const script = document.createElement('script');
+                                script.src = src;
+                                script.onload = resolve;
+                                script.onerror = reject;
+                                document.head.appendChild(script);
+                            });
+                        };
+                        
+                        // Load all external scripts first
+                        Promise.all(externalScripts.map(s => loadScript(s.src)))
+                            .then(() => {
+                                console.log('External scripts loaded, executing inline scripts');
+                                // Now execute inline scripts
+                                inlineScripts.forEach(oldScript => {
+                                    const newScript = document.createElement('script');
+                                    newScript.textContent = oldScript.textContent;
+                                    outputElement.appendChild(newScript);
+                                });
+                                console.log('Output element after processing:', outputElement.children.length, 'children');
+                            })
+                            .catch(err => {
+                                console.error('Failed to load external scripts:', err);
+                                outputElement.textContent = 'Error loading Plotly: ' + err.message;
+                            });
+                    } else if (trimmedOutput.startsWith('<!DOCTYPE') || 
+                               trimmedOutput.startsWith('<html') ||
+                               trimmedOutput.startsWith('<div') ||
+                               trimmedOutput.startsWith('<img')) {
+                        outputElement.innerHTML = result.output;
+                    } else {
+                        outputElement.textContent = result.output;
+                    }
+                    outputElement.classList.remove("loading-message");
+                    if (result.success) {
+                        outputElement.classList.add("success-message");
+                        outputElement.classList.remove("error-message");
+                    } else {
+                        outputElement.classList.add("error-message");
+                        outputElement.classList.remove("success-message");
+                    }
+                });
+            }
+        });
+        
+        console.log("All code blocks initialised successfully");
+
+        // Set flag to indicate Pyodide is fully ready
+        window.pyodideReady = true;
+        console.log("Pyodide fully ready");
+        
+    } catch (error) {
+        console.error("Failed to initialise Pyodide:", error);
+        document.querySelectorAll(".output").forEach(el => {
+            el.textContent = "Error loading Pyodide: " + error.message;
+            el.classList.remove("loading-message");
+            el.classList.add("error-message");
+        });
+    }
+}
+
+// Start the application when DOM is loaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', main);
+} else {
+    main();
+}
+    </script>
+    
+</body>
+</html>

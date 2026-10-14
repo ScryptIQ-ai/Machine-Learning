@@ -1,0 +1,1686 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Meta Tags -->
+    <!-- charset must stay within the first 1024 bytes of the
+         document or browsers stop looking and fall back to a
+         default encoding. Keep these two first in <head>. -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- MathJax for mathematical notation -->
+    <!-- v4 moved the loadable components out of the old es5 subdirectory and
+         up to the package root, so the path is part of the version, not just
+         the number. Getting it wrong is a 404 that fails silently, leaving
+         equations as raw dollar-delimited LaTeX on the page.
+         output.font pins the TeX font from v3; v4 would otherwise default to
+         New Computer Modern and change how every equation looks. fontPath is
+         set explicitly because MathJax's default resolves font data from an
+         *unversioned* jsDelivr URL, which is exactly what cdn_versions.yaml
+         exists to prevent. -->
+    <script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$']],
+            displayMath: [['$$', '$$']],
+            processEscapes: true
+        },
+        svg: {
+            fontCache: 'global'
+        },
+        output: {
+            font: 'mathjax-tex',
+            fontPath: 'https://cdn.jsdelivr.net/npm/@mathjax/%%FONT%%-font@4.1.3'
+        },
+        startup: {
+            pageReady() {
+                // PDF export prints as soon as the page reports itself ready.
+                // Announce typesetting separately so it can be waited on.
+                return MathJax.startup.defaultPageReady().then(function () {
+                    window.mathJaxReady = true;
+                });
+            }
+        }
+    };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@4.1.3/tex-svg.js"></script>
+    
+    <!-- Pyodide and CodeMirror -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v314.0.7/full/pyodide.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.21/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.21/theme/pastel-on-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.21/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.21/mode/python/python.min.js"></script>
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="../assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../assets/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="../assets/android-chrome-512x512.png">
+
+    <!-- Core Stylesheets -->
+    <link rel="stylesheet" href=../assets/colours-l2d.css>
+    <link rel="stylesheet" href="../assets/shared-styles.css">
+    <link rel="stylesheet" href="../assets/nav-bar.css">
+    <link rel="stylesheet" href="../assets/module_card.css">
+    <link rel="stylesheet" href="../assets/learning_outcomes.css">
+    <link rel="stylesheet" href="../assets/learning_lists.css">
+    <link rel="stylesheet" href="../assets/box_styles.css">
+    <link rel="stylesheet" href="../assets/code_styles.css">
+    
+    <title>scryptIQ - ML1 - Scikit-Learn</title>
+    <script>
+        window.LESSON_FILES = [
+            {url: "https://raw.githubusercontent.com/ScryptIQ-ai/lesson-data/refs/heads/main/ml/breast_cancer.csv", filename: "breast_cancer.csv", is_binary: false}
+        ];
+        window.LESSON_PACKAGES = ["numpy", "pandas", "scikit-learn", "seaborn", "matplotlib", "plotly"];
+        window.LESSON_PACKAGE_NAMES = ["numpy", "pandas", "scikit-learn", "seaborn", "matplotlib", "plotly"];
+    </script>
+</head>
+<body>
+    
+    <!-- Sidebar Navigation -->
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <a href="../homepage.html" style="text-decoration: none; display: inline-block;">
+                <img src="../assets/l2d-brain-logo.png" alt="scryptIQ Logo" class="sidebar-logo">
+            </a>
+        </div>
+
+        <h3>Content</h3>
+        <ul>
+            <li><a href="./introduction.html" class="">Introduction</a></li><li><a href="./state-space.html">State Space</a></li>
+            <li>
+                <div class="nav-toggle active" data-target="expandable-section-2">
+                    Scikit-Learn
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <ul class="nested-nav expanded" id="expandable-section-2"><li><a href="#introduction">Introduction</a></li><li><a href="#scikit-learn">Scikit-Learn</a></li><li><a href="#data-exploration">Data Exploration</a></li><li><a href="#splitting-the-data">Splitting the Data</a></li><li><a href="#data-leakage">Data Leakage</a></li><li><a href="#data-cleaning">Data Cleaning</a></li><li><a href="#encoding-the-target-feature">Encoding the target feature</a></li><li><a href="#scaling">Scaling</a></li><li><a href="#training">Training</a></li><li><a href="#evaluation">Evaluation</a></li><li><a href="#probabilities">Probabilities</a></li><li><a href="#feature-importance">Feature Importance</a></li><li><a href="#summary---quiz">Summary & Quiz</a></li>
+                </ul>
+            </li><li><a href="./categorical-data.html">Categorical Data</a></li><li><a href="./classifier-types.html">Classifier Models</a></li><li><a href="./assignment.html">Assignment</a></li><li><a href="./feedback.html">Feedback</a></li>
+        </ul>
+
+        <h3 class="collapsible-header collapsed">
+            Resources
+            <span class="collapse-icon">►</span>
+        </h3>
+        <div class="collapsible-content collapsed">
+            <ul>
+                <li><a href="./glossary.html">Glossary</a></li><li><a href="./downloads.html">Downloads</a></li><li><a href="../HB/introduction.html">Handbook</a></li>
+            </ul>
+        </div>
+
+        <h3>
+            <li><a href="./report-issue.html">Report an Issue</a></li>
+        </h3>
+    </div>
+
+    <!-- Sidebar Toggle Button -->
+    <button id="sidebar-toggle" class="sidebar-toggle">❮</button>
+
+    <!-- Main Content Area -->
+    <div id="main-content" class="main-content">
+        <!-- Top Navigation Bar -->
+        <div class="top-navbar">
+            <h1 class="page-title">Machine Learning 1</h1>
+            <div class="nav-actions">
+                <a href="../homepage.html" class="text-button" title="Materials homepage">
+                    Homepage
+                </a>
+                <a href="https://scryptiq.ai/my-cohorts/" class="text-button scryptiq-button" title="Find out more about us">
+                    scryptIQ
+                </a>
+            </div>
+        </div>
+
+        
+            <div class="module-card" id="introduction">
+                <div class="module-header">
+                    Scikit-Learn <span class="module-tag">ML1</span>
+                </div>
+                <div class="module-body">
+                    <h3>Learning Objectives</h3>
+                    <div class="learning-outcomes">
+                        <div class="outcome-item">
+                    <span class="outcome-number">1</span>
+                    <span class="outcome-text">Understand the building blocks of ML</span>
+                </div>
+<div class="outcome-item">
+                    <span class="outcome-number">2</span>
+                    <span class="outcome-text">How to explore, clean, and scale data for training</span>
+                </div>
+<div class="outcome-item">
+                    <span class="outcome-number">3</span>
+                    <span class="outcome-text">How to train and perform basic evaluation of an ML model</span>
+                </div>
+<div class="outcome-item">
+                    <span class="outcome-number">4</span>
+                    <span class="outcome-text">Understand what feature importances are and how they can be used</span>
+                </div>
+                    </div>
+                    <h3>Introduction</h3>
+                    <p>In step 2 of the machine learning (ML) process the model <strong>algorithmically</strong> builds the statistical approximation during training.<br><br>This consists of three building blocks:<br><ol class="nested-list"><li><strong>The Loss Function</strong>: How the model measures <em>how</em> wrong its predictions are for each sample in the training dataset.</li><br><li><strong>The Cost Function</strong>: The augmented, summed values from the <em>loss function</em> from the whole training dataset.</li><br><li><strong>Optimisation Routine</strong>: The algorithm that searches for the best solution given the value from the <em>cost function</em>.</li></ol></p><p>Given these <em>three</em> building blocks, an ML model will iterate (loop through) all the samples in the training dataset, updating its parameters after each time the whole dataset has been processed (an <em>epoch</em>). Think of the parameters as a set of dials and knobs that the optimisation routine can change in response to the feedback it gets from the cost function. The loss function, cost function and optimisation algorithm can be unique per model, although many share the same, such as <strong>gradient descent</strong>. These concepts will be explored more in the lecture for this lesson, as well as <strong>ML4</strong>.<br><br>In practice, you will rarely need to build these yourself when using classical ML tools. In <strong>scikit-learn</strong>, the Python package we will be using throughout this module, each model comes with its loss function, cost function and optimisation routine already built in and set to sensible defaults. Where there are choices to be made, it is around modifying what the model assumes about the data, such as the number of splits in a random forest. These are the <strong>hyperparameters</strong>, which, as described, are chosen <strong>before</strong> training, unlike <strong>parameters</strong>, which are <strong>updated</strong> during training. These will be explored in the next lesson <strong>ML2</strong>. A conceptual understanding of the three building blocks is therefore enough for now: it tells you what those settings are doing, and why a model might struggle to learn.</p>
+        <div class="info-box key-terms-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                KEY TERMS
+            </div>
+            <div class="box-content">
+                <p><strong>parameters</strong>: Values inside the model that are learned from the data during training, such as a weight in a regression or a split threshold in a decision tree.<br><br><strong>hyperparameters</strong>: Settings chosen by you <em>before</em> training that control how the model learns, such as the number of trees in a random forest.</p>
+            </div>
+        </div>
+        
+                </div>
+            </div>
+            
+            <div class="module-card" id="scikit-learn">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Scikit-Learn</h3>
+                        <p><em>Scikit-learn</em> is an all-encompassing Python package for machine learning, containing the majority of models and a myriad of tools to prepare, transform, and clean data. It is open-source and one of the most popular packages for ML across all programming languages. What <em>scikit-learn</em> does well is to wrap computationally difficult aspects of ML into single functions, allowing the user to chain together several functions in a pipeline with only a few lines of code. This allows you to focus on your approach, rather than the code itself. A good example of this is the <em>three building blocks</em>, which are all executed via efficient code using a single method: <code>.fit()</code>, which we will see later. That&#x27;s it, one line of code to fully train a model.<br><br>Additionally, <em>scikit-learn</em> has been designed to integrate seamlessly with <em>numpy</em> and <em>pandas</em>, so you can easily flow from your data exploration and cleaning workflows into machine learning.<br><br>What we cover in <strong>ML1-3</strong> will only scratch the surface of the offering of <em>scikit-learn</em>, with many specialist tools for unique problems and data. Therefore, it is worth exploring their <a href="https://scikit-learn.org/stable/user_guide.html">documentation</a> to see if they have already tackled a problem similar to the one you&#x27;re working on.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="data-exploration">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Data Exploration</h3>
+                        <p>All machine learning begins with the dataset; if the data itself is poor or messy, then the model is not going to perform well. As was seen in the previous section, the desired dataset should have separable <em>manifolds</em> in the high-dimensional space. If you have noisy, irrelevant features, they could be harming the prediction rather than just being a bystander.<br><br>The dataset we will be using first is a classic, and used several times for teaching and as a benchmark to test models against. It is the <strong>Wisconsin Breast Cancer</strong> <a href="https://www.semanticscholar.org/paper/Nuclear-feature-extraction-for-breast-tumor-Street-Wolberg/53f0fbb425bc14468eb3bf96b2e1d41ba8087f36">dataset</a>, which contains physical descriptors of the nuclei in cancerous (malignant) and non-cancerous (benign) cells. To view it and its features we will be using <em>pandas</em>.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-10"># data science tools
+import pandas as pd
+import numpy as np
+
+# visualisation packages
+import matplotlib.pyplot as plt
+import seaborn as sns
+import plotly.graph_objects as go</textarea>
+            </div>
+            <div id="code-cell-10-output" class="output" style="display: none;"></div>
+        </div>
+        
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-11"># read in the data from a csv
+df = pd.read_csv(&quot;./data/breast_cancer.csv&quot;)
+
+df.head(3)</textarea>
+            </div>
+            <div id="code-cell-11-output" class="output"></div>
+        </div>
+        <p>Test your skills with <em>pandas</em> on the dataframe to get a feel for the data and for <em>pandas</em> itself:</p>
+        <div class="code-area">
+            <div class="code-container code-editor">
+                <textarea id="code-cell-12"># Use this cell to explore the dataset
+# For example use .shape to explore the number of rows/cols
+# Or use .describe() to see the features stats
+
+df</textarea>
+            </div>
+            <button id="run-code-cell-12" class="run-button">Run Code</button>
+            <div id="code-cell-12-output" class="output"></div>
+        </div>
+        <p>Of the 11 columns, the first 10 are the features that will be used to train the model. They are all continuous floating values, all with different scales; each describing a different physical property of the nucleus. The final column <code>diagnosis</code> is the <em>target column</em>, where a label is given for the sample coming from either a <strong>malignant (M)</strong> cell or a <strong>benign (B)</strong> cell.<br><br>To begin we will assign the name of our target column to a variable, for easy access:</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-13">target_col = &#x27;diagnosis&#x27;</textarea>
+            </div>
+            <div id="code-cell-13-output" class="output" style="display: none;"></div>
+        </div>
+        <p>If you don&#x27;t have too many features a useful plot is the <a href="https://seaborn.pydata.org/generated/seaborn.pairplot.html">pairplot</a> which plots all combinations of features as scatter plots. These can be coloured via the target column to have an indication of features that could be used to differentiate the classes.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-14"># set hue to the target column
+# sns.pairplot(df, hue=target_col);</textarea>
+            </div>
+            <div id="code-cell-14-output" class="output"></div>
+        </div>
+        <p>From the pairplot it is obvious that many of the features do separate the classes, but there is a lot of overlap at the border for many, which would preclude using an individual feature&#x27;s statistic to decide a diagnosis. Here, the hope is that the combination of many features (in a high dimensional space) will create a shape where the <em>two</em> classes are cleanly separated.</p>
+        <div class="info-box warning-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                WARNING
+            </div>
+            <div class="box-content">
+                <p>Due to the combinatorial nature of this plot it will struggle with very high-dimensional datasets, typically causing the notebook to crash.</p>
+            </div>
+        </div>
+        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="splitting-the-data">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Splitting the Data</h3>
+                        <p>The first step in machine learning is to split the data into at least <strong>two</strong> groups: the <strong>training</strong> and <strong>test</strong> datasets. This must be done at the very beginning, before many data cleaning techniques, to avoid <em>data leakage</em>, which will be explored next. In essence, you should not have any information from the test data come into the training data, as this can give your model information to learn about the test data.<br><br>Think of your test data as questions that test whether the model has learned the general nature of the data, rather than learned it by rote.</p><p>The training data is typically between 60-80% of the dataset. You want to maximise as much in this group as possible, as it increases the accuracy of the model&#x27;s decision boundary. However, it comes at the cost of samples to test the model, where you would want at least <strong>30</strong> to <strong>100</strong>. It therefore becomes a push and pull, with easier decisions when you have a high number of samples in your data.</p><p>There is a third group, the <strong>validation</strong> dataset, which can be used to optimise the <strong>hyperparameters</strong>. This is not always needed, as this can be performed by sub-sampling the <em>training</em> dataset, as will be seen in <strong>ML2</strong>.</p><table class="markdown-table">
+<thead>
+<tr>
+<th>Split</th>
+<th>Purpose</th>
+<th>Proportion of Total Data</th>
+<th>Usage Frequency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Training set</strong></td>
+<td>Used to train the model.</td>
+<td>~60-80%</td>
+<td>Always</td>
+</tr>
+<tr>
+<td><strong>Validation set</strong></td>
+<td>Used to fine-tune the model & track training.</td>
+<td>~10-20%</td>
+<td>Often, but not always</td>
+</tr>
+<tr>
+<td><strong>Testing set</strong></td>
+<td>Used to evaluate the model’s performance, providing an indication of how well it has learned.</td>
+<td>~10-20%</td>
+<td>Always</td>
+</tr>
+</tbody>
+</table><h4>Implementation</h4><p>Before splitting, the data should be separated into the model inputs - $X$ - and the model output - $y$:</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-15">X = df.drop(columns=[target_col])
+y = df[target_col]</textarea>
+            </div>
+            <div id="code-cell-15-output" class="output" style="display: none;"></div>
+        </div>
+        
+        <div class="code-area">
+            <div class="code-container code-editor">
+                <textarea id="code-cell-16">X
+y</textarea>
+            </div>
+            <button id="run-code-cell-16" class="run-button">Run Code</button>
+            <div id="code-cell-16-output" class="output"></div>
+        </div>
+        <p>Due to the breadth of tools in <em>scikit-learn</em> it is convention to import functions/models from specific modules, rather than through an alias as seen with the data exploration packages.<br><br>Here we are loading in the splitting function <a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html">train_test_split</a> from the <em>model_selection</em> module.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-17">#  scikit-learn&#x27;s package name is sklearn
+from sklearn.model_selection import train_test_split</textarea>
+            </div>
+            <div id="code-cell-17-output" class="output" style="display: none;"></div>
+        </div>
+        <p>To the function we pass the $X$ and $y$ data, providing three other arguments:<ul class="nested-list"><li><strong>test_size</strong>: The proportion of the dataset that should be in the test split (0-1).</li><br><li><strong>random_state</strong>: Providing an <code>int</code> here ensures the split is the same every time. Good for reproducibility, but can be removed to test the <em>variance</em> of the model - see <strong>ML2</strong>.</li><br><li><strong>stratify</strong>: If given the target column, this argument ensures the training and test data splits have the same proportion of each class. This is imperative in datasets where there is a lower proportion of one class, as it can bias the testing.</li><ul class="nested-list"><li>As a rule of thumb, always include it.</li></ul></ul></p><p>The function will return four objects, with the first two being the $X$ data and the second two the $y$ data.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-18">X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)</textarea>
+            </div>
+            <div id="code-cell-18-output" class="output" style="display: none;"></div>
+        </div>
+        <p>It is always good to sanity check the data before continuing. Use the <code>.shape</code> attribute to check the number of samples in each split match the sizes given.</p>
+        <div class="code-area">
+            <div class="code-container code-editor">
+                <textarea id="code-cell-19">X_train</textarea>
+            </div>
+            <button id="run-code-cell-19" class="run-button">Run Code</button>
+            <div id="code-cell-19-output" class="output"></div>
+        </div>
+        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="data-leakage">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Data Leakage</h3>
+                        <p>Splitting the data early and preventing the model from ever seeing the test data is the most obvious method for preventing data leakage. This is not what trips most people up; instead, <em>data leakage</em> often comes about when the statistics of the test dataset sneak into the training data.</p><p>This can come in many forms, such as:<br><ul class="nested-list"><li><strong>multiple samples from the same subject</strong>: If samples contain repeated measurements from the same subject, the model can learn the specifics of that subject and not the general shape. In this situation, all subjects must be in either the training or the test set, not both.</li><br><li><strong>replacing missing data</strong>: Many datasets come with missing values; these need to be replaced with a number, normally the mean or median. If this value is calculated from the whole dataset, then the test samples&#x27; statistics are leaked. How to do this will be covered in the next sub-section.</li><br><li><strong>scaling on all the data</strong>: Features come in all ranges and shapes. These are often transformed to be more uniform to help the model train. As with missing data, if the transformation comes from the data statistics, the test data is leaked. This will be covered in more detail later.</li><br><li><strong>data that contains time</strong>: If your dataset includes time as a feature you must only use data from the future in the test, as the assumption is often that the past predicts the present.</li><br><li><strong>tuning the hyperparameters with the test</strong>: Sometimes users will optimise the model&#x27;s choices (hyperparameters) with the test data, as they believe it doesn&#x27;t affect the training. This will skew the model choice to fit the test data.</li></ul></p><p>You can also have <strong>proxies</strong> for the target feature. This could be sample unique IDs that aren&#x27;t removed or data that is recorded after the event/label occurs, such as post-diagnosis medications. A more subtle version of this would be descriptive statistics that inform something about the data you are trying to hide from a model, such as the length of the time series / sequence in spectral analysis. You should therefore always know the exact information you are providing.</p><h4>Checking for data leakage</h4><p>We are not perfect, so there will be times when you have accidentally leaked into the training data. To catch these mistakes it is imperative you properly interrogate your model&#x27;s predictions, to find out why it performs so well. This can be done by using feature importance (see the end of this section) and finding a suspicious predictor that you think would not normally be this important or dominant, or by finding newer test data, one that you validate the model on in a fresh exploration session. The former will help you with data leakage via proxies — target information — and the latter with leakage of the testing statistics.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="data-cleaning">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Data Cleaning</h3>
+                        <p>Most data does not arrive without faults: categorical data needs to be standardised, outliers/errors removed, etc. Cleaning the data before training is therefore one of the most laborious tasks of machine learning.</p><p>The most common issue that needs to be fixed is missing values, which in <em>numpy</em> &amp; <em>pandas</em> present as <code>NaN</code> (not a number) values. These often occur from missed measurements by a sensor, or differences in collection routines.<br><br>To check if any column has missing values, use the <code>isnull()</code> method combined with <code>any()</code> to find out. The first part returns a boolean array per feature where True is present for any row with a <em>NaN</em> in that feature, the second part condenses it down to a single value by returning True if <strong>any</strong> item in that array is a True.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-20">X_train.isnull().any()</textarea>
+            </div>
+            <div id="code-cell-20-output" class="output"></div>
+        </div>
+        
+        <div class="info-box remember-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                REMEMBER
+            </div>
+            <div class="box-content">
+                <p>We are working with <strong>only</strong> the training dataset first, to inform what our replacement values should be.</p>
+            </div>
+        </div>
+        <p>The result shows us that the <strong>symmetry</strong> feature has some <em>NaN</em> values. As <code>isnull()</code> produces a series/matrix of boolean values, this can be used to filter the dataframe to just show the rows with the missing values. Run the cell below to see:</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-21">X_train[X_train[&#x27;symmetry&#x27;].isnull()]</textarea>
+            </div>
+            <div id="code-cell-21-output" class="output"></div>
+        </div>
+        <p>Machine learning models cannot intrinsically handle missing values, as we saw in the previous section that they work on the whole high-dimensional space. To miss a value is to not have the final number in a set of coordinates. To this end, a decision must be made about what to do with the affected samples.<br><br>The simplest method is to drop any sample/row with missing values, as any replacement would be a guess and one that could bias the model. This is effective when the number of samples with missing values is a small fraction of the dataset. For this, <a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.dropna.html"><code>dropna()</code></a> can be used, subsetting to a specific feature if needed.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-22">X_train_cleaned = X_train.dropna(subset=[&#x27;symmetry&#x27;])
+
+print(X_train.shape)
+
+X_train_cleaned.shape</textarea>
+            </div>
+            <div id="code-cell-22-output" class="output"></div>
+        </div>
+        <p>More often, you don&#x27;t have data to throw away, in which case you must decide on a replacement that will minimise biasing the model. In many cases this will be replacing the missing value with the average, with the understanding being that this value is the least discriminatory; in this case the <em>mean</em> or <em>median</em> will do. For training, where a feature is differently distributed for the target class, the average for each class can also be used, to help reinforce the differences. However, it must be noted that you will not have this option for the test or new data, as the class won&#x27;t be known, so this can only be used on the training data (see later in this section).<br><br>To replace values use <a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.fillna.html">.fillna()</a> instead.</p><p>First we will find the median value and store it as a variable, for use now and for cleaning the test data (if needed).</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-23">data_median = X_train[&#x27;symmetry&#x27;].median()
+
+data_median</textarea>
+            </div>
+            <div id="code-cell-23-output" class="output"></div>
+        </div>
+        
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-24">X_train[&#x27;symmetry&#x27;] = X_train[&#x27;symmetry&#x27;].fillna(data_median)</textarea>
+            </div>
+            <div id="code-cell-24-output" class="output" style="display: none;"></div>
+        </div>
+        <p>Once values are dropped/replaced, it is always worth checking that the changes have been applied to the dataframe you will be taking forward:</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-25">X_train.isnull().any()</textarea>
+            </div>
+            <div id="code-cell-25-output" class="output"></div>
+        </div>
+        
+        <div class="info-box remember-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                REMEMBER
+            </div>
+            <div class="box-content">
+                <p>If the target column is missing a label then that row will need to be dropped; there is no method to nullify its absence.<br><br>Once the model is trained and working well, it can be used to predict the missing label. If the confidence is high then the label can be added and the sample included in an expanded training dataset. This is known as semi-supervised learning. However, it would be prudent to note which samples are generated labels.</p>
+            </div>
+        </div>
+        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="encoding-the-target-feature">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Encoding the target feature</h3>
+                        <p>As in the examples in the first section, the target column&#x27;s categorical labels need to be represented with integers beginning with <code>0</code>. In the breast cancer dataset the labels are <strong>&quot;B&quot;</strong> and <strong>&quot;M&quot;</strong>, standing for <strong>benign</strong> and <strong>malignant</strong> respectively. The norm in a binary classification problem is to have the <em>negative</em> class (the absence of anything) be <code>0</code> and the positive class (the thing you are looking for) be <code>1</code>.<br><br>These can be easily encoded using the <em>numpy</em> function <code>where()</code>, which will replace a value given a conditional statement:</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-26"># where value in column is &#x27;B&#x27;, make it 0
+# where it is not, make it 1
+y_train = np.where(y_train == &#x27;B&#x27;, 0, 1)
+y_test = np.where(y_test == &#x27;B&#x27;, 0, 1)
+
+# print the first 10 labels
+y_train[:10]</textarea>
+            </div>
+            <div id="code-cell-26-output" class="output"></div>
+        </div>
+        <p>At this point it is useful to save the labels&#x27; true names as a dictionary:</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-27"># Create a dictionary to convert back in the future
+class_dict = {
+        0 : &quot;Benign&quot;,
+        1 : &quot;Malignant&quot;
+}</textarea>
+            </div>
+            <div id="code-cell-27-output" class="output" style="display: none;"></div>
+        </div>
+        <p>On the whole array of labels we can use the <code>.value_counts()</code> method to see the ratio of categories:</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-28">counts = y.value_counts()
+
+counts</textarea>
+            </div>
+            <div id="code-cell-28-output" class="output"></div>
+        </div>
+        <p>One factor to always consider is the ratio of the classes, a class that is severely under-represented will likely be predicted poorly in the test, as the model will be reinforced to learn more from the majority class during its training. This can end up in a case where a model can seem like it is performing very well with a 90%+ accuracy, when in fact it is just predicting one class all the time and that class makes up 90%+ of the samples.<br><br>There are additional methods to address measuring and tackling this in <strong>ML2</strong>.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-29">counts=np.array(counts)
+print(f&quot;Percentage of negative class: {counts[0] / (counts[0] + counts[1]) * 100:.1f}%&quot;)
+print(f&quot;Percentage of positive class: {counts[1] / (counts[0] + counts[1]) * 100:.1f}%&quot;)</textarea>
+            </div>
+            <div id="code-cell-29-output" class="output"></div>
+        </div>
+        <p>Here, nearly 40% of the samples are from the positive (malignant) case, which is good enough for what we need.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="scaling">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Scaling</h3>
+                        <p>The last, but important, step before training is to re-scale any quantitative data. As briefly discussed in the <a href="./state-space.html">state space</a> section, the models are indifferent to the units your data comes in. They can be kilometres, counts, seconds, etc.; all the model wants to use is the separation or grouping of the samples in the state space.<br><br>Having features of vastly different scales can negatively affect the model&#x27;s ability to separate the data, as is visualised below. Moving the slider to the right increases the scale of the <em>feature 1</em>, distorting the data:</p>
+        <div class="code-area">
+            <div class="code-collapse-header" onclick="toggleCodeCollapse('code-cell-30')">
+                <span class="code-collapse-icon">▶</span>
+                <span class="code-collapse-label">Show code</span>
+            </div>
+            <div class="code-container code-fixed code-collapsed" id="code-cell-30-container">
+                <textarea id="code-cell-30">def make_class(n, rng, noise, c, a, scale=1, mu=0, w=61.1):
+    t = rng.uniform(0, 2 * np.pi, n)
+    xyz = scale * np.c_[(c + a * np.cos(t)) * np.cos(w * t), (c + a * np.cos(t)) * np.sin(w * t), a * np.sin(t)]
+    return xyz + rng.normal(mu, noise, xyz.shape)
+
+rng = np.random.default_rng(42)
+c1 = make_class(250, rng, 0.3, 11, 4, mu=0.4)
+c2 = make_class(250, rng, 0.35, 13, 1.2, scale=0.85)
+
+lim, stretches = 20, [1, 3, 10, 30, 100]
+g = np.linspace(-lim, lim, 7)
+groups = [(np.array(np.meshgrid(g, g, g)).reshape(3, -1).T, dict(color=&#x27;grey&#x27;, size=1.5, opacity=0.4), &#x27;State space&#x27;),
+          (c1, dict(color=&#x27;blue&#x27;, size=3), &#x27;class-1&#x27;),
+          (c2, dict(color=&#x27;orange&#x27;, size=3), &#x27;class-2&#x27;)]
+
+def traces_for(s):
+    return [go.Scatter3d(**dict(zip(&#x27;xyz&#x27;, (P * [s, 1, 1]).T)), mode=&#x27;markers&#x27;, marker=m, name=n) for P, m, n in groups]
+
+fig = go.Figure(
+    data=traces_for(stretches[0]),
+    frames=[go.Frame(data=traces_for(s), name=str(s),
+                     layout=dict(scene=dict(xaxis=dict(range=[-lim * s, lim * s])))) for s in stretches])
+fig.update_layout(
+    title=&quot;Increasing Feature 1&#x27;s scale&quot;,
+    scene=dict(aspectmode=&#x27;data&#x27;,
+               **{f&#x27;{a}axis&#x27;: dict(title=f&#x27;Feature {i + 1}&#x27;, range=[-lim, lim]) for i, a in enumerate(&#x27;xyz&#x27;)}),
+    width=750, height=650, template=&#x27;plotly_white&#x27;,
+    sliders=[dict(currentvalue=dict(prefix=&#x27;Feature 1 multiplied by: ×&#x27;),
+                  steps=[dict(method=&#x27;animate&#x27;, label=str(s),
+                              args=[[str(s)], dict(mode=&#x27;immediate&#x27;, frame=dict(duration=0, redraw=True))])
+                         for s in stretches])])
+
+# fig.show()
+print(fig.to_html(auto_play=False))</textarea>
+            </div>
+            <div id="code-cell-30-output" class="output"></div>
+        </div>
+        <p>As is visually clear, having one feature on a vastly different scale distorts the geometry of the space, ensuring that this feature dominates the others. This matters a lot for any model that is built around distances. Larger scales can also affect the optimisation of the model during training, but we will not go into detail on the mechanics of this.</p>
+        <div class="info-box note-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                NOTE
+            </div>
+            <div class="box-content">
+                <p>Not all models need the data scaled. In particular, models built with decision trees (random forests) do not require it, as they are invariant to distance. However, it often doesn&#x27;t hurt to apply it, so it can still be good practice. Which models do and don&#x27;t need it will be discussed further in the <a href="./classifier-types.html">model types</a> section.</p>
+            </div>
+        </div>
+        <h4>Applying scaling</h4><p>Back to the breast cancer dataset, cherry-picking a few features demonstrates the differences in scale:</p>
+        <div class="code-area">
+            <div class="code-collapse-header" onclick="toggleCodeCollapse('code-cell-31')">
+                <span class="code-collapse-icon">▶</span>
+                <span class="code-collapse-label">Show code</span>
+            </div>
+            <div class="code-container code-fixed code-collapsed" id="code-cell-31-container">
+                <textarea id="code-cell-31">columns=[&#x27;radius&#x27;, &#x27;concavity&#x27;, &#x27;perimeter&#x27;]
+n = len(columns)
+colours = plt.cm.tab10.colors 
+
+fig = plt.figure(figsize=(16, 1.5 * n))
+gs = fig.add_gridspec(n, 2)
+
+ax_all = fig.add_subplot(gs[:, 0])
+axes = [fig.add_subplot(gs[i, 1]) for i in range(n)]
+
+for ax, col, colour in zip(axes, columns, colours):
+    for a in (ax_all, ax):
+        a.hist(X_train[col], bins=50, label=col, color=colour, alpha=0.6)
+    ax.legend(loc=&#x27;upper right&#x27;)
+
+ax_all.legend()
+plt.tight_layout()
+plt.show()</textarea>
+            </div>
+            <div id="code-cell-31-output" class="output"></div>
+        </div>
+        <p>These distributions are roughly bell-shaped, with some skew and no extreme outliers, so the mean and standard deviation summarise each feature well. We can therefore standardise or rescale each feature to a mean of <strong>0</strong> (by minusing the mean) and a standard deviation of <strong>1</strong> (by dividing by the <em>std</em>). Each value would then become a reflection of its change away from the feature&#x27;s mean, so every feature is now expressed on the same scale regardless of its original units. Note in the plot further down, post scaling, that the shape is the same.<br><br>The equation for this is:<br><br>$$ \frac{x_i - mean(x)}{stdev(x)} $$</p><p>This type of transformation is standard scaling, which can be applied using scikit-learn&#x27;s <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html">StandardScaler</a>:</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-32">from sklearn.preprocessing import StandardScaler</textarea>
+            </div>
+            <div id="code-cell-32-output" class="output" style="display: none;"></div>
+        </div>
+        <p>To use the scaler, first it must be initialised by calling the name with <code>()</code> after. This creates an instance of the object, that can be stored as a variable:</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-33">scaler = StandardScaler() # initialise the scaler class</textarea>
+            </div>
+            <div id="code-cell-33-output" class="output" style="display: none;"></div>
+        </div>
+        <p>On this object you call the <code>.fit_transform()</code> method, which will learn (fit) from the data and then scale it (transform). The data returned will be a <em>numpy</em> array, which can be converted back to a <em>pandas</em> dataframe.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-34">scaled_np = scaler.fit_transform(X_train) # fit and scale the data
+
+scaled_X_train = pd.DataFrame(scaled_np, columns=X_train.columns)
+
+scaled_X_train</textarea>
+            </div>
+            <div id="code-cell-34-output" class="output"></div>
+        </div>
+        <p>Plotting the data again, we can see that they now occupy the same scale while retaining the same shape.</p>
+        <div class="code-area">
+            <div class="code-collapse-header" onclick="toggleCodeCollapse('code-cell-35')">
+                <span class="code-collapse-icon">▶</span>
+                <span class="code-collapse-label">Show code</span>
+            </div>
+            <div class="code-container code-fixed code-collapsed" id="code-cell-35-container">
+                <textarea id="code-cell-35">fig = plt.figure(figsize=(16, 1.5 * n))
+gs = fig.add_gridspec(n, 2)
+
+ax_all = fig.add_subplot(gs[:, 0])
+axes = [fig.add_subplot(gs[i, 1]) for i in range(n)]
+
+for ax, col, colour in zip(axes, columns, colours):
+    for a in (ax_all, ax):
+        a.hist(scaled_X_train[col], bins=50, label=col, color=colour, alpha=0.6)
+    ax.legend(loc=&#x27;upper right&#x27;)
+
+ax_all.legend()
+plt.tight_layout()
+plt.show()</textarea>
+            </div>
+            <div id="code-cell-35-output" class="output"></div>
+        </div>
+        <p>The standard scaler is the most commonly used, but it is not the only one. Notable other scalers are:<br><ul class="nested-list"><li><strong>robust scaler</strong>: Like the standard scaler, except it is robust to outliers, preventing the mean being pulled towards them. Use this when you have outliers present that are not anomalies.</li><br><li><strong>min-max scaler</strong>: Scales the data to have the minimum value be <strong>0</strong> and maximum value of <strong>1</strong> (this can be changed to -1 and 1). Use this when you don&#x27;t think your data is normally distributed and you want to preserve its structure. This would be anything with a meaningful range, such as counts out of 100, percentiles or speed, or anything where you want to maintain the relative distance.</li></ul></p><p>There is also the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.Normalizer.html"><code>Normalizer</code></a>, which works sample-wise (row) rather than feature-wise (column). By default, it rescales each row to a nominal value such as <code>1</code>, giving the proportion of each feature to that sample. It discards each feature&#x27;s true value and replaces it with a set of numbers that describes its direction in the feature space. This is most useful when you have many features on a common scale, such as expression count or activity, where you are more interested in the proportion of each feature compared to the others in the sample, rather than each feature&#x27;s amount, as in these cases samples can have varying total magnitudes purely from the randomness of measurement. Here, larger values will naturally dominate the end product; however, this is by design, as they represent the highest proportion.<br><br>All of these are demonstrated further in the notebook <em>scaler_demo.ipynb</em> inside your additional resources folder.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="scaling">
+                <div class="module-body">
+                    <div class="module-section">
+                        
+        <div class="info-box practice-exercise-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                PRACTICE EXERCISE
+            </div>
+            <div class="box-content">
+                <p><strong>1.</strong></p>
+                <p>Repeat the scaling of chosen features - radius, concavity, and perimeter - using the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.RobustScaler.html">RobustScaler</a> from sklearn.<br>Recreate the histogram plot and comment on how the distribution now sits on the scale.</p>
+            </div>
+        </div>
+        
+        <div class="code-area">
+            <div class="code-container code-editor">
+                <textarea id="code-cell-36"></textarea>
+            </div>
+            <button id="run-code-cell-36" class="run-button">Run Code</button>
+            <div id="code-cell-36-output" class="output"></div>
+        </div>
+        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="training">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Training</h3>
+                        <p>As you can see, most of the code and decision-making went into viewing and changing the data, to have it in its best form for the model. Training the model with <em>scikit-learn</em> is a fairly simple task.<br><br>First, we must import our model. We will be using the <em>Random Forest Classifier</em> again from the <em>ensemble</em> module:</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-37">from sklearn.ensemble import RandomForestClassifier</textarea>
+            </div>
+            <div id="code-cell-37-output" class="output" style="display: none;"></div>
+        </div>
+        <p>To train the model, you simply instantiate the model as seen with the scaler, and call the <code>.fit()</code> method on the object, providing two arguments: the training data $X$ and the ground truth data $y$:</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-38"># providing a random state gives the same output every time
+clf = RandomForestClassifier(random_state=42) 
+
+clf.fit(scaled_X_train, y_train)</textarea>
+            </div>
+            <div id="code-cell-38-output" class="output"></div>
+        </div>
+        <p>That&#x27;s it. One call of a method and the three building blocks of machine learning are executed and optimised. As said, a lot of heavy lifting is done automatically in the backend, stopping the model from over-training (overfitting) and choosing sensible default settings. In <strong>ML4</strong> where we create neural networks from scratch with <em>PyTorch</em>, much of this will have to be coded by the user.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="evaluation">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Evaluation</h3>
+                        <p>The trained model must be evaluated with the test data to know its worth. First, we must check if any values are missing:</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-39">X_test.isnull().any()</textarea>
+            </div>
+            <div id="code-cell-39-output" class="output"></div>
+        </div>
+        <p>And then scale the data using the <strong>fitted</strong> scaler:</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-40">scaled_np = scaler.transform(X_test) # only transform for the test
+scaled_X_test = pd.DataFrame(scaled_np, columns=X_train.columns)
+scaled_X_test</textarea>
+            </div>
+            <div id="code-cell-40-output" class="output"></div>
+        </div>
+        <p>Once trained, the model object has several methods associated with it for evaluation. The core methods are:<ol class="nested-list"><li><code>.predict()</code>: Retrieve the model&#x27;s label prediction for every sample provided</li><br><li><code>.predict_proba()</code>: Retrieve the model&#x27;s confidence for each label or their <em>probabilities</em></li><br><li><code>.score()</code>: Calculate the model&#x27;s accuracy given the ground truth labels.</li></ol></p>
+        <div class="info-box tip-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                TIP
+            </div>
+            <div class="box-content">
+                <p>Even though we have been exclusively working with a <em>random forest</em>, sklearn&#x27;s design means that the same methods carry across all models.</p>
+            </div>
+        </div>
+        <h4>Predict</h4><p>Use <code>.predict()</code> when you are just interested in the model output. As an input you provide the scaled data, receiving an output array that matches the number of samples in the input. This is usually done once the model has been evaluated and trusted, to generate labels for a new set of data.</p>
+        <div class="code-area">
+            <div class="code-container code-editor">
+                <textarea id="code-cell-41">predict = clf.predict(scaled_X_test)  # Get class predictions for test data
+
+predict</textarea>
+            </div>
+            <button id="run-code-cell-41" class="run-button">Run Code</button>
+            <div id="code-cell-41-output" class="output"></div>
+        </div>
+        <h4>Accuracy</h4><p>The simplest statistic for evaluating a classification model is the accuracy: how many predicted labels match the labels in the ground truth array $y$. The method <code>.score()</code> will match the predictions from the given data with the ground truth, providing a number between <strong>0</strong> and <strong>1</strong>, where 1 is all predictions were correct and 0 all are wrong.</p>
+        <div class="code-area">
+            <div class="code-container code-editor">
+                <textarea id="code-cell-42">accuracy = clf.score(scaled_X_test, y_test)  # get accuracy for the test data
+
+print(f&quot;Model accuracy is: {accuracy*100:.2f}%&quot;) # times by 100 and reduce to 2 decimal places</textarea>
+            </div>
+            <button id="run-code-cell-42" class="run-button">Run Code</button>
+            <div id="code-cell-42-output" class="output"></div>
+        </div>
+        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="evaluation">
+                <div class="module-body">
+                    <div class="module-section">
+                        
+        <div class="info-box practice-exercise-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                PRACTICE EXERCISE
+            </div>
+            <div class="box-content">
+                <p><strong>2.</strong></p>
+                <p>Calculate the accuracy yourself, using just the array from <code>predict</code> and the ground truth labels in <code>y_test</code>, via Python equivalence testing.</p>
+            </div>
+        </div>
+        
+        <div class="code-area">
+            <div class="code-container code-editor">
+                <textarea id="code-cell-43">predict
+y_test</textarea>
+            </div>
+            <button id="run-code-cell-43" class="run-button">Run Code</button>
+            <div id="code-cell-43-output" class="output"></div>
+        </div>
+        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="probabilities">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Probabilities</h3>
+                        <p>In the first section we discussed the <a href="./state-space.html#with-probabilities">model&#x27;s confidence</a> in its predictions. Most models do not just provide a single label, rather they give their belief it is one or another in the form of probabilities (together sum to 1). You retrieve much more information when looking at the probabilities, as all that <code>.predict()</code> is doing is returning the label of the category with the highest probability, which in a binary problem means $\geq 0.5$.<br><br>The resulting array will have a shape $N \times L$, where $N$ is the number of samples and $L$ is the number of target labels. The first item in each row will be label <code>0</code> (benign) and the second item label <code>1</code> (malignant).</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-44">probabs = clf.predict_proba(scaled_X_test)  # Get probability estimates for each class
+
+probabs[:10, :] # print the first 10</textarea>
+            </div>
+            <div id="code-cell-44-output" class="output"></div>
+        </div>
+        <p>Working with the probabilities allows you to have more control over the confidence in the prediction. A classic example is in disease prediction, where you want to be sure that the prediction is true before proceeding.<br><br>To increase the confidence we can set our own threshold as <strong>0.75</strong> (up from <em>0.5</em>) and apply it to only the probabilities for the <em>malignant</em> class:</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-45">threshold = 0.75 # set threshold
+
+# isolate 2nd column and apply conditional
+predict_75 = probabs[:, 1] &gt; threshold  
+
+predict_75</textarea>
+            </div>
+            <div id="code-cell-45-output" class="output"></div>
+        </div>
+        <p>As True and False are equivalent to 1 and 0 in Python, this array can be decoded using the class dictionary that was created earlier.</p>
+        <div class="code-area">
+            <div class="code-container code-editor">
+                <textarea id="code-cell-46"># list comprehension
+[class_dict[item] for item in predict_75]</textarea>
+            </div>
+            <button id="run-code-cell-46" class="run-button">Run Code</button>
+            <div id="code-cell-46-output" class="output"></div>
+        </div>
+        
+        <div class="info-box fact-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                FACT
+            </div>
+            <div class="box-content">
+                <p>Large language models that underpin modern chatbots operate in a similar way. Once all the text has passed through the model, it will generate a probability distribution over all words, with the largest one picked. However, in practice, to increase variation in the responses, the models are often set to choose randomly from a selection of the highest probabilities.</p>
+            </div>
+        </div>
+        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="probabilities">
+                <div class="module-body">
+                    <div class="module-section">
+                        
+        <div class="info-box practice-exercise-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                PRACTICE EXERCISE
+            </div>
+            <div class="box-content">
+                <p><strong>3.</strong></p>
+                <p>Rather than having just two outcomes, you want to change the output so that high-confidence predictions for malignant or benign are recorded as they are, while low-confidence predictions are labelled <strong>&quot;unsure&quot;</strong> and sent for human inspection.<br>Convert the probabilities in <code>probabs</code> to the three labels with thresholds:<ul class="nested-list"><li><strong>benign</strong>: 75% or more for the 0 class</li><br><li><strong>malignant</strong>: 75% or more for the 1 class</li><br><li><strong>unsure</strong>: more than 25% and less than 75% for the 1 class</li></ul></p>
+            </div>
+        </div>
+        
+        <div class="code-area">
+            <div class="code-container code-editor">
+                <textarea id="code-cell-47"></textarea>
+            </div>
+            <button id="run-code-cell-47" class="run-button">Run Code</button>
+            <div id="code-cell-47-output" class="output"></div>
+        </div>
+        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="feature-importance">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Feature Importance</h3>
+                        <p>Unique to <em>tree-based</em> classifiers are <strong>feature importances</strong>, a metric of how much a feature contributed to the prediction — the mechanics will be explained in the <a href="./classifier-types.html">final section</a>. Each feature is given a proportional value (all sum to <strong>1</strong>), meaning the largest values indicate a greater share in the contribution to the prediction.<br><br>The importances are calculated from the training data, so you must be sure the model is a true representation of the data through testing before moving forward with the investigations.</p>
+        <div class="info-box note-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                NOTE
+            </div>
+            <div class="box-content">
+                <p>There are alternative methods for other models that will be covered in <strong>ML2</strong> and more in-depth in the <strong>Advanced AI</strong> module.</p>
+            </div>
+        </div>
+        <p>The importances are stored as an <code>attribute</code> of the trained classifier, simply retrieve them with the following:</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-48">importances = clf.feature_importances_
+
+importances</textarea>
+            </div>
+            <div id="code-cell-48-output" class="output"></div>
+        </div>
+        
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-49">list(df.columns)</textarea>
+            </div>
+            <div id="code-cell-49-output" class="output"></div>
+        </div>
+        
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-50">top_3 = [&#x27;concave_points&#x27;, &#x27;perimeter&#x27;, &#x27;texture&#x27;]
+top_3.append(target_col)
+
+top_3</textarea>
+            </div>
+            <div id="code-cell-50-output" class="output" style="display: none;"></div>
+        </div>
+        <p>From this, combined with the columns, it can be seen that the highest values are <strong>0.263</strong> (<em>concave_points</em>), <strong>0.178</strong> (<em>perimeter</em>), <strong>0.174</strong> (<em>area</em>) and <strong>0.173</strong> (<em>radius</em>). <em>Perimeter</em>, <em>area</em> and <em>radius</em> are near-identical measures of nucleus size ($r$ = 0.98+), so they share the importance between them. We therefore keep only <em>perimeter</em>, the highest of the three. The next highest is <em>concavity</em> (<strong>0.065</strong>), but it is strongly correlated with <em>concave_points</em> ($r$ = 0.86), so we skip that too and take <em>texture</em> (<strong>0.042</strong>) instead.<br><br>These can be used either as sanity checks on the model, i.e. we know these features are classical measurements used in the human-led diagnosis of cancers, or in reverse, as the beginning of an investigation into causal links between measurements and the target. In the latter situation, the same rule applies to machine learning, that correlative links are not always causative. Much the same, those features highly correlated with a causal feature will also score highly.<br><br>Further, to better understand how each feature contributes to the prediction, we can use these feature names to filter the dataframe and train another <em>random forest</em> with just them — seeing if this improves or worsens classification. It also allows us to work once again in a visual dimension (3D).</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-51">top3_df = df[top_3]
+
+top3_df.head(3)</textarea>
+            </div>
+            <div id="code-cell-51-output" class="output"></div>
+        </div>
+        <p>With this new dataset we can run through the same process as before, skipping the data cleaning as we know the only <code>NaNs</code> were in <em>symmetry</em>.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-52">X3 = top3_df.drop(columns=[target_col])
+y3 = np.where(top3_df[target_col] == &#x27;B&#x27;, 0, 1)
+
+X_tra3, X_te3, y_tra3, y_te3 = train_test_split(X3, y3, test_size=0.2, random_state=42, stratify=y3)</textarea>
+            </div>
+            <div id="code-cell-52-output" class="output" style="display: none;"></div>
+        </div>
+        <p>The data will need to be newly scaled, so that it is adapted for just 3 columns and the new split of data.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-53">new_std = StandardScaler()
+
+scaled_X_tra3 = new_std.fit_transform(X_tra3)
+scaled_X_te3 = new_std.transform(X_te3)</textarea>
+            </div>
+            <div id="code-cell-53-output" class="output" style="display: none;"></div>
+        </div>
+        <p>The model&#x27;s accuracy of <strong>95.61%</strong> matches that of the model trained on the whole dataset (<strong>95.61%</strong>).<br><br>Even though that is promising, it would not be correct to look at just one value to compare, but instead to compare the variance or distribution of the accuracy given different splits of the data. This will be covered in the next lesson.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-54">clf3 = RandomForestClassifier(random_state=42) 
+
+clf3.fit(scaled_X_tra3, y_tra3)
+
+accuracy = clf3.score(scaled_X_te3, y_te3)  
+
+print(f&quot;Model accuracy is: {accuracy*100:.2f}%&quot;)</textarea>
+            </div>
+            <div id="code-cell-54-output" class="output"></div>
+        </div>
+        <p>To visualise the data, it can be split by the target variable to label it accordingly. As the data is a <em>numpy</em> array, we can simply use a <strong>boolean mask</strong> to filter the dataset by the target array.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-55">b_train_data = scaled_X_tra3[y_tra3 == 0]
+m_train_data = scaled_X_tra3[y_tra3 == 1]</textarea>
+            </div>
+            <div id="code-cell-55-output" class="output" style="display: none;"></div>
+        </div>
+        <p>Visualising the data, we can easily see the divide between the two classes. The data has some overlap at the decision boundary, which would likely return a low probability for each of the predictions. Other than for visualisation, creating a model with fewer, more accurate features can help make a more robust, lightweight model, as some features and their noise can obscure a model&#x27;s accurate predictions rather than having no effect at all.</p><p>Try moving the plot around to view how each feature splits the data on its own, and how the combination adds more clarity:</p>
+        <div class="code-area">
+            <div class="code-collapse-header" onclick="toggleCodeCollapse('code-cell-56')">
+                <span class="code-collapse-icon">▶</span>
+                <span class="code-collapse-label">Show code</span>
+            </div>
+            <div class="code-container code-fixed code-collapsed" id="code-cell-56-container">
+                <textarea id="code-cell-56"># Define the boundaries of our state space
+dim1_min, dim2_min, dim3_min = scaled_X_tra3.min(axis=0)
+dim1_max, dim2_max, dim3_max = scaled_X_tra3.max(axis=0)
+
+# Create a grid to sample the state space
+resolution1 = resolution2 = resolution3 = 20
+dim1 = np.linspace(dim1_min, dim1_max, resolution1)
+dim2 = np.linspace(dim2_min, dim2_max, resolution2)
+dim3 = np.linspace(dim3_min, dim3_max, resolution3)
+
+# make linear arrays into a grid
+grid_1, grid_2, grid_3 = np.meshgrid(dim1, dim2, dim3)
+# turn into coordinates for plotting
+coords = np.c_[grid_1.ravel(), grid_2.ravel(), grid_3.ravel()]
+
+probs = clf3.predict_proba(coords)[:, 1]
+
+fig = go.Figure(
+    data=[
+        go.Scatter3d(x=b_train_data[:, 0], y=b_train_data[:, 1], z=b_train_data[:, 2],
+                    mode=&#x27;markers&#x27;, marker=dict(color=&#x27;grey&#x27;, opacity=0.5, size=3), name=&#x27;benign&#x27;),
+        go.Scatter3d(x=m_train_data[:, 0], y=m_train_data[:, 1], z=m_train_data[:, 2],
+                    mode=&#x27;markers&#x27;, marker=dict(color=&#x27;red&#x27;, opacity=0.6, size=3), name=&#x27;malignant&#x27;),
+        go.Isosurface(
+            x=coords[:, 0], y=coords[:, 1], z=coords[:, 2],
+            value=probs,
+            isomin=0.5, isomax=0.5,
+            surface_count=1,
+            caps=dict(x_show=False, y_show=False, z_show=False),
+            colorscale=[[0, &#x27;green&#x27;], [1, &#x27;green&#x27;]],
+            showscale=False,
+            opacity=0.6
+        )
+    ],
+)
+
+fig.update_layout(
+    scene=dict(
+        xaxis_title=top_3[0],
+        yaxis_title=top_3[1],
+        zaxis_title=top_3[2],
+    )
+)
+
+# fig.show()
+print(fig.to_html(auto_play=False))</textarea>
+            </div>
+            <div id="code-cell-56-output" class="output"></div>
+        </div>
+        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="summary---quiz">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Summary & Quiz</h3>
+                        <p>In this section, we introduced the three building blocks of training (the loss function, the cost function and the optimisation routine) and saw how <em>scikit-learn</em> wraps them all into a single <code>.fit()</code> call. We worked through the practical steps that come before it: exploring the data, splitting it early to avoid data leakage, handling missing values, encoding the target and scaling the features with a scaler fitted only on the training data. We then trained a random forest, evaluated it with <code>.predict()</code>, <code>.score()</code> and <code>.predict_proba()</code>, and used probability thresholds to control how confident a prediction needs to be. Finally, we used feature importances to pick a small set of informative features, and retrained the model to visualise its decision boundary in 3D.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="summary---quiz">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Summary & Quiz</h3>
+                        
+        <div class="quiz-box" id="quiz-2">
+            <div class="quiz-body">
+                <p class="quiz-intro">Attempt the questions below once you have finished. If you get any wrong, head back to that section to remind yourself of the reasoning/syntax behind the correct answer:</p>
+                
+            <div class="quiz-question" id="quiz-2-q0" data-quiz="quiz-2" data-topic-id="building-blocks">
+                <span class="quiz-topic-tag">Building Blocks</span>
+                <p class="quiz-question-text">Which three building blocks does a single call to `.fit()` execute?</p>
+                <div class="quiz-options" role="radiogroup">
+                    <label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-2-q0" value="0">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">Data cleaning, scaling and splitting</span>
+                </label><label class="quiz-option" data-correct="true">
+                    <input type="radio" name="quiz-2-q0" value="1">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">The loss function, cost function and optimisation routine</span>
+                </label><label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-2-q0" value="2">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">Prediction, scoring and probabilities</span>
+                </label><label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-2-q0" value="3">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">Hyperparameter tuning, validation and testing</span>
+                </label>
+                </div>
+                <div class="quiz-feedback" aria-live="polite"></div>
+            </div><hr class="quiz-divider">
+            <div class="quiz-question" id="quiz-2-q1" data-quiz="quiz-2" data-topic-id="data-leakage">
+                <span class="quiz-topic-tag">Data Leakage</span>
+                <p class="quiz-question-text">Why should the data be split into training and test sets before cleaning and scaling?</p>
+                <div class="quiz-options" role="radiogroup">
+                    <label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-2-q1" value="0">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">To make the training set larger</span>
+                </label><label class="quiz-option" data-correct="true">
+                    <input type="radio" name="quiz-2-q1" value="1">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">To stop statistics from the test data leaking into the training data</span>
+                </label><label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-2-q1" value="2">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">To remove outliers from the test set</span>
+                </label><label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-2-q1" value="3">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">Because scikit-learn cannot scale unsplit data</span>
+                </label>
+                </div>
+                <div class="quiz-feedback" aria-live="polite"></div>
+            </div><hr class="quiz-divider">
+            <div class="quiz-question" id="quiz-2-q2" data-quiz="quiz-2" data-topic-id="scaling">
+                <span class="quiz-topic-tag">Scaling</span>
+                <p class="quiz-question-text">Which method should be called on the test data when using a scaler fitted on the training data?</p>
+                <div class="quiz-options" role="radiogroup">
+                    <label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-2-q2" value="0">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">`.fit()`</span>
+                </label><label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-2-q2" value="1">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">`.fit_transform()`</span>
+                </label><label class="quiz-option" data-correct="true">
+                    <input type="radio" name="quiz-2-q2" value="2">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">`.transform()`</span>
+                </label><label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-2-q2" value="3">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">`.predict()`</span>
+                </label>
+                </div>
+                <div class="quiz-feedback" aria-live="polite"></div>
+            </div><hr class="quiz-divider">
+            <div class="quiz-question" id="quiz-2-q3" data-quiz="quiz-2" data-topic-id="probabilities">
+                <span class="quiz-topic-tag">Probabilities</span>
+                <p class="quiz-question-text">What does `.predict_proba()` return for a binary classifier?</p>
+                <div class="quiz-options" role="radiogroup">
+                    <label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-2-q3" value="0">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">A single label for each sample</span>
+                </label><label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-2-q3" value="1">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">The model&#x27;s accuracy on the test set</span>
+                </label><label class="quiz-option" data-correct="true">
+                    <input type="radio" name="quiz-2-q3" value="2">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">An array of shape N × 2 with the probability of each class per sample</span>
+                </label><label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-2-q3" value="3">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">The importance of each feature</span>
+                </label>
+                </div>
+                <div class="quiz-feedback" aria-live="polite"></div>
+            </div><hr class="quiz-divider">
+            <div class="quiz-question" id="quiz-2-q4" data-quiz="quiz-2" data-topic-id="feature-importance">
+                <span class="quiz-topic-tag">Feature Importance</span>
+                <p class="quiz-question-text">What do feature importances tell you?</p>
+                <div class="quiz-options" role="radiogroup">
+                    <label class="quiz-option" data-correct="true">
+                    <input type="radio" name="quiz-2-q4" value="0">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">How much each feature contributed to the model&#x27;s prediction</span>
+                </label><label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-2-q4" value="1">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">Whether a feature causes the target</span>
+                </label><label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-2-q4" value="2">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">Which features contain missing values</span>
+                </label><label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-2-q4" value="3">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">How well the model generalises to new data</span>
+                </label>
+                </div>
+                <div class="quiz-feedback" aria-live="polite"></div>
+            </div>
+                
+            <div class="quiz-topics-footer">
+                <span class="quiz-topics-label">Topics covered</span>
+                <div class="quiz-topics-list">
+                    <span class="quiz-topic-pill" id="quiz-2-topic-building-blocks">Building Blocks</span><span class="quiz-topic-pill" id="quiz-2-topic-data-leakage">Data Leakage</span><span class="quiz-topic-pill" id="quiz-2-topic-scaling">Scaling</span><span class="quiz-topic-pill" id="quiz-2-topic-probabilities">Probabilities</span><span class="quiz-topic-pill" id="quiz-2-topic-feature-importance">Feature Importance</span>
+                </div>
+            </div>
+            </div>
+        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+        <div class="page-navigation">
+            <a href="./state-space.html" class="nav-button prev">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                </svg>
+                Previous
+            </a>
+            <a href="./categorical-data.html" class="nav-button next">
+                Next
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                </svg>
+            </a></div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div>© All materials are copyright scryptIQ 2025</div>
+            <div>Powered by Pyodide</div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="../assets/main.js"></script>
+    
+    <!-- Pyodide Initialisation Script -->
+    <script>
+
+// Generalisable Pyodide Initialisation Script
+// Variables and state build up naturally as code blocks execute in order
+
+async function main() {
+    // Show loading message for all output elements
+    document.querySelectorAll(".output").forEach(el => {
+        el.textContent = "Loading Pyodide...";
+        el.classList.add("loading-message");
+    });
+    
+    try {
+        // Load Pyodide
+        console.log("Loading Pyodide...");
+        const pyodideStartTime = performance.now();
+        let pyodide = await loadPyodide();
+        const pyodideLoadTime = performance.now() - pyodideStartTime;
+        console.log(`Pyodide loaded in ${pyodideLoadTime.toFixed(2)}ms`);
+        
+        // Load required packages only if specified
+        const lessonPackages = window.LESSON_PACKAGES || [];
+        
+        if (lessonPackages.length > 0) {
+            console.log("Loading required Python packages...");
+            const packagesStartTime = performance.now();
+
+            // micropip resolves each requirement against the Pyodide lockfile
+            // *first* and only falls through to PyPI for packages Pyodide does
+            // not bundle (it sets search_pyodide_lock_first whenever the index
+            // URLs are left at their default).  So one call handles both cases
+            // and, unlike a hardcoded list of bundled package names, there is
+            // nothing to fall out of date when Pyodide is upgraded.  It also
+            // means version specifiers such as `pandas==2.2` work.
+            await pyodide.loadPackage(['micropip']);
+            const micropip = pyodide.pyimport('micropip');
+            await micropip.install(lessonPackages);
+            console.log(`Installed packages: ${lessonPackages.join(', ')}`);
+
+            const packagesLoadTime = performance.now() - packagesStartTime;
+            console.log(`Packages loaded in ${packagesLoadTime.toFixed(2)}ms`);
+            console.log(`Total initialisation time: ${(pyodideLoadTime + packagesLoadTime).toFixed(2)}ms`);
+        } else {
+            console.log("No packages to load for this lesson");
+            console.log(`Total initialisation time: ${pyodideLoadTime.toFixed(2)}ms`);
+        }
+
+        // Only set up basic Python environment - no pre-loaded variables
+        await pyodide.runPythonAsync(`
+            import sys
+            from io import StringIO
+        `);
+
+        // Only set up matplotlib if it's in the loaded packages.  Checked
+        // against the canonical (lower-cased, un-versioned) names so that a
+        // PACKAGES cell saying `Matplotlib` or `matplotlib>=3.9` still works.
+        const lessonPackageNames = window.LESSON_PACKAGE_NAMES || [];
+        if (lessonPackageNames.includes('matplotlib')) {
+            await pyodide.runPythonAsync(`
+                # Set up matplotlib for web rendering
+                import matplotlib
+                matplotlib.use('AGG')
+                import matplotlib.pyplot as plt
+                import io
+                import base64
+                
+                def capture_matplotlib():
+                    """Capture current matplotlib figure as HTML img tag"""
+                    buf = io.BytesIO()
+                    plt.savefig(buf, format='png', bbox_inches='tight', dpi=100)
+                    buf.seek(0)
+                    img_base64 = base64.b64encode(buf.read()).decode('utf-8')
+                    plt.close()
+                    return f'<img src="data:image/png;base64,{img_base64}" style="max-width: 100%; height: auto;" />'
+
+                # Silence the "FigureCanvasAgg is non-interactive" warning that
+                # occurs when notebook code calls plt.show().  In this environment
+                # figures are captured automatically via capture_matplotlib(), so
+                # plt.show() should simply be a no-op.
+                plt.show = lambda *args, **kwargs: None
+            `);
+            console.log('Matplotlib capture function set up');
+        }
+        
+        console.log("Pyodide loaded successfully");
+        
+        // Load remote files if URLs are specified
+        const lessonFiles = window.LESSON_FILES || [];
+        
+        if (lessonFiles.length > 0) {
+            try {
+                console.log(`Checking for ${lessonFiles.length} remote file(s) to load...`);
+                
+                // Build Python code to load all files dynamically
+                let pythonCode = `
+from pyodide.http import pyfetch
+import os
+
+# Create data directory if it doesn't exist
+os.makedirs('./data', exist_ok=True)
+`;
+                
+                // Add loading code for each file
+                for (const file of lessonFiles) {
+                    if (file.is_binary) {
+                        // Binary files (images, etc.) - use bytes
+                        pythonCode += `
+# Load ${file.filename} (binary)
+try:
+    response = await pyfetch("${file.url}")
+    content = await response.bytes()
+    with open('./data/${file.filename}', 'wb') as f:
+        f.write(bytes(content))
+    print("Loaded: ${file.filename}")
+except Exception as e:
+    print(f"Could not load ${file.filename}: {e}")
+`;
+                    } else {
+                        // Text files (CSV, etc.) - use string
+                        pythonCode += `
+# Load ${file.filename} (text)
+try:
+    response = await pyfetch("${file.url}")
+    content = await response.string()
+    with open('./data/${file.filename}', 'w') as f:
+        f.write(content)
+    print("Loaded: ${file.filename}")
+except Exception as e:
+    print(f"Could not load ${file.filename}: {e}")
+`;
+                    }
+                }
+                
+                await pyodide.runPythonAsync(pythonCode);
+                console.log("Remote files loaded successfully");
+            } catch (error) {
+                console.warn("Error loading remote files (continuing anyway):", error);
+            }
+        } else {
+            console.log("No remote files to load for this lesson");
+        }
+        
+        // Function to execute Python code and capture output
+        async function executePythonCode(code) {
+            try {
+                // Redirect Python stdout and stderr to capture print statements and warnings
+                await pyodide.runPythonAsync(`
+                    old_stdout = sys.stdout
+                    old_stderr = sys.stderr
+                    sys.stdout = mystdout = StringIO()
+                    sys.stderr = mystderr = StringIO()
+                `);
+
+                // Run the user code.
+                // We pass the code string via pyodide.globals to avoid JS-string escaping
+                // issues, then use Python's ast module to execute it.  The last expression
+                // (if any) is eval-ed inside Python so that repr() is called there —
+                // this means display settings such as np.set_printoptions() are always
+                // respected before the value crosses the Python→JS boundary.
+                // (Pyodide auto-converts numpy arrays to TypedArray, so String(result)
+                // would bypass numpy's formatting entirely.)
+                pyodide.globals.set('__cell_code__', code);
+                await pyodide.runPythonAsync(`
+import ast as _ast
+__cell_result__ = None
+try:
+    _tree = _ast.parse(__cell_code__)
+    if _tree.body and isinstance(_tree.body[-1], _ast.Expr):
+        _last = _tree.body.pop()
+        exec(compile(_ast.Module(body=_tree.body, type_ignores=[]), '<cell>', 'exec'), globals())
+        _val = eval(compile(_ast.Expression(body=_last.value), '<cell>', 'eval'), globals())
+        if _val is not None:
+            __cell_result__ = repr(_val)
+    else:
+        exec(compile(_tree, '<cell>', 'exec'), globals())
+finally:
+    for _k in ['_tree', '_last', '_val', '_ast']:
+        globals().pop(_k, None)
+    globals().pop('__cell_code__', None)
+`);
+
+                // Get the captured stdout and stderr
+                let stdout = await pyodide.runPythonAsync(`
+                    sys.stdout = old_stdout
+                    sys.stderr = old_stderr
+                    mystdout.getvalue()
+                `);
+
+                const stderr = await pyodide.runPythonAsync(`mystderr.getvalue()`);
+                if (stderr) {
+                    if (stdout) stdout += "\n";
+                    stdout += stderr;
+                }
+
+                // Retrieve the Python-side repr string (already formatted correctly)
+                const resultRepr = await pyodide.runPythonAsync(`
+_r = __cell_result__
+del __cell_result__
+_r
+`);
+
+                // Check for matplotlib figures only if matplotlib was loaded
+                const lessonPackageNames = window.LESSON_PACKAGE_NAMES || [];
+                if (lessonPackageNames.includes('matplotlib')) {
+                    const hasFigures = await pyodide.runPythonAsync(`
+                        import matplotlib.pyplot as plt
+                        len(plt.get_fignums()) > 0
+                    `);
+
+                    if (hasFigures) {
+                        const figureHtml = await pyodide.runPythonAsync(`capture_matplotlib()`);
+                        if (stdout) stdout += "\n";
+                        stdout += figureHtml;
+                    }
+                }
+
+                // Combine stdout and result repr
+                let output = stdout;
+                if (resultRepr !== undefined && resultRepr !== null && String(resultRepr).trim() !== '') {
+                    if (output) output += "\n";
+                    output += String(resultRepr);
+                }
+                
+                return { success: true, output: output || "Code executed successfully (no output)" };
+                
+            } catch (error) {
+                // Attempt to restore stdout/stderr even on failure
+                try {
+                    await pyodide.runPythonAsync(`
+                        if 'old_stdout' in dir(): sys.stdout = old_stdout
+                        if 'old_stderr' in dir(): sys.stderr = old_stderr
+                    `);
+                } catch (_) {}
+                // Re-run through Python's traceback machinery to get a clean error message
+                let tracebackStr = '';
+                try {
+                    pyodide.globals.set('_traceback_code', code);
+                    await pyodide.runPythonAsync(`
+                        import traceback as _tb
+                        from io import StringIO as _SIO
+                        _trace_result = None
+                        _saved_io = (sys.stdout, sys.stderr)
+                        sys.stdout = sys.stderr = _SIO()
+                        try:
+                            exec(compile(_traceback_code, '<exec>', 'exec'), globals())
+                        except Exception:
+                            _trace_result = _tb.format_exc()
+                        finally:
+                            sys.stdout, sys.stderr = _saved_io
+                    `);
+                    const tbVal = await pyodide.runPythonAsync('_trace_result');
+                    if (tbVal) tracebackStr = tbVal;
+                } catch (_) {}
+                let displayMsg;
+                if (tracebackStr && tracebackStr.includes('File "<exec>"')) {
+                    const lines = tracebackStr.split('\n');
+                    let execIdx = -1;
+                    for (let i = lines.length - 1; i >= 0; i--) {
+                        if (lines[i].includes('File "<exec>"')) { execIdx = i; break; }
+                    }
+                    displayMsg = execIdx !== -1
+                        ? lines.slice(execIdx).join('\n').trim()
+                        : tracebackStr.trim();
+                } else {
+                    displayMsg = (error.message || '').trim() || error.type || String(error);
+                }
+                return { success: false, output: 'Error:\n' + displayMsg };
+            }
+        }
+        
+        // Execute all hidden code blocks first (for setup code like imports)
+        const hiddenCodeBlocks = Array.from(document.querySelectorAll('.hidden-code textarea'));
+        console.log(`Found ${hiddenCodeBlocks.length} hidden code blocks`);
+
+        for (const textarea of hiddenCodeBlocks) {
+            const code = textarea.value.trim();
+            if (!code) continue;
+            
+            console.log(`Executing hidden code block: ${textarea.id}`);
+            console.log(`Hidden code content: ${code.substring(0, 100)}...`);
+            const result = await executePythonCode(code);
+            
+            if (!result.success) {
+                console.error(`Error in hidden code block ${textarea.id}:`, result.output);
+            } else {
+                console.log(`Hidden code block ${textarea.id} executed successfully`);
+                console.log(`Result: ${result.output}`);
+            }
+        }
+
+        console.log("All hidden code blocks executed");
+        
+        // Get all fixed code blocks in document order
+        const fixedCodeBlocks = Array.from(document.querySelectorAll('.code-fixed textarea'));
+        
+        // Setup and execute fixed code blocks sequentially
+        for (const textarea of fixedCodeBlocks) {
+            const code = textarea.value.trim();
+            if (!code) continue;
+            
+            // Set up CodeMirror editor (read-only)
+            const editor = CodeMirror.fromTextArea(textarea, {
+                mode: "python",
+                theme: "pastel-on-dark",
+                lineNumbers: true,
+                readOnly: true,
+                viewportMargin: Infinity
+            });
+            
+            // Find corresponding output element
+            const outputId = textarea.id + '-output';
+            const outputElement = document.getElementById(outputId);
+            
+            if (outputElement) {
+                outputElement.textContent = "Running code...";
+                outputElement.classList.add("loading-message");
+                
+                // Execute the code (this maintains state for subsequent blocks)
+                const result = await executePythonCode(code);
+                
+                // Display the output - check if it's HTML
+                const trimmedOutput = result.output.trim();
+                console.log('Output length:', trimmedOutput.length);
+                console.log('Output starts with:', trimmedOutput.substring(0, 100));
+                
+                if (trimmedOutput.includes('<script') && trimmedOutput.includes('Plotly')) {
+                    // It's Plotly HTML output - extract just the body content
+                    console.log('Rendering as Plotly HTML');
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(result.output, 'text/html');
+                    // Clear the output element and append the body content
+                    outputElement.innerHTML = '';
+                    
+                    // Find and load external scripts first (like Plotly CDN)
+                    const externalScripts = Array.from(doc.querySelectorAll('script[src]'));
+                    const inlineScripts = Array.from(doc.querySelectorAll('script:not([src])'));
+                    
+                    // Append non-script content first
+                    Array.from(doc.body.children).forEach(child => {
+                        if (child.tagName !== 'SCRIPT') {
+                            outputElement.appendChild(child.cloneNode(true));
+                        }
+                    });
+                    
+                    // Load external scripts sequentially
+                    const loadScript = (src) => {
+                        return new Promise((resolve, reject) => {
+                            const script = document.createElement('script');
+                            script.src = src;
+                            script.onload = resolve;
+                            script.onerror = reject;
+                            document.head.appendChild(script);
+                        });
+                    };
+                    
+                    // Load all external scripts first
+                    Promise.all(externalScripts.map(s => loadScript(s.src)))
+                        .then(() => {
+                            console.log('External scripts loaded, executing inline scripts');
+                            // Now execute inline scripts
+                            inlineScripts.forEach(oldScript => {
+                                const newScript = document.createElement('script');
+                                newScript.textContent = oldScript.textContent;
+                                outputElement.appendChild(newScript);
+                            });
+                            console.log('Output element after processing:', outputElement.children.length, 'children');
+                        })
+                        .catch(err => {
+                            console.error('Failed to load external scripts:', err);
+                            outputElement.textContent = 'Error loading Plotly: ' + err.message;
+                        });
+                } else if (trimmedOutput.startsWith('<!DOCTYPE') || 
+                           trimmedOutput.startsWith('<html') ||
+                            trimmedOutput.startsWith('<div') ||
+                            trimmedOutput.startsWith('<img')) {
+                    console.log('Rendering as generic HTML');
+                    outputElement.innerHTML = result.output;
+                    console.log('Output element after innerHTML:', outputElement.children.length, 'children');
+                } else {
+                    console.log('Rendering as plain text');
+                    outputElement.textContent = result.output;
+                }
+                outputElement.classList.remove("loading-message");
+                if (result.success) {
+                    outputElement.classList.add("success-message");
+                    outputElement.classList.remove("error-message");
+                } else {
+                    outputElement.classList.add("error-message");
+                    outputElement.classList.remove("success-message");
+                }
+            }
+            
+            // Small delay to show progression
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        
+        // Set flag to indicate all FIXED cells have been executed
+        // This is used by PDF generation to ensure all outputs are ready
+        window.allCellsExecuted = true;
+        console.log("All FIXED cells executed successfully");
+        
+        // Setup all editable code blocks (but don't execute them)
+        document.querySelectorAll('.code-editor textarea').forEach((textarea) => {
+            // Set up CodeMirror editor (editable)
+            const editor = CodeMirror.fromTextArea(textarea, {
+                mode: "python",
+                theme: "pastel-on-dark",
+                lineNumbers: true,
+                viewportMargin: Infinity
+            });
+            
+            // Find corresponding run button and output element
+            const baseId = textarea.id;
+            const runButtonId = 'run-' + baseId;
+            const outputId = baseId + '-output';
+            
+            const runButton = document.getElementById(runButtonId);
+            const outputElement = document.getElementById(outputId);
+            
+            if (runButton && outputElement) {
+                // Set initial state
+                outputElement.textContent = "Ready to run code!";
+                outputElement.classList.remove("loading-message");
+                
+                runButton.addEventListener("click", async () => {
+                    const code = editor.getValue().trim();
+                    if (!code) {
+                        outputElement.textContent = "No code to run";
+                        return;
+                    }
+                    
+                    outputElement.textContent = "Running...";
+                    outputElement.classList.remove("error-message", "success-message");
+                    outputElement.classList.add("loading-message");
+                    
+                    // Execute the code (this also maintains state for future blocks)
+                    const result = await executePythonCode(code);
+                    
+                    // Display the output - check if it's HTML
+                    const trimmedOutput = result.output.trim();
+                    console.log('Output length:', trimmedOutput.length);
+                    console.log('Output starts with:', trimmedOutput.substring(0, 100));
+                    
+                    if (trimmedOutput.includes('<script') && trimmedOutput.includes('Plotly')) {
+                        // It's Plotly HTML output - extract just the body content
+                        console.log('Rendering as Plotly HTML');
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(result.output, 'text/html');
+                        // Clear the output element and append the body content
+                        outputElement.innerHTML = '';
+                        
+                        // Find and load external scripts first (like Plotly CDN)
+                        const externalScripts = Array.from(doc.querySelectorAll('script[src]'));
+                        const inlineScripts = Array.from(doc.querySelectorAll('script:not([src])'));
+                        
+                        // Append non-script content first
+                        Array.from(doc.body.children).forEach(child => {
+                            if (child.tagName !== 'SCRIPT') {
+                                outputElement.appendChild(child.cloneNode(true));
+                            }
+                        });
+                        
+                        // Load external scripts sequentially
+                        const loadScript = (src) => {
+                            return new Promise((resolve, reject) => {
+                                const script = document.createElement('script');
+                                script.src = src;
+                                script.onload = resolve;
+                                script.onerror = reject;
+                                document.head.appendChild(script);
+                            });
+                        };
+                        
+                        // Load all external scripts first
+                        Promise.all(externalScripts.map(s => loadScript(s.src)))
+                            .then(() => {
+                                console.log('External scripts loaded, executing inline scripts');
+                                // Now execute inline scripts
+                                inlineScripts.forEach(oldScript => {
+                                    const newScript = document.createElement('script');
+                                    newScript.textContent = oldScript.textContent;
+                                    outputElement.appendChild(newScript);
+                                });
+                                console.log('Output element after processing:', outputElement.children.length, 'children');
+                            })
+                            .catch(err => {
+                                console.error('Failed to load external scripts:', err);
+                                outputElement.textContent = 'Error loading Plotly: ' + err.message;
+                            });
+                    } else if (trimmedOutput.startsWith('<!DOCTYPE') || 
+                               trimmedOutput.startsWith('<html') ||
+                               trimmedOutput.startsWith('<div') ||
+                               trimmedOutput.startsWith('<img')) {
+                        outputElement.innerHTML = result.output;
+                    } else {
+                        outputElement.textContent = result.output;
+                    }
+                    outputElement.classList.remove("loading-message");
+                    if (result.success) {
+                        outputElement.classList.add("success-message");
+                        outputElement.classList.remove("error-message");
+                    } else {
+                        outputElement.classList.add("error-message");
+                        outputElement.classList.remove("success-message");
+                    }
+                });
+            }
+        });
+        
+        console.log("All code blocks initialised successfully");
+
+        // Set flag to indicate Pyodide is fully ready
+        window.pyodideReady = true;
+        console.log("Pyodide fully ready");
+        
+    } catch (error) {
+        console.error("Failed to initialise Pyodide:", error);
+        document.querySelectorAll(".output").forEach(el => {
+            el.textContent = "Error loading Pyodide: " + error.message;
+            el.classList.remove("loading-message");
+            el.classList.add("error-message");
+        });
+    }
+}
+
+// Start the application when DOM is loaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', main);
+} else {
+    main();
+}
+    </script>
+    
+</body>
+</html>

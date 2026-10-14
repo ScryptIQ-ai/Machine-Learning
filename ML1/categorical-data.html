@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Meta Tags -->
+    <!-- charset must stay within the first 1024 bytes of the
+         document or browsers stop looking and fall back to a
+         default encoding. Keep these two first in <head>. -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- MathJax for mathematical notation -->
+    <!-- v4 moved the loadable components out of the old es5 subdirectory and
+         up to the package root, so the path is part of the version, not just
+         the number. Getting it wrong is a 404 that fails silently, leaving
+         equations as raw dollar-delimited LaTeX on the page.
+         output.font pins the TeX font from v3; v4 would otherwise default to
+         New Computer Modern and change how every equation looks. fontPath is
+         set explicitly because MathJax's default resolves font data from an
+         *unversioned* jsDelivr URL, which is exactly what cdn_versions.yaml
+         exists to prevent. -->
+    <script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$']],
+            displayMath: [['$$', '$$']],
+            processEscapes: true
+        },
+        svg: {
+            fontCache: 'global'
+        },
+        output: {
+            font: 'mathjax-tex',
+            fontPath: 'https://cdn.jsdelivr.net/npm/@mathjax/%%FONT%%-font@4.1.3'
+        },
+        startup: {
+            pageReady() {
+                // PDF export prints as soon as the page reports itself ready.
+                // Announce typesetting separately so it can be waited on.
+                return MathJax.startup.defaultPageReady().then(function () {
+                    window.mathJaxReady = true;
+                });
+            }
+        }
+    };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@4.1.3/tex-svg.js"></script>
+    
+    <!-- Pyodide and CodeMirror -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v314.0.7/full/pyodide.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.21/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.21/theme/pastel-on-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.21/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.21/mode/python/python.min.js"></script>
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="../assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../assets/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="../assets/android-chrome-512x512.png">
+
+    <!-- Core Stylesheets -->
+    <link rel="stylesheet" href=../assets/colours-l2d.css>
+    <link rel="stylesheet" href="../assets/shared-styles.css">
+    <link rel="stylesheet" href="../assets/nav-bar.css">
+    <link rel="stylesheet" href="../assets/module_card.css">
+    <link rel="stylesheet" href="../assets/learning_outcomes.css">
+    <link rel="stylesheet" href="../assets/learning_lists.css">
+    <link rel="stylesheet" href="../assets/box_styles.css">
+    <link rel="stylesheet" href="../assets/code_styles.css">
+    
+    <title>scryptIQ - ML1 - Categorical Data</title>
+    <script>
+        window.LESSON_FILES = [
+            {url: "https://raw.githubusercontent.com/ScryptIQ-ai/lesson-data/refs/heads/main/ml/mushrooms_small.csv", filename: "mushrooms_small.csv", is_binary: false}
+        ];
+        window.LESSON_PACKAGES = ["numpy", "pandas", "scikit-learn", "seaborn", "matplotlib", "plotly"];
+        window.LESSON_PACKAGE_NAMES = ["numpy", "pandas", "scikit-learn", "seaborn", "matplotlib", "plotly"];
+    </script>
+</head>
+<body>
+    
+    <!-- Sidebar Navigation -->
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <a href="../homepage.html" style="text-decoration: none; display: inline-block;">
+                <img src="../assets/l2d-brain-logo.png" alt="scryptIQ Logo" class="sidebar-logo">
+            </a>
+        </div>
+
+        <h3>Content</h3>
+        <ul>
+            <li><a href="./introduction.html" class="">Introduction</a></li><li><a href="./state-space.html">State Space</a></li><li><a href="./scikit-learn.html">Scikit-Learn</a></li>
+            <li>
+                <div class="nav-toggle active" data-target="expandable-section-3">
+                    Categorical Data
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <ul class="nested-nav expanded" id="expandable-section-3"><li><a href="#introduction">Introduction</a></li><li><a href="#mushrooms">Mushrooms</a></li><li><a href="#encoding">Encoding</a></li><li><a href="#one-hot-encoding">One-Hot Encoding</a></li><li><a href="#ordinal">Ordinal</a></li><li><a href="#scaling">Scaling</a></li><li><a href="#summary---quiz">Summary & Quiz</a></li>
+                </ul>
+            </li><li><a href="./classifier-types.html">Classifier Models</a></li><li><a href="./assignment.html">Assignment</a></li><li><a href="./feedback.html">Feedback</a></li>
+        </ul>
+
+        <h3 class="collapsible-header collapsed">
+            Resources
+            <span class="collapse-icon">►</span>
+        </h3>
+        <div class="collapsible-content collapsed">
+            <ul>
+                <li><a href="./glossary.html">Glossary</a></li><li><a href="./downloads.html">Downloads</a></li><li><a href="../HB/introduction.html">Handbook</a></li>
+            </ul>
+        </div>
+
+        <h3>
+            <li><a href="./report-issue.html">Report an Issue</a></li>
+        </h3>
+    </div>
+
+    <!-- Sidebar Toggle Button -->
+    <button id="sidebar-toggle" class="sidebar-toggle">❮</button>
+
+    <!-- Main Content Area -->
+    <div id="main-content" class="main-content">
+        <!-- Top Navigation Bar -->
+        <div class="top-navbar">
+            <h1 class="page-title">Machine Learning 1</h1>
+            <div class="nav-actions">
+                <a href="../homepage.html" class="text-button" title="Materials homepage">
+                    Homepage
+                </a>
+                <a href="https://scryptiq.ai/my-cohorts/" class="text-button scryptiq-button" title="Find out more about us">
+                    scryptIQ
+                </a>
+            </div>
+        </div>
+
+        
+            <div class="module-card" id="introduction">
+                <div class="module-header">
+                    Categorical Data <span class="module-tag">ML1</span>
+                </div>
+                <div class="module-body">
+                    <h3>Learning Objectives</h3>
+                    <div class="learning-outcomes">
+                        <div class="outcome-item">
+                    <span class="outcome-number">1</span>
+                    <span class="outcome-text">Understand the difference between one-hot and ordinal encoding</span>
+                </div>
+<div class="outcome-item">
+                    <span class="outcome-number">2</span>
+                    <span class="outcome-text">Choose an appropriate encoding for each categorical feature</span>
+                </div>
+<div class="outcome-item">
+                    <span class="outcome-number">3</span>
+                    <span class="outcome-text">Apply <code>OneHotEncoder</code>, <code>OrdinalEncoder</code> and <code>np.where()</code> to a dataset</span>
+                </div>
+<div class="outcome-item">
+                    <span class="outcome-number">4</span>
+                    <span class="outcome-text">Understand why encoded features should not be standard scaled</span>
+                </div>
+                    </div>
+                    <h3>Introduction</h3>
+                    <p>In all the examples so far, the data has been continuous and quantitative, with categorical data ignored, despite being a very commonly seen type.<br><br>Machine learning models can only work with numerical data, which means text-based categories need to be converted into a numerical format that best describes their relationship to each other and the target variable.</p>
+                </div>
+            </div>
+            
+            <div class="module-card" id="mushrooms">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Mushrooms</h3>
+                        <p>To demonstrate different approaches to encoding categorical data we will be using the <a href="https://archive.ics.uci.edu/dataset/848/secondary+mushroom+dataset">mushroom dataset</a>, which contains a mix of numerical and categorical data.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-57"># data science tools
+import pandas as pd
+import numpy as np
+
+# visualisation packages
+import matplotlib.pyplot as plt
+import seaborn as sns
+import plotly.graph_objects as go</textarea>
+            </div>
+            <div id="code-cell-57-output" class="output" style="display: none;"></div>
+        </div>
+        
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-58">mush = pd.read_csv(&quot;./data/mushrooms_small.csv&quot;)
+
+mush.head(3)</textarea>
+            </div>
+            <div id="code-cell-58-output" class="output"></div>
+        </div>
+        <p>From the overview it can be seen that many of the columns have single letters that are code for a descriptive category, as well as some NaNs in the <em>gill-spacing</em> feature, which we will look at shortly. To understand how the data should be encoded we must first know what they stand for and how the categories relate to each other. As with quantitative data, <em>knowing</em> the background of the features is important to getting the most out of them.<br><br>Below are two tables extracted from the metadata that accompanies the tabular data.</p><h4>Categorical Features</h4><table class="markdown-table">
+<thead>
+<tr>
+<th>Column</th>
+<th>Description</th>
+<th>Categories</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>class</code></td>
+<td><strong>Target</strong> label (binary)</td>
+<td><code>p</code> = poisonous, <code>e</code> = edible</td>
+</tr>
+<tr>
+<td><code>cap-shape</code></td>
+<td>Shape of the cap</td>
+<td><code>b</code> = bell, <code>c</code> = conical, <code>x</code> = convex, <code>f</code> = flat, <code>s</code> = sunken, <code>p</code> = spherical, <code>o</code> = others</td>
+</tr>
+<tr>
+<td><code>cap-color</code></td>
+<td>Colour of the cap</td>
+<td><code>n</code> = brown, <code>b</code> = buff, <code>g</code> = grey, <code>r</code> = green, <code>p</code> = pink, <code>u</code> = purple, <code>e</code> = red, <code>w</code> = white, <code>y</code> = yellow, <code>l</code> = blue, <code>o</code> = orange, <code>k</code> = black</td>
+</tr>
+<tr>
+<td><code>does-bruise-or-bleed</code></td>
+<td>Whether the flesh bruises or bleeds</td>
+<td><code>t</code> = bruises or bleeds, <code>f</code> = no</td>
+</tr>
+<tr>
+<td><code>gill-spacing</code></td>
+<td>Spacing of the gills</td>
+<td><code>c</code> = close, <code>d</code> = distant, <code>f</code> = none</td>
+</tr>
+<tr>
+<td><code>has-ring</code></td>
+<td>Presence of a ring on the stem</td>
+<td><code>t</code> = ring, <code>f</code> = none</td>
+</tr>
+<tr>
+<td><code>habitat</code></td>
+<td>Where the mushroom grows</td>
+<td><code>g</code> = grasses, <code>l</code> = leaves, <code>m</code> = meadows, <code>p</code> = paths, <code>h</code> = heaths, <code>u</code> = urban, <code>w</code> = waste, <code>d</code> = woods</td>
+</tr>
+<tr>
+<td><code>season</code></td>
+<td>Season of occurrence</td>
+<td><code>s</code> = spring, <code>u</code> = summer, <code>a</code> = autumn, <code>w</code> = winter</td>
+</tr>
+</tbody>
+</table><h4>Numerical Features</h4><table class="markdown-table">
+<thead>
+<tr>
+<th>Column</th>
+<th>Description</th>
+<th>Unit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cap-diameter</code></td>
+<td>Diameter of the cap</td>
+<td>cm</td>
+</tr>
+<tr>
+<td><code>stem-height</code></td>
+<td>Height of the stem</td>
+<td>cm</td>
+</tr>
+<tr>
+<td><code>stem-width</code></td>
+<td>Width of the stem</td>
+<td>mm</td>
+</tr>
+</tbody>
+</table><p>Use the <code>.value_counts()</code> method to observe the distribution of the different categories in a few of the features.</p>
+        <div class="code-area">
+            <div class="code-container code-editor">
+                <textarea id="code-cell-59"># view the data yourself
+mush</textarea>
+            </div>
+            <button id="run-code-cell-59" class="run-button">Run Code</button>
+            <div id="code-cell-59-output" class="output"></div>
+        </div>
+        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="encoding">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Encoding</h3>
+                        <p>Before applying any encoding we must decide what type should be applied to each feature, as some methods are more appropriate for different types of data. The main choice is between <strong>one-hot</strong> and <strong>ordinal</strong> encoding, which are used in the following situations:</p>
+        <div class="info-box key-terms-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                KEY TERMS
+            </div>
+            <div class="box-content">
+                <p><strong>one-hot encoding</strong><br><br>Use one-hot encoding when the categories have no ordered relationship to each other. That is, where changing them to a sequence or random assortment of numbers would give the impression of a false relationship between the categories. For example, in the mushroom dataset, the <em>cap colour</em> feature has no easy way to encode the relationship between brown and purple in numbers, thereby requiring one-hot encoding. In essence, one-hot encoding creates a new feature that says whether that category is present or not.<br><br>See the visualisation below:</p>
+            </div>
+        </div>
+        <p><img src="./images/one-hot-encoding.png" alt="One Hot Encoding" class="notebook-image"></p>
+        <div class="info-box key-terms-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                KEY TERMS
+            </div>
+            <div class="box-content">
+                <p><strong>ordinal encoding</strong><br><br>If the categories have a position relative to each other, such as rank or a progression, then they can be converted into a sequential set of numbers, where <code>0</code> would be the lowest rank, increasing by <code>1</code> each time for the next category in the sequence. For example, the letters <em>a</em>, <em>b</em>, and <em>c</em> follow each other and could be considered ordinal; these would then be transformed into <code>0</code>, <code>1</code>, and <code>2</code> respectively, changing the values in the feature rather than creating new ones (see the visualisation below).<br><br>A possible candidate with the mushrooms dataset is the <strong>season</strong> feature, as each one follows into the next. However, by the nature of a linear sequence, one season will be <em>far away</em> from a season it does turn into. In this situation, as there are only 4 categories, it may be easier to go with <em>one-hot encoding</em>.<br><br>Binary categories, where there are only two choices, such as true or false, can be thought of as both one-hot and ordinal encoding, as changing the two categories to <code>0</code> and <code>1</code> reflects the present, not present nature of one-hot and the numerical relationship of <code>0</code> to <code>1</code> in ordinal. There is a preference to use ordinal encoding tools with binary categories as it gives you the option to assign which of the two is <code>0</code> and which is <code>1</code>, which can matter semantically, i.e. <code>0</code> being false.</p>
+            </div>
+        </div>
+        <p><img src="./images/ordinal-encoding.png" alt="Ordinal Encoding" class="notebook-image"></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="encoding">
+                <div class="module-body">
+                    <div class="module-section">
+                        
+        <div class="info-box practice-exercise-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                PRACTICE EXERCISE
+            </div>
+            <div class="box-content">
+                <p><strong>4.</strong></p>
+                <p>Both <strong>cap colour</strong> and <strong>season</strong> encodings have been decided. Before moving on, make a decision for the rest of the categorical columns:<ol class="nested-list"><li><strong>cap-shape</strong></li><br><li><strong>does-bruise-or-bleed</strong></li><br><li><strong>gill-spacing</strong></li><br><li><strong>has-ring</strong></li><br><li><strong>habitat</strong></li></ol>Use the cell below to explore each feature.<br><em>The answers are below.</em></p>
+            </div>
+        </div>
+        
+        <div class="code-area">
+            <div class="code-container code-editor">
+                <textarea id="code-cell-60"># mush[].value_counts()</textarea>
+            </div>
+            <button id="run-code-cell-60" class="run-button">Run Code</button>
+            <div id="code-cell-60-output" class="output"></div>
+        </div>
+        
+        <div class="code-area">
+            <div class="code-collapse-header" onclick="toggleCodeCollapse('code-cell-61')">
+                <span class="code-collapse-icon">▶</span>
+                <span class="code-collapse-label">Show code</span>
+            </div>
+            <div class="code-container code-fixed code-collapsed" id="code-cell-61-container">
+                <textarea id="code-cell-61">cap_shape = &quot;one hot&quot;
+does_bruise = &quot;ordinal, binary&quot;
+gill_space = &quot;ordinal&quot;
+has_ring = &quot;ordinal, binary&quot;
+habitat = &quot;one hot&quot;
+season = &quot;one hot, although could be ordinal too&quot;</textarea>
+            </div>
+            <div id="code-cell-61-output" class="output" style="display: none;"></div>
+        </div>
+        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="one-hot-encoding">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>One-Hot Encoding</h3>
+                        <p>One-hot encoding is simpler to deploy as there are no decisions about the order, as a new column is generated per category per feature. The process can be achieved using the built-in tools of <em>pandas</em> and <em>numpy</em>, using functions like <code>np.where()</code> to populate the new columns. For ease, <em>scikit-learn</em> has created an encoding class for both one-hot and ordinal encoding.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-62">from sklearn.preprocessing import OneHotEncoder</textarea>
+            </div>
+            <div id="code-cell-62-output" class="output" style="display: none;"></div>
+        </div>
+        <p>To begin the process, the names of the columns that are to be encoded must be extracted to pass to the encoding object. This can be done programmatically via the <code>.select_dtypes()</code> method, which will filter the data frame to only include columns of a certain data type, in this case <em>strings</em>.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-63">categorical_columns = mush.select_dtypes(include=[&#x27;str&#x27;]).columns
+
+categorical_columns</textarea>
+            </div>
+            <div id="code-cell-63-output" class="output"></div>
+        </div>
+        <p>This works if you plan on applying the same encoding to all categorical features, as they tend to all be text (note that the result above also includes the target, <code>class</code>, which we would not encode this way). However, in our case we only want to apply <em>one-hot encoding</em> to a few columns, which means we will need to manually select them.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-64">onehot_columns = [&quot;cap-color&quot;, &quot;cap-shape&quot;, &quot;habitat&quot;, &quot;season&quot;]</textarea>
+            </div>
+            <div id="code-cell-64-output" class="output" style="display: none;"></div>
+        </div>
+        <p>As with the scalers and models, the encoder is first initialised and then used to <em>fit</em> and <em>transform</em> the data, remembering to filter the data to only those columns we want. The product will be a <em>numpy</em> array with the same number of rows, with increased columns.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-65">encoder = OneHotEncoder(sparse_output=False) # sparse matrices are optimised for the problem explained later
+
+filt_df = mush[onehot_columns]
+encoded_data = encoder.fit_transform(filt_df)
+
+encoded_data</textarea>
+            </div>
+            <div id="code-cell-65-output" class="output"></div>
+        </div>
+        <p>For clarity, let&#x27;s convert the <em>numpy</em> array to a <em>pandas</em> dataframe with the appropriate column names. The names can be obtained from the <code>.get_feature_names_out()</code> method, from the encoding object.</p>
+        <div class="code-area">
+            <div class="code-container code-editor">
+                <textarea id="code-cell-66"># Run the cell to see the generated names
+encoder.get_feature_names_out()</textarea>
+            </div>
+            <button id="run-code-cell-66" class="run-button">Run Code</button>
+            <div id="code-cell-66-output" class="output"></div>
+        </div>
+        <p>As can be seen, they are a joining of the feature&#x27;s name + the category.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-67"># Turn into a dataframe
+encoded_df = pd.DataFrame(
+    encoded_data,
+    columns=encoder.get_feature_names_out()
+)
+
+encoded_df.head(3)</textarea>
+            </div>
+            <div id="code-cell-67-output" class="output"></div>
+        </div>
+        <p>This can then be added back to the original dataframe, after dropping the original columns.<br><br>Here, we use <a href="https://pandas.pydata.org/docs/reference/api/pandas.concat.html">pd.concat()</a> to join the original with the columns dropped and the new encoded data, all along axis <code>1</code> which means it is joined <em>column-wise</em>.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-68">mush_encoded = pd.concat(
+    [mush.drop(columns=onehot_columns), encoded_df],
+    axis=1
+)</textarea>
+            </div>
+            <div id="code-cell-68-output" class="output"></div>
+        </div>
+        <p>Take a look at the new mushroom dataset; you will see that the number of columns has exploded from <strong>11</strong> to <strong>38</strong>. This is the main issue with <em>one-hot</em> encoding, as features with many categories can increase the dimensionality of the dataset, all with 1s and 0s, making what is known as a <strong>sparse dataset</strong>, which can be harder for the model to learn.</p>
+        <div class="code-area">
+            <div class="code-container code-editor">
+                <textarea id="code-cell-69">mush_encoded.head(3)</textarea>
+            </div>
+            <button id="run-code-cell-69" class="run-button">Run Code</button>
+            <div id="code-cell-69-output" class="output"></div>
+        </div>
+        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="ordinal">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Ordinal</h3>
+                        <p>The process for ordinal encoding is, programmatically, much the same as one-hot encoding, with the exception that the order of the categories must be stated.<br><br>First, looking at the dataset, we can see that <em>gill-spacing</em> — a feature to have ordinal encoding — contains <em>NaN</em> values.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-70">mush_encoded.head(3)</textarea>
+            </div>
+            <div id="code-cell-70-output" class="output"></div>
+        </div>
+        <p>Approaching half of the values are missing, meaning dropping them would severely deplete our dataset.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-71">mush_encoded[&#x27;gill-spacing&#x27;].isnull().value_counts()</textarea>
+            </div>
+            <div id="code-cell-71-output" class="output"></div>
+        </div>
+        <p>Given the options for gill spacing:</p><table class="markdown-table">
+<thead>
+<tr>
+<th>Column</th>
+<th>Description</th>
+<th>Categories</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gill-spacing</code></td>
+<td>Spacing of the gills</td>
+<td><code>c</code> = close, <code>d</code> = distant, <code>f</code> = none</td>
+</tr>
+</tbody>
+</table><p>It is a reasonable choice to replace the <em>NaN</em>s with <code>f</code>.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-72">mush_encoded[&#x27;gill-spacing&#x27;] = mush_encoded[&#x27;gill-spacing&#x27;].fillna(&#x27;f&#x27;)
+
+mush_encoded.head(3)</textarea>
+            </div>
+            <div id="code-cell-72-output" class="output"></div>
+        </div>
+        
+        <div class="info-box tip-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                TIP
+            </div>
+            <div class="box-content">
+                <p>If the model isn&#x27;t performing as well as you want, a good place to start is changing any encoding decisions you have made.</p>
+            </div>
+        </div>
+        <h4>Ordinal application</h4>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-73">from sklearn.preprocessing import OrdinalEncoder</textarea>
+            </div>
+            <div id="code-cell-73-output" class="output" style="display: none;"></div>
+        </div>
+        <p>To apply the ordinal encoder it must be initialised with a list of categories, in order of their rank. Below, we have placed <strong>f</strong>-absence as 0, <strong>c</strong>-close as 1, and <strong>d</strong>-distant as 2, which nicely represents their relationship to each other.<br><br>Once created and as before, <code>.fit_transform()</code> is called on the filtered dataframe. Except this time, as only one column is being returned it can be used to immediately replace the previous feature values.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-74">ord_encoder = OrdinalEncoder(categories=[[&#x27;f&#x27;, &#x27;c&#x27;, &#x27;d&#x27;]])
+
+mush_encoded[&#x27;gill-spacing&#x27;] = ord_encoder.fit_transform(mush_encoded[[&#x27;gill-spacing&#x27;]])
+
+mush_encoded[&#x27;gill-spacing&#x27;].value_counts()</textarea>
+            </div>
+            <div id="code-cell-74-output" class="output"></div>
+        </div>
+        
+        <div class="info-box note-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                NOTE
+            </div>
+            <div class="box-content">
+                <p>The <code>OrdinalEncoder</code> can handle multiple features, simply pass a nested list of categories that corresponds to the order of the columns.</p>
+            </div>
+        </div>
+        <h4>Binary columns</h4><p>For binary ordinal columns you can use <code>OrdinalEncoder</code> as well, although we will demonstrate a simpler method below using <code>np.where()</code> again.<br><br>Both <strong>does bruise</strong> and <strong>has ring</strong> are either <em>true (t)</em> or <em>false (f)</em>:</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-75">print(mush_encoded[&#x27;does-bruise-or-bleed&#x27;].value_counts())
+print(&quot;&quot;)
+print(mush_encoded[&#x27;has-ring&#x27;].value_counts())</textarea>
+            </div>
+            <div id="code-cell-75-output" class="output"></div>
+        </div>
+        <p>Given this, the values can be replaced by the <code>np.where</code> function, which replaces a value with something <em>where</em> the condition is true and with a specific value when false. We used it before with <em>numpy</em> arrays, but it can also be used with <em>pandas</em> dataframe columns as they are interchangeable.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-76"># where it is &quot;f&quot; replace it with 0 or else 1
+mush_encoded[&#x27;does-bruise-or-bleed&#x27;] = np.where(mush_encoded[&#x27;does-bruise-or-bleed&#x27;] == &#x27;f&#x27;, 0, 1)
+mush_encoded[&#x27;has-ring&#x27;] = np.where(mush_encoded[&#x27;has-ring&#x27;] == &#x27;f&#x27;, 0, 1)
+
+mush_encoded.head(3)</textarea>
+            </div>
+            <div id="code-cell-76-output" class="output"></div>
+        </div>
+        <p>A quick check to see the outcome is what we expect.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-77">print(mush_encoded[&#x27;does-bruise-or-bleed&#x27;].value_counts())
+print(&quot;&quot;)
+print(mush_encoded[&#x27;has-ring&#x27;].value_counts())</textarea>
+            </div>
+            <div id="code-cell-77-output" class="output"></div>
+        </div>
+        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="scaling">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Scaling</h3>
+                        <p>The data is now completely numerical; however, it has not been scaled. Before we move on, what do you think would be the effect of a <strong>standard scaler</strong> on a new binary, ordinal encoded feature? Remember that it is this equation:<br><br>$$ \frac{x_i - mean(x)}{stdev(x)} $$</p><p>After you&#x27;ve thought of an answer, run the cell below to see.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-78">from sklearn.preprocessing import StandardScaler</textarea>
+            </div>
+            <div id="code-cell-78-output" class="output" style="display: none;"></div>
+        </div>
+        
+        <div class="code-area">
+            <div class="code-container code-editor">
+                <textarea id="code-cell-79">cols = [&#x27;does-bruise-or-bleed&#x27;, &#x27;has-ring&#x27;, &#x27;gill-spacing&#x27;]
+n = len(cols)
+k = 20
+
+pre = mush_encoded[cols]
+post = StandardScaler().fit_transform(pre)
+
+fig, axes = plt.subplots(n, 2, sharex=True, layout=&quot;constrained&quot;, figsize=(16, 2.5 * n))
+
+for i, col in enumerate(cols):
+
+    axes[i, 0].hist(pre[col], bins=k, label=col, color=&#x27;darkgreen&#x27;, alpha=0.6, rwidth=0.8)
+    axes[i, 1].hist(post[:, i], bins=k, label=col, color=&#x27;purple&#x27;, alpha=0.6, rwidth=0.8)
+
+    for ax in axes[i]:
+        ax.legend(loc=&#x27;upper right&#x27;)
+
+axes[0, 0].set_title(&#x27;Pre-scaling&#x27;)
+axes[0, 1].set_title(&#x27;Post-scaling (StandardScaler)&#x27;)
+
+plt.show()</textarea>
+            </div>
+            <button id="run-code-cell-79" class="run-button">Run Code</button>
+            <div id="code-cell-79-output" class="output"></div>
+        </div>
+        <p>The data keeps its shape as seen before, except, depending on the distribution of the categories, they shift further or closer to each other, destroying the uniformity of distance we had encoded in them all.<br><br>For this reason, it&#x27;s best to apply the scaling to the non-encoded numerical data only.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="scaling">
+                <div class="module-body">
+                    <div class="module-section">
+                        
+        <div class="info-box practice-exercise-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                PRACTICE EXERCISE
+            </div>
+            <div class="box-content">
+                <p><strong>5.</strong></p>
+                <p>Which one of <strong>min-max scaler</strong>, <strong>robust scaler</strong>, and <strong>normalizer</strong> would be okay to apply to binary, ordinal encoded data?</p>
+            </div>
+        </div>
+        
+        <div class="code-area">
+            <div class="code-collapse-header" onclick="toggleCodeCollapse('code-cell-80')">
+                <span class="code-collapse-icon">▶</span>
+                <span class="code-collapse-label">Show code</span>
+            </div>
+            <div class="code-container code-fixed code-collapsed" id="code-cell-80-container">
+                <textarea id="code-cell-80">&quot;Min-Max scaler — as the data is already scaled to between 0 and 1, it would be unaffected&quot;</textarea>
+            </div>
+            <div id="code-cell-80-output" class="output" style="display: none;"></div>
+        </div>
+        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="scaling-the-numerical-data">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Scaling the Numerical Data</h3>
+                        <p>As with selecting only columns that are <code>&quot;strings&quot;</code>, the same can be done for the original continuous, floating numbers, using the <code>.select_dtypes()</code> method combined with <code>columns</code>. This will need to be performed on the original dataframe, as some of the newly encoded columns will be <em>floats</em> too.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-81">numerical_columns = mush.select_dtypes(include=[&#x27;float&#x27;]).columns
+
+numerical_columns</textarea>
+            </div>
+            <div id="code-cell-81-output" class="output"></div>
+        </div>
+        <p>Using the list of names, we pass the filtered dataframe to a call of <code>.fit_transform()</code> on a new scaler instance, then convert it back to a <em>pandas</em> dataframe to be joined back onto the encoded dataframe.</p>
+        <div class="info-box note-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                NOTE
+            </div>
+            <div class="box-content">
+                <p>For simplicity, the scaling here is applied to the whole dataset to demonstrate the mechanics. As seen previously, you should <strong>first</strong> split the data and then fit the scaler on the training data <strong>only</strong>, to avoid data leakage.</p>
+            </div>
+        </div>
+        
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-82">scaler = StandardScaler()
+
+# scale the data
+num_scaled = scaler.fit_transform(mush_encoded[numerical_columns])
+# convert back to a dataframe with the same names
+num_scaled = pd.DataFrame(num_scaled, columns=numerical_columns)
+
+num_scaled.head(3)</textarea>
+            </div>
+            <div id="code-cell-82-output" class="output"></div>
+        </div>
+        <p>As before, drop the original columns and add them back using <code>pd.concat()</code>, across the column <em>axis</em>.</p>
+        <div class="code-area">
+            <div class="code-container code-fixed">
+                <textarea id="code-cell-83">mush_encoded.drop(columns=numerical_columns, inplace=True)
+
+mush_encoded = pd.concat(
+    [mush_encoded, num_scaled],
+    axis=1
+)
+mush_encoded.head(3)</textarea>
+            </div>
+            <div id="code-cell-83-output" class="output"></div>
+        </div>
+        <p>The training features are now ready for machine learning, try applying the skills you learnt in the previous section.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="scaling-the-numerical-data">
+                <div class="module-body">
+                    <div class="module-section">
+                        
+        <div class="info-box practice-exercise-box">
+            <div class="box-title">
+                <span class="box-icon"></span>
+                PRACTICE EXERCISE
+            </div>
+            <div class="box-content">
+                <p><strong>6.</strong></p>
+                <p>Train and evaluate the mushroom dataset using a <em>Random Forest</em> model, as demonstrated in the previous notebook.<ol class="nested-list"><li>Encode the target labels as <code>0</code> and <code>1</code> for the negative and positive class.</li><br><li>Split into train / test sets.</li><br><li>Scale the training data appropriately.</li><br><li>Train the default model.</li><br><li>Find the accuracy of the model given the test data.</li></ol></p>
+            </div>
+        </div>
+        
+        <div class="code-area">
+            <div class="code-container code-editor">
+                <textarea id="code-cell-84"># Preferentially complete this exercise in the notebook in your lesson repo</textarea>
+            </div>
+            <button id="run-code-cell-84" class="run-button">Run Code</button>
+            <div id="code-cell-84-output" class="output"></div>
+        </div>
+        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="summary---quiz">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Summary & Quiz</h3>
+                        <p>In this section, we looked at why machine learning models need categorical data converted to numbers, and how to choose between one-hot and ordinal encoding. We used <code>OneHotEncoder</code> for features with no natural order, and <code>OrdinalEncoder</code> for ordered features after filling the missing <em>gill-spacing</em> values. We also used <code>np.where()</code> for binary columns. Finally, we saw why standard scaling should not be applied to encoded features, as it distorts the distances we encoded, and scaled only the original numerical columns.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="module-card" id="summary---quiz">
+                <div class="module-body">
+                    <div class="module-section">
+                        <h3>Summary & Quiz</h3>
+                        
+        <div class="quiz-box" id="quiz-3">
+            <div class="quiz-body">
+                <p class="quiz-intro">Attempt the questions below once you have finished. If you get any wrong, head back to that section to remind yourself of the reasoning/syntax behind the correct answer:</p>
+                
+            <div class="quiz-question" id="quiz-3-q0" data-quiz="quiz-3" data-topic-id="one-hot-encoding">
+                <span class="quiz-topic-tag">One-Hot Encoding</span>
+                <p class="quiz-question-text">When is one-hot encoding the most appropriate choice?</p>
+                <div class="quiz-options" role="radiogroup">
+                    <label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-3-q0" value="0">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">When the categories have a clear rank or order</span>
+                </label><label class="quiz-option" data-correct="true">
+                    <input type="radio" name="quiz-3-q0" value="1">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">When the categories have no ordered relationship to each other</span>
+                </label><label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-3-q0" value="2">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">When the feature is already numerical</span>
+                </label><label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-3-q0" value="3">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">When there are missing values in the feature</span>
+                </label>
+                </div>
+                <div class="quiz-feedback" aria-live="polite"></div>
+            </div><hr class="quiz-divider">
+            <div class="quiz-question" id="quiz-3-q1" data-quiz="quiz-3" data-topic-id="one-hot-encoding">
+                <span class="quiz-topic-tag">One-Hot Encoding</span>
+                <p class="quiz-question-text">What does one-hot encoding do to a feature?</p>
+                <div class="quiz-options" role="radiogroup">
+                    <label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-3-q1" value="0">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">Replaces the categories with a sequence of numbers in the same column</span>
+                </label><label class="quiz-option" data-correct="true">
+                    <input type="radio" name="quiz-3-q1" value="1">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">Creates a new column per category, marking whether it is present</span>
+                </label><label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-3-q1" value="2">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">Removes the feature from the dataset</span>
+                </label><label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-3-q1" value="3">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">Scales the feature to between 0 and 1</span>
+                </label>
+                </div>
+                <div class="quiz-feedback" aria-live="polite"></div>
+            </div><hr class="quiz-divider">
+            <div class="quiz-question" id="quiz-3-q2" data-quiz="quiz-3" data-topic-id="ordinal-encoding">
+                <span class="quiz-topic-tag">Ordinal Encoding</span>
+                <p class="quiz-question-text">What must you provide to `OrdinalEncoder` that `OneHotEncoder` does not need?</p>
+                <div class="quiz-options" role="radiogroup">
+                    <label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-3-q2" value="0">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">The names of the columns</span>
+                </label><label class="quiz-option" data-correct="true">
+                    <input type="radio" name="quiz-3-q2" value="1">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">The order of the categories</span>
+                </label><label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-3-q2" value="2">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">The target labels</span>
+                </label><label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-3-q2" value="3">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">The number of categories</span>
+                </label>
+                </div>
+                <div class="quiz-feedback" aria-live="polite"></div>
+            </div><hr class="quiz-divider">
+            <div class="quiz-question" id="quiz-3-q3" data-quiz="quiz-3" data-topic-id="binary-features">
+                <span class="quiz-topic-tag">Binary Features</span>
+                <p class="quiz-question-text">Why can binary categories be encoded with `np.where()` or ordinal encoding?</p>
+                <div class="quiz-options" role="radiogroup">
+                    <label class="quiz-option" data-correct="true">
+                    <input type="radio" name="quiz-3-q3" value="0">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">Because two categories can be mapped to `0` and `1`</span>
+                </label><label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-3-q3" value="1">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">Because binary features never contain missing values</span>
+                </label><label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-3-q3" value="2">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">Because they must be scaled afterwards</span>
+                </label><label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-3-q3" value="3">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">Because they cannot be one-hot encoded</span>
+                </label>
+                </div>
+                <div class="quiz-feedback" aria-live="polite"></div>
+            </div><hr class="quiz-divider">
+            <div class="quiz-question" id="quiz-3-q4" data-quiz="quiz-3" data-topic-id="scaling-encoded-data">
+                <span class="quiz-topic-tag">Scaling Encoded Data</span>
+                <p class="quiz-question-text">Why should a standard scaler not be applied to encoded categorical features?</p>
+                <div class="quiz-options" role="radiogroup">
+                    <label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-3-q4" value="0">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">It cannot be applied to integers</span>
+                </label><label class="quiz-option" data-correct="true">
+                    <input type="radio" name="quiz-3-q4" value="1">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">It shifts the encoded values, destroying the uniform distances between them</span>
+                </label><label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-3-q4" value="2">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">It converts them back to text</span>
+                </label><label class="quiz-option" data-correct="false">
+                    <input type="radio" name="quiz-3-q4" value="3">
+                    <span class="quiz-option-marker"></span>
+                    <span class="quiz-option-text">It removes the zeros</span>
+                </label>
+                </div>
+                <div class="quiz-feedback" aria-live="polite"></div>
+            </div>
+                
+            <div class="quiz-topics-footer">
+                <span class="quiz-topics-label">Topics covered</span>
+                <div class="quiz-topics-list">
+                    <span class="quiz-topic-pill" id="quiz-3-topic-one-hot-encoding">One-Hot Encoding</span><span class="quiz-topic-pill" id="quiz-3-topic-ordinal-encoding">Ordinal Encoding</span><span class="quiz-topic-pill" id="quiz-3-topic-binary-features">Binary Features</span><span class="quiz-topic-pill" id="quiz-3-topic-scaling-encoded-data">Scaling Encoded Data</span>
+                </div>
+            </div>
+            </div>
+        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+        <div class="page-navigation">
+            <a href="./scikit-learn.html" class="nav-button prev">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                </svg>
+                Previous
+            </a>
+            <a href="./classifier-types.html" class="nav-button next">
+                Next
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                </svg>
+            </a></div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div>© All materials are copyright scryptIQ 2025</div>
+            <div>Powered by Pyodide</div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="../assets/main.js"></script>
+    
+    <!-- Pyodide Initialisation Script -->
+    <script>
+
+// Generalisable Pyodide Initialisation Script
+// Variables and state build up naturally as code blocks execute in order
+
+async function main() {
+    // Show loading message for all output elements
+    document.querySelectorAll(".output").forEach(el => {
+        el.textContent = "Loading Pyodide...";
+        el.classList.add("loading-message");
+    });
+    
+    try {
+        // Load Pyodide
+        console.log("Loading Pyodide...");
+        const pyodideStartTime = performance.now();
+        let pyodide = await loadPyodide();
+        const pyodideLoadTime = performance.now() - pyodideStartTime;
+        console.log(`Pyodide loaded in ${pyodideLoadTime.toFixed(2)}ms`);
+        
+        // Load required packages only if specified
+        const lessonPackages = window.LESSON_PACKAGES || [];
+        
+        if (lessonPackages.length > 0) {
+            console.log("Loading required Python packages...");
+            const packagesStartTime = performance.now();
+
+            // micropip resolves each requirement against the Pyodide lockfile
+            // *first* and only falls through to PyPI for packages Pyodide does
+            // not bundle (it sets search_pyodide_lock_first whenever the index
+            // URLs are left at their default).  So one call handles both cases
+            // and, unlike a hardcoded list of bundled package names, there is
+            // nothing to fall out of date when Pyodide is upgraded.  It also
+            // means version specifiers such as `pandas==2.2` work.
+            await pyodide.loadPackage(['micropip']);
+            const micropip = pyodide.pyimport('micropip');
+            await micropip.install(lessonPackages);
+            console.log(`Installed packages: ${lessonPackages.join(', ')}`);
+
+            const packagesLoadTime = performance.now() - packagesStartTime;
+            console.log(`Packages loaded in ${packagesLoadTime.toFixed(2)}ms`);
+            console.log(`Total initialisation time: ${(pyodideLoadTime + packagesLoadTime).toFixed(2)}ms`);
+        } else {
+            console.log("No packages to load for this lesson");
+            console.log(`Total initialisation time: ${pyodideLoadTime.toFixed(2)}ms`);
+        }
+
+        // Only set up basic Python environment - no pre-loaded variables
+        await pyodide.runPythonAsync(`
+            import sys
+            from io import StringIO
+        `);
+
+        // Only set up matplotlib if it's in the loaded packages.  Checked
+        // against the canonical (lower-cased, un-versioned) names so that a
+        // PACKAGES cell saying `Matplotlib` or `matplotlib>=3.9` still works.
+        const lessonPackageNames = window.LESSON_PACKAGE_NAMES || [];
+        if (lessonPackageNames.includes('matplotlib')) {
+            await pyodide.runPythonAsync(`
+                # Set up matplotlib for web rendering
+                import matplotlib
+                matplotlib.use('AGG')
+                import matplotlib.pyplot as plt
+                import io
+                import base64
+                
+                def capture_matplotlib():
+                    """Capture current matplotlib figure as HTML img tag"""
+                    buf = io.BytesIO()
+                    plt.savefig(buf, format='png', bbox_inches='tight', dpi=100)
+                    buf.seek(0)
+                    img_base64 = base64.b64encode(buf.read()).decode('utf-8')
+                    plt.close()
+                    return f'<img src="data:image/png;base64,{img_base64}" style="max-width: 100%; height: auto;" />'
+
+                # Silence the "FigureCanvasAgg is non-interactive" warning that
+                # occurs when notebook code calls plt.show().  In this environment
+                # figures are captured automatically via capture_matplotlib(), so
+                # plt.show() should simply be a no-op.
+                plt.show = lambda *args, **kwargs: None
+            `);
+            console.log('Matplotlib capture function set up');
+        }
+        
+        console.log("Pyodide loaded successfully");
+        
+        // Load remote files if URLs are specified
+        const lessonFiles = window.LESSON_FILES || [];
+        
+        if (lessonFiles.length > 0) {
+            try {
+                console.log(`Checking for ${lessonFiles.length} remote file(s) to load...`);
+                
+                // Build Python code to load all files dynamically
+                let pythonCode = `
+from pyodide.http import pyfetch
+import os
+
+# Create data directory if it doesn't exist
+os.makedirs('./data', exist_ok=True)
+`;
+                
+                // Add loading code for each file
+                for (const file of lessonFiles) {
+                    if (file.is_binary) {
+                        // Binary files (images, etc.) - use bytes
+                        pythonCode += `
+# Load ${file.filename} (binary)
+try:
+    response = await pyfetch("${file.url}")
+    content = await response.bytes()
+    with open('./data/${file.filename}', 'wb') as f:
+        f.write(bytes(content))
+    print("Loaded: ${file.filename}")
+except Exception as e:
+    print(f"Could not load ${file.filename}: {e}")
+`;
+                    } else {
+                        // Text files (CSV, etc.) - use string
+                        pythonCode += `
+# Load ${file.filename} (text)
+try:
+    response = await pyfetch("${file.url}")
+    content = await response.string()
+    with open('./data/${file.filename}', 'w') as f:
+        f.write(content)
+    print("Loaded: ${file.filename}")
+except Exception as e:
+    print(f"Could not load ${file.filename}: {e}")
+`;
+                    }
+                }
+                
+                await pyodide.runPythonAsync(pythonCode);
+                console.log("Remote files loaded successfully");
+            } catch (error) {
+                console.warn("Error loading remote files (continuing anyway):", error);
+            }
+        } else {
+            console.log("No remote files to load for this lesson");
+        }
+        
+        // Function to execute Python code and capture output
+        async function executePythonCode(code) {
+            try {
+                // Redirect Python stdout and stderr to capture print statements and warnings
+                await pyodide.runPythonAsync(`
+                    old_stdout = sys.stdout
+                    old_stderr = sys.stderr
+                    sys.stdout = mystdout = StringIO()
+                    sys.stderr = mystderr = StringIO()
+                `);
+
+                // Run the user code.
+                // We pass the code string via pyodide.globals to avoid JS-string escaping
+                // issues, then use Python's ast module to execute it.  The last expression
+                // (if any) is eval-ed inside Python so that repr() is called there —
+                // this means display settings such as np.set_printoptions() are always
+                // respected before the value crosses the Python→JS boundary.
+                // (Pyodide auto-converts numpy arrays to TypedArray, so String(result)
+                // would bypass numpy's formatting entirely.)
+                pyodide.globals.set('__cell_code__', code);
+                await pyodide.runPythonAsync(`
+import ast as _ast
+__cell_result__ = None
+try:
+    _tree = _ast.parse(__cell_code__)
+    if _tree.body and isinstance(_tree.body[-1], _ast.Expr):
+        _last = _tree.body.pop()
+        exec(compile(_ast.Module(body=_tree.body, type_ignores=[]), '<cell>', 'exec'), globals())
+        _val = eval(compile(_ast.Expression(body=_last.value), '<cell>', 'eval'), globals())
+        if _val is not None:
+            __cell_result__ = repr(_val)
+    else:
+        exec(compile(_tree, '<cell>', 'exec'), globals())
+finally:
+    for _k in ['_tree', '_last', '_val', '_ast']:
+        globals().pop(_k, None)
+    globals().pop('__cell_code__', None)
+`);
+
+                // Get the captured stdout and stderr
+                let stdout = await pyodide.runPythonAsync(`
+                    sys.stdout = old_stdout
+                    sys.stderr = old_stderr
+                    mystdout.getvalue()
+                `);
+
+                const stderr = await pyodide.runPythonAsync(`mystderr.getvalue()`);
+                if (stderr) {
+                    if (stdout) stdout += "\n";
+                    stdout += stderr;
+                }
+
+                // Retrieve the Python-side repr string (already formatted correctly)
+                const resultRepr = await pyodide.runPythonAsync(`
+_r = __cell_result__
+del __cell_result__
+_r
+`);
+
+                // Check for matplotlib figures only if matplotlib was loaded
+                const lessonPackageNames = window.LESSON_PACKAGE_NAMES || [];
+                if (lessonPackageNames.includes('matplotlib')) {
+                    const hasFigures = await pyodide.runPythonAsync(`
+                        import matplotlib.pyplot as plt
+                        len(plt.get_fignums()) > 0
+                    `);
+
+                    if (hasFigures) {
+                        const figureHtml = await pyodide.runPythonAsync(`capture_matplotlib()`);
+                        if (stdout) stdout += "\n";
+                        stdout += figureHtml;
+                    }
+                }
+
+                // Combine stdout and result repr
+                let output = stdout;
+                if (resultRepr !== undefined && resultRepr !== null && String(resultRepr).trim() !== '') {
+                    if (output) output += "\n";
+                    output += String(resultRepr);
+                }
+                
+                return { success: true, output: output || "Code executed successfully (no output)" };
+                
+            } catch (error) {
+                // Attempt to restore stdout/stderr even on failure
+                try {
+                    await pyodide.runPythonAsync(`
+                        if 'old_stdout' in dir(): sys.stdout = old_stdout
+                        if 'old_stderr' in dir(): sys.stderr = old_stderr
+                    `);
+                } catch (_) {}
+                // Re-run through Python's traceback machinery to get a clean error message
+                let tracebackStr = '';
+                try {
+                    pyodide.globals.set('_traceback_code', code);
+                    await pyodide.runPythonAsync(`
+                        import traceback as _tb
+                        from io import StringIO as _SIO
+                        _trace_result = None
+                        _saved_io = (sys.stdout, sys.stderr)
+                        sys.stdout = sys.stderr = _SIO()
+                        try:
+                            exec(compile(_traceback_code, '<exec>', 'exec'), globals())
+                        except Exception:
+                            _trace_result = _tb.format_exc()
+                        finally:
+                            sys.stdout, sys.stderr = _saved_io
+                    `);
+                    const tbVal = await pyodide.runPythonAsync('_trace_result');
+                    if (tbVal) tracebackStr = tbVal;
+                } catch (_) {}
+                let displayMsg;
+                if (tracebackStr && tracebackStr.includes('File "<exec>"')) {
+                    const lines = tracebackStr.split('\n');
+                    let execIdx = -1;
+                    for (let i = lines.length - 1; i >= 0; i--) {
+                        if (lines[i].includes('File "<exec>"')) { execIdx = i; break; }
+                    }
+                    displayMsg = execIdx !== -1
+                        ? lines.slice(execIdx).join('\n').trim()
+                        : tracebackStr.trim();
+                } else {
+                    displayMsg = (error.message || '').trim() || error.type || String(error);
+                }
+                return { success: false, output: 'Error:\n' + displayMsg };
+            }
+        }
+        
+        // Execute all hidden code blocks first (for setup code like imports)
+        const hiddenCodeBlocks = Array.from(document.querySelectorAll('.hidden-code textarea'));
+        console.log(`Found ${hiddenCodeBlocks.length} hidden code blocks`);
+
+        for (const textarea of hiddenCodeBlocks) {
+            const code = textarea.value.trim();
+            if (!code) continue;
+            
+            console.log(`Executing hidden code block: ${textarea.id}`);
+            console.log(`Hidden code content: ${code.substring(0, 100)}...`);
+            const result = await executePythonCode(code);
+            
+            if (!result.success) {
+                console.error(`Error in hidden code block ${textarea.id}:`, result.output);
+            } else {
+                console.log(`Hidden code block ${textarea.id} executed successfully`);
+                console.log(`Result: ${result.output}`);
+            }
+        }
+
+        console.log("All hidden code blocks executed");
+        
+        // Get all fixed code blocks in document order
+        const fixedCodeBlocks = Array.from(document.querySelectorAll('.code-fixed textarea'));
+        
+        // Setup and execute fixed code blocks sequentially
+        for (const textarea of fixedCodeBlocks) {
+            const code = textarea.value.trim();
+            if (!code) continue;
+            
+            // Set up CodeMirror editor (read-only)
+            const editor = CodeMirror.fromTextArea(textarea, {
+                mode: "python",
+                theme: "pastel-on-dark",
+                lineNumbers: true,
+                readOnly: true,
+                viewportMargin: Infinity
+            });
+            
+            // Find corresponding output element
+            const outputId = textarea.id + '-output';
+            const outputElement = document.getElementById(outputId);
+            
+            if (outputElement) {
+                outputElement.textContent = "Running code...";
+                outputElement.classList.add("loading-message");
+                
+                // Execute the code (this maintains state for subsequent blocks)
+                const result = await executePythonCode(code);
+                
+                // Display the output - check if it's HTML
+                const trimmedOutput = result.output.trim();
+                console.log('Output length:', trimmedOutput.length);
+                console.log('Output starts with:', trimmedOutput.substring(0, 100));
+                
+                if (trimmedOutput.includes('<script') && trimmedOutput.includes('Plotly')) {
+                    // It's Plotly HTML output - extract just the body content
+                    console.log('Rendering as Plotly HTML');
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(result.output, 'text/html');
+                    // Clear the output element and append the body content
+                    outputElement.innerHTML = '';
+                    
+                    // Find and load external scripts first (like Plotly CDN)
+                    const externalScripts = Array.from(doc.querySelectorAll('script[src]'));
+                    const inlineScripts = Array.from(doc.querySelectorAll('script:not([src])'));
+                    
+                    // Append non-script content first
+                    Array.from(doc.body.children).forEach(child => {
+                        if (child.tagName !== 'SCRIPT') {
+                            outputElement.appendChild(child.cloneNode(true));
+                        }
+                    });
+                    
+                    // Load external scripts sequentially
+                    const loadScript = (src) => {
+                        return new Promise((resolve, reject) => {
+                            const script = document.createElement('script');
+                            script.src = src;
+                            script.onload = resolve;
+                            script.onerror = reject;
+                            document.head.appendChild(script);
+                        });
+                    };
+                    
+                    // Load all external scripts first
+                    Promise.all(externalScripts.map(s => loadScript(s.src)))
+                        .then(() => {
+                            console.log('External scripts loaded, executing inline scripts');
+                            // Now execute inline scripts
+                            inlineScripts.forEach(oldScript => {
+                                const newScript = document.createElement('script');
+                                newScript.textContent = oldScript.textContent;
+                                outputElement.appendChild(newScript);
+                            });
+                            console.log('Output element after processing:', outputElement.children.length, 'children');
+                        })
+                        .catch(err => {
+                            console.error('Failed to load external scripts:', err);
+                            outputElement.textContent = 'Error loading Plotly: ' + err.message;
+                        });
+                } else if (trimmedOutput.startsWith('<!DOCTYPE') || 
+                           trimmedOutput.startsWith('<html') ||
+                            trimmedOutput.startsWith('<div') ||
+                            trimmedOutput.startsWith('<img')) {
+                    console.log('Rendering as generic HTML');
+                    outputElement.innerHTML = result.output;
+                    console.log('Output element after innerHTML:', outputElement.children.length, 'children');
+                } else {
+                    console.log('Rendering as plain text');
+                    outputElement.textContent = result.output;
+                }
+                outputElement.classList.remove("loading-message");
+                if (result.success) {
+                    outputElement.classList.add("success-message");
+                    outputElement.classList.remove("error-message");
+                } else {
+                    outputElement.classList.add("error-message");
+                    outputElement.classList.remove("success-message");
+                }
+            }
+            
+            // Small delay to show progression
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        
+        // Set flag to indicate all FIXED cells have been executed
+        // This is used by PDF generation to ensure all outputs are ready
+        window.allCellsExecuted = true;
+        console.log("All FIXED cells executed successfully");
+        
+        // Setup all editable code blocks (but don't execute them)
+        document.querySelectorAll('.code-editor textarea').forEach((textarea) => {
+            // Set up CodeMirror editor (editable)
+            const editor = CodeMirror.fromTextArea(textarea, {
+                mode: "python",
+                theme: "pastel-on-dark",
+                lineNumbers: true,
+                viewportMargin: Infinity
+            });
+            
+            // Find corresponding run button and output element
+            const baseId = textarea.id;
+            const runButtonId = 'run-' + baseId;
+            const outputId = baseId + '-output';
+            
+            const runButton = document.getElementById(runButtonId);
+            const outputElement = document.getElementById(outputId);
+            
+            if (runButton && outputElement) {
+                // Set initial state
+                outputElement.textContent = "Ready to run code!";
+                outputElement.classList.remove("loading-message");
+                
+                runButton.addEventListener("click", async () => {
+                    const code = editor.getValue().trim();
+                    if (!code) {
+                        outputElement.textContent = "No code to run";
+                        return;
+                    }
+                    
+                    outputElement.textContent = "Running...";
+                    outputElement.classList.remove("error-message", "success-message");
+                    outputElement.classList.add("loading-message");
+                    
+                    // Execute the code (this also maintains state for future blocks)
+                    const result = await executePythonCode(code);
+                    
+                    // Display the output - check if it's HTML
+                    const trimmedOutput = result.output.trim();
+                    console.log('Output length:', trimmedOutput.length);
+                    console.log('Output starts with:', trimmedOutput.substring(0, 100));
+                    
+                    if (trimmedOutput.includes('<script') && trimmedOutput.includes('Plotly')) {
+                        // It's Plotly HTML output - extract just the body content
+                        console.log('Rendering as Plotly HTML');
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(result.output, 'text/html');
+                        // Clear the output element and append the body content
+                        outputElement.innerHTML = '';
+                        
+                        // Find and load external scripts first (like Plotly CDN)
+                        const externalScripts = Array.from(doc.querySelectorAll('script[src]'));
+                        const inlineScripts = Array.from(doc.querySelectorAll('script:not([src])'));
+                        
+                        // Append non-script content first
+                        Array.from(doc.body.children).forEach(child => {
+                            if (child.tagName !== 'SCRIPT') {
+                                outputElement.appendChild(child.cloneNode(true));
+                            }
+                        });
+                        
+                        // Load external scripts sequentially
+                        const loadScript = (src) => {
+                            return new Promise((resolve, reject) => {
+                                const script = document.createElement('script');
+                                script.src = src;
+                                script.onload = resolve;
+                                script.onerror = reject;
+                                document.head.appendChild(script);
+                            });
+                        };
+                        
+                        // Load all external scripts first
+                        Promise.all(externalScripts.map(s => loadScript(s.src)))
+                            .then(() => {
+                                console.log('External scripts loaded, executing inline scripts');
+                                // Now execute inline scripts
+                                inlineScripts.forEach(oldScript => {
+                                    const newScript = document.createElement('script');
+                                    newScript.textContent = oldScript.textContent;
+                                    outputElement.appendChild(newScript);
+                                });
+                                console.log('Output element after processing:', outputElement.children.length, 'children');
+                            })
+                            .catch(err => {
+                                console.error('Failed to load external scripts:', err);
+                                outputElement.textContent = 'Error loading Plotly: ' + err.message;
+                            });
+                    } else if (trimmedOutput.startsWith('<!DOCTYPE') || 
+                               trimmedOutput.startsWith('<html') ||
+                               trimmedOutput.startsWith('<div') ||
+                               trimmedOutput.startsWith('<img')) {
+                        outputElement.innerHTML = result.output;
+                    } else {
+                        outputElement.textContent = result.output;
+                    }
+                    outputElement.classList.remove("loading-message");
+                    if (result.success) {
+                        outputElement.classList.add("success-message");
+                        outputElement.classList.remove("error-message");
+                    } else {
+                        outputElement.classList.add("error-message");
+                        outputElement.classList.remove("success-message");
+                    }
+                });
+            }
+        });
+        
+        console.log("All code blocks initialised successfully");
+
+        // Set flag to indicate Pyodide is fully ready
+        window.pyodideReady = true;
+        console.log("Pyodide fully ready");
+        
+    } catch (error) {
+        console.error("Failed to initialise Pyodide:", error);
+        document.querySelectorAll(".output").forEach(el => {
+            el.textContent = "Error loading Pyodide: " + error.message;
+            el.classList.remove("loading-message");
+            el.classList.add("error-message");
+        });
+    }
+}
+
+// Start the application when DOM is loaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', main);
+} else {
+    main();
+}
+    </script>
+    
+</body>
+</html>
