@@ -25,6 +25,20 @@ Additional styles for enhanced pyodide functionality
     border: 2px solid var(--primary);
 }
 
+.code-solution .CodeMirror {
+    border: none;
+    border-radius: 0 0 4px 4px;
+    margin: 0;
+    padding: 10px 0;
+}
+
+.code-solution.code-container {
+    border: none;
+    margin-bottom: 0;
+    border-radius: 0 0 4px 4px;
+    overflow: hidden;
+}
+
 .code-container {
     position: relative;
     margin-bottom: 15px;

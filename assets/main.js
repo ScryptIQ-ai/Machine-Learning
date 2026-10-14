@@ -3,8 +3,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Footer HTML (your existing code)
     const footerHTML = `
         <div class="footer">
-            <div>© Built with parchmentIQ copyright of scryptIQ</div>
-            <div>© L2D is copyright UCL 2025</div>
+            <div>© Built with parchmentIQ copyright of scryptIQ 2026</div>
+            <div>© all materials are copyright of scryptIQ 2026</div>
         </div>
     `;
 
@@ -22,18 +22,34 @@ document.addEventListener('DOMContentLoaded', function() {
     const sidebar = document.getElementById('sidebar');
     const mainContent = document.querySelector('.main-content');
     
-    sidebarToggle.addEventListener('click', function() {
-        sidebar.classList.toggle('collapsed');
-        mainContent.classList.toggle('expanded');
-        sidebarToggle.classList.toggle('collapsed');
-        
-        // Change the toggle button text based on state
-        if (sidebar.classList.contains('collapsed')) {
-            sidebarToggle.innerHTML = '❯';
-        } else {
-            sidebarToggle.innerHTML = '❮';
-        }
-    });
+    // On small screens the sidebar overlays the content, so start it
+    // collapsed to keep the page content visible on load.
+    const mobileQuery = window.matchMedia('(max-width: 900px)');
+    if (mobileQuery.matches && sidebar && sidebarToggle) {
+        sidebar.classList.add('collapsed');
+        mainContent && mainContent.classList.add('expanded');
+        sidebarToggle.classList.add('collapsed');
+        sidebarToggle.innerHTML = '❯';
+    }
+
+    // The homepage and about-us pages have no sidebar, so these elements are
+    // absent there. Without this guard the whole DOMContentLoaded handler threw
+    // on `null.addEventListener`, and everything below it -- collapsible
+    // sections, nav links, tabs -- silently never got wired up.
+    if (sidebarToggle && sidebar) {
+        sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('collapsed');
+            mainContent && mainContent.classList.toggle('expanded');
+            sidebarToggle.classList.toggle('collapsed');
+
+            // Change the toggle button text based on state
+            if (sidebar.classList.contains('collapsed')) {
+                sidebarToggle.innerHTML = '❯';
+            } else {
+                sidebarToggle.innerHTML = '❮';
+            }
+        });
+    }
     
     // Collapsible sections in sidebar
     const collapsibleHeaders = document.querySelectorAll('.collapsible-header');
@@ -140,8 +156,8 @@ function toggleCodeCollapse(codeId) {
     if (container.classList.contains('code-collapsed')) {
         container.classList.remove('code-collapsed');
         icon.classList.add('expanded');
-        label.textContent = 'Hide code';
-        
+        label.textContent = label.textContent.replace(/^Show/, 'Hide');
+
         // Refresh CodeMirror after making it visible
         setTimeout(() => {
             const codeMirror = container.querySelector('.CodeMirror');
@@ -152,6 +168,54 @@ function toggleCodeCollapse(codeId) {
     } else {
         container.classList.add('code-collapsed');
         icon.classList.remove('expanded');
-        label.textContent = 'Show code';
+        label.textContent = label.textContent.replace(/^Hide/, 'Show');
     }
 }
+
+// Quiz functionality
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.quiz-box').forEach(function (quizBox) {
+        const quizId = quizBox.id;
+
+        quizBox.querySelectorAll('.quiz-question').forEach(function (questionEl) {
+            const topicId = questionEl.dataset.topicId;
+            const options = questionEl.querySelectorAll('.quiz-option');
+            const feedback = questionEl.querySelector('.quiz-feedback');
+
+            options.forEach(function (label) {
+                label.addEventListener('click', function () {
+                    // Ignore if already answered
+                    if (questionEl.classList.contains('answered')) return;
+
+                    const isCorrect = label.dataset.correct === 'true';
+
+                    questionEl.classList.add('answered');
+
+                    // Style all options: correct stays green, wrong chosen goes red
+                    options.forEach(function (opt) {
+                        opt.classList.add('disabled');
+                        if (opt.dataset.correct === 'true') {
+                            opt.classList.add('correct');
+                        } else if (opt === label && !isCorrect) {
+                            opt.classList.add('incorrect');
+                        }
+                        opt.querySelector('input').disabled = true;
+                    });
+
+                    if (isCorrect) {
+                        feedback.textContent = '✓ Correct!';
+                        feedback.className = 'quiz-feedback correct';
+                        // Strike through matching topic pill
+                        if (topicId) {
+                            const pill = quizBox.querySelector('#' + quizId + '-topic-' + topicId);
+                            if (pill) pill.classList.add('completed');
+                        }
+                    } else {
+                        feedback.textContent = '✗ Not quite — the correct answer is highlighted.';
+                        feedback.className = 'quiz-feedback incorrect';
+                    }
+                });
+            });
+        });
+    });
+});

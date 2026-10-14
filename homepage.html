@@ -2,6 +2,13 @@
 <html lang="en">
 
 <head>
+    <!-- Meta Tags -->
+    <!-- charset must stay within the first 1024 bytes of the
+         document or browsers stop looking and fall back to a
+         default encoding. Keep these two first in <head>. -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <!-- Favicons -->
     <link rel="icon" type="image/x-icon" href="./assets/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32x32.png">
@@ -15,10 +22,7 @@
     <link rel="stylesheet" href="./assets/shared-styles.css">
     <link rel="stylesheet" href="./assets/nav-bar.css">
 
-    <!-- Meta Tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>L2D - Homepage</title>
+    <title>scryptIQ - Homepage</title>
 
     <!-- Homepage Styles -->
     <link rel="stylesheet" href="./assets/homepage-styles.css">
@@ -27,12 +31,12 @@
 <body>
     <nav class="navigation">
     <a href="./homepage.html" class="logo">
-        <div class="logo-icon"><img src="./assets/l2d-brain-logo.png" alt="Logo"></div>
+        <div class="logo-icon"><img src="./assets/l2d-brain-logo.png" alt="Home"></div>
     </a>
     <ul class="nav-links">
         <li><a href="./homepage.html">Home</a></li>
         <li><a href="./about-us.html">About Us</a></li>
-        <li><a href="https://learntodiscover.ai/my-cohorts/">Learn to Discover</a></li>
+        <li><a href="https://scryptiq.ai/my-cohorts/" class="scryptiq-button">scryptIQ</a></li>
     </ul>
 </nav>
 
@@ -176,8 +180,8 @@
                         
 
                         <!-- Course Calendar -->
-<a href="https://learntodiscover.ai/shared/assets/L2D-scryptIQ-schedule-2025.pdf" class="hero-module-card">
-    <div class="hero-module-icon"><img src="./assets/homepage/calendar-icon.png" alt="Course calendar icon" /></div>
+<a href="https://scryptiq.ai/shared/assets/relIQ-calendars/Autumn2025.pdf" class="hero-module-card">
+    <div class="hero-module-icon"><img src="./assets/homepage/calendar-icon.png" alt="" /></div>
     <div class="hero-module-content">
         <h3>Course Calendar</h3>
     </div>
@@ -188,7 +192,7 @@
                         <!-- 1-to-1 Support with Submenu -->
 <div class="support-wrapper">
     <div class="hero-module-card support-main-button" onclick="toggleSupportMenu()">
-        <div class="hero-module-icon"><img src="./assets/homepage/1-to-1-icon.png" alt="1-to-1 Support icon" /></div>
+        <div class="hero-module-icon"><img src="./assets/homepage/1-to-1-icon.png" alt="" /></div>
         <div class="hero-module-content">
             <h3>1-to-1 Support</h3>
         </div>
@@ -199,7 +203,7 @@
     <div class="support-submenu" id="supportSubmenu">
         
         <a href="https://cal.com/matthew-salinger-ck4evx/20-minute-support-call" class="support-submenu-button">
-            <div class="hero-module-icon"><img src="./assets/homepage/video-call-icon.png" alt="Video call icon" /></div>
+            <div class="hero-module-icon"><img src="./assets/homepage/video-call-icon.png" alt="" /></div>
             <div class="hero-module-content">
                 <h4>Matt Salinger</h4>
             </div>
@@ -207,7 +211,7 @@
         </a>
         
         <a href="https://cal.com/emily-deniszczyc-oj1awz/20-min-support-call?user=emily-deniszczyc-oj1awz&amp;month=2025-11" class="support-submenu-button">
-            <div class="hero-module-icon"><img src="./assets/homepage/video-call-icon.png" alt="Video call icon" /></div>
+            <div class="hero-module-icon"><img src="./assets/homepage/video-call-icon.png" alt="" /></div>
             <div class="hero-module-content">
                 <h4>Emily Deniszczyc</h4>
             </div>
@@ -215,7 +219,7 @@
         </a>
         
         <a href="https://cal.com/winnie-lei-l2d/20-minute-support-call" class="support-submenu-button">
-            <div class="hero-module-icon"><img src="./assets/homepage/video-call-icon.png" alt="Video call icon" /></div>
+            <div class="hero-module-icon"><img src="./assets/homepage/video-call-icon.png" alt="" /></div>
             <div class="hero-module-content">
                 <h4>Winnie Lei</h4>
             </div>
@@ -223,7 +227,7 @@
         </a>
         
         <a href="https://cal.com/yue-jiang-rhcl15/20-minute-support-call" class="support-submenu-button">
-            <div class="hero-module-icon"><img src="./assets/homepage/video-call-icon.png" alt="Video call icon" /></div>
+            <div class="hero-module-icon"><img src="./assets/homepage/video-call-icon.png" alt="" /></div>
             <div class="hero-module-content">
                 <h4>Yue Jiang</h4>
             </div>
@@ -248,31 +252,9 @@
                         
                         <!-- Module Card -->
 <a href="./ML1/introduction.html" class="hero-module-card">
-    <div class="hero-module-icon"><img src="./assets/homepage/pf1-icon.png" alt="Machine Learning 1 icon" /></div>
+    <div class="hero-module-icon"><img src="./assets/homepage/pf1-icon.png" alt="" /></div>
     <div class="hero-module-content">
         <h3>Machine Learning 1</h3>
-    </div>
-    <div class="hero-arrow">→</div>
-</a>
-                        
-                        
-                        
-                        <!-- Module Card -->
-<a href="./ML3/introduction.html" class="hero-module-card">
-    <div class="hero-module-icon"><img src="./assets/homepage/pf3-icon.png" alt="Machine Learning 3 icon" /></div>
-    <div class="hero-module-content">
-        <h3>Machine Learning 3</h3>
-    </div>
-    <div class="hero-arrow">→</div>
-</a>
-                        
-                        
-                        
-                        <!-- Module Card -->
-<a href="./ML4/introduction.html" class="hero-module-card">
-    <div class="hero-module-icon"><img src="./assets/homepage/pf4-icon.png" alt="Machine Learning 4 icon" /></div>
-    <div class="hero-module-content">
-        <h3>Machine Learning 4</h3>
     </div>
     <div class="hero-arrow">→</div>
 </a>
@@ -303,12 +285,6 @@
                 own, and collaborates with other providers to deliver bespoke, research science-adjacent computational
                 education. </p>
             </p>
-            <p>
-                Originally developed at University College London, scryptIQ is an active collaborator with BBI Ltd.,
-                developing and delivering the Learn to Discover (L2D) course. L2D is a fully-supported training
-                programme and platform dedicated to upskilling researchers in the biosciences, healthcare and medicine
-                in Python programming, data science, machine learning and AI. Its primary focus is the application of
-                these to real-world bioscientific data.</p>
             </p>
         </div>
     </section>
